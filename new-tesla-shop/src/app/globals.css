@@ -1,0 +1,147 @@
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #002366; /* Royal Blue */
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f4;
+  --accent: #002366;
+  --border: #e2e2e2;
+  --radius: 0.5rem;
+  --dark-navy: #0a0f1a; /* Black blue */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --primary: #4169e1; /* Lighter Royal Blue for dark mode */
+    --primary-foreground: #ffffff;
+    --secondary: #1a1a1a;
+    --border: #333333;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.breadcrumbs {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.breadcrumbs a {
+  color: var(--primary);
+}
+
+.breadcrumbs span {
+  margin: 0 0.5rem;
+}
+
+.currency-switcher {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.currency-btn {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.currency-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: var(--background);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-image {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: #eee;
+}
+
+.card-content {
+  padding: 1rem;
+}
+
+.btn {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
