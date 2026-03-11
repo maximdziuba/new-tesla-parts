@@ -23,23 +23,23 @@ export default async function CategoryPage({ params }: Props) {
       <Breadcrumbs items={[{ label: category.name }]} />
       
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ textAlign: 'center' }}>{category.name}: Підкатегорії</h1>
+        <h1 style={{ textAlign: 'center', color: 'var(--primary-text)' }}>{category.name}: Підкатегорії</h1>
       </div>
       
-      <div className="grid grid-2 grid-3">
+      <div className="grid grid-standard">
         {categorySubcategories.map((sub) => (
           <Link key={sub.id} href={`/subcategory/${sub.id}`} className="card">
-            <div className="card-image" style={{ position: 'relative' }}>
+            <div className="card-image" style={{ position: 'relative', height: '400px', background: 'white' }}>
               <Image 
                 src={sub.image} 
                 alt={sub.name} 
                 fill 
-                style={{ objectFit: 'cover' }}
+                style={{ objectFit: 'contain', padding: '1rem' }}
                 unoptimized
               />
             </div>
-            <div className="card-content">
-              <h2 style={{ fontSize: '1.1rem', textAlign: 'center' }}>{sub.name}</h2>
+            <div className="card-content" style={{ padding: '1.5rem' }}>
+              <h2 style={{ fontSize: '1.5rem', textAlign: 'center', color: 'var(--primary-text)' }}>{sub.name}</h2>
             </div>
           </Link>
         ))}

@@ -4,35 +4,38 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import Sidebar from './Sidebar';
 
 const Header = () => {
   const { totalItems } = useCart();
   const { currency, setCurrency } = useCurrency();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const infoLinks = [
-    { label: 'Про нас', href: '/about' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Політика конфіденційності', href: '/privacy' }
-  ];
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <header style={{ background: 'var(--dark-navy)', color: 'white', padding: '1rem 0', marginBottom: '1rem' }}>
+    <header style={{ background: 'var(--secondary-dark)', color: 'white', padding: '1rem 0', marginBottom: '1rem' }}>
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         
-        {/* Logo */}
-        <Link href="/" style={{ fontSize: '1.25rem', fontWeight: 'bold', letterSpacing: '1px', color: 'white' }}>
-          TESLA PARTS UA
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          {/* Burger Menu Button (Both Desktop and Mobile) */}
+          <button 
+            onClick={() => setSidebarOpen(true)}
+            style={{ background: 'none', border: 'none', color: 'white', padding: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
+            <span className="desktop-only" style={{ fontSize: '0.9rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              Меню
+            </span>
+          </button>
 
-        {/* Desktop Info Links (Middle) */}
-        <nav className="desktop-only" style={{ display: 'flex', gap: '2rem', fontSize: '0.9rem' }}>
-          {infoLinks.map((link) => (
-            <Link key={link.href} href={link.href} style={{ color: '#ccc' }}>
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+          {/* Logo */}
+          <Link href="/" style={{ fontSize: '1.25rem', fontWeight: 'bold', letterSpacing: '1px', color: 'white' }}>
+            TESLA PARTS UA
+          </Link>
+        </div>
 
         {/* Right Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
@@ -41,21 +44,29 @@ const Header = () => {
             <button 
               className={`currency-btn ${currency === 'UAH' ? 'active' : ''}`}
               onClick={() => setCurrency('UAH')}
-              style={{ borderColor: '#444', color: currency === 'UAH' ? 'white' : '#888' }}
+              style={{ 
+                borderColor: '#444', 
+                color: currency === 'UAH' ? 'white' : '#888',
+                backgroundColor: currency === 'UAH' ? 'var(--primary-accent)' : 'transparent' 
+              }}
             >
               UAH
             </button>
             <button 
               className={`currency-btn ${currency === 'USD' ? 'active' : ''}`}
               onClick={() => setCurrency('USD')}
-              style={{ borderColor: '#444', color: currency === 'USD' ? 'white' : '#888' }}
+              style={{ 
+                borderColor: '#444', 
+                color: currency === 'USD' ? 'white' : '#888',
+                backgroundColor: currency === 'USD' ? 'var(--primary-accent)' : 'transparent'
+              }}
             >
               USD
             </button>
           </div>
 
           {/* Cart Icon */}
-          <Link href="/checkout" style={{ position: 'relative', color: 'white' }}>
+          <Link href="/checkout" style={{ position: 'relative', color: 'var(--primary-accent)' }}>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               width="24" height="24" 
@@ -75,8 +86,8 @@ const Header = () => {
                 position: 'absolute',
                 top: '-8px',
                 right: '-10px',
-                background: '#4169E1',
-                color: 'white',
+                background: 'white',
+                color: 'var(--secondary-dark)',
                 borderRadius: '50%',
                 width: '18px',
                 height: '18px',
@@ -90,45 +101,8 @@ const Header = () => {
               </span>
             )}
           </Link>
-
-          {/* Mobile Menu Toggle */}
-          <button 
-            className="mobile-only"
-            onClick={() => setMenuOpen(!menuOpen)}
-            style={{ background: 'none', border: 'none', color: 'white', padding: 0 }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              {menuOpen ? (
-                <path d="M18 6L6 18M6 6l12 12" />
-              ) : (
-                <path d="M3 12h18M3 6h18M3 18h18" />
-              )}
-            </svg>
-          </button>
         </div>
       </div>
-
-      {/* Mobile Menu Dropdown */}
-      {menuOpen && (
-        <div className="mobile-only" style={{ background: '#12192b', padding: '1rem', borderTop: '1px solid #222' }}>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'center' }}>
-            {infoLinks.map((link) => (
-              <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      )}
-
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .desktop-only { display: none !important; }
-        }
-        @media (min-width: 769px) {
-          .mobile-only { display: none !important; }
-        }
-      `}</style>
     </header>
   );
 };

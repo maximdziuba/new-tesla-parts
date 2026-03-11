@@ -34,7 +34,7 @@ export default async function SubcategoryPage({ params }: Props) {
           На жаль, у цій підкатегорії поки немає товарів.
         </p>
       ) : (
-        <div className="grid grid-2 grid-3">
+        <div className="grid grid-products">
           {subcategoryProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

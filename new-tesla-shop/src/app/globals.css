@@ -1,24 +1,20 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #002366; /* Royal Blue */
-  --primary-foreground: #ffffff;
-  --secondary: #f4f4f4;
-  --accent: #002366;
-  --border: #e2e2e2;
-  --radius: 0.5rem;
-  --dark-navy: #0a0f1a; /* Black blue */
-}
+  /* Electric Deep Blue Palette */
+  --primary-accent: #4169E1;      /* Royal Blue */
+  --secondary-dark: #002366;      /* Deep Midnight */
+  --primary-text: #333333;        /* Asphalt Grey */
+  --neutral-base: #D1D5DB;        /* Desert Mist */
+  --main-background: #FFFFFF;     /* Pure White */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --primary: #4169e1; /* Lighter Royal Blue for dark mode */
-    --primary-foreground: #ffffff;
-    --secondary: #1a1a1a;
-    --border: #333333;
-  }
+  /* Standard variable names for compatibility */
+  --background: var(--main-background);
+  --foreground: var(--primary-text);
+  --primary: var(--primary-accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--neutral-base);
+  --accent: var(--primary-accent);
+  --border: var(--neutral-base);
+  --radius: 0.5rem;
 }
 
 * {
@@ -85,6 +81,7 @@ ul {
 
 button {
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .container {
@@ -98,13 +95,99 @@ button {
   gap: 1.5rem;
 }
 
+/* Category/Subcategory grid: 3 (desktop), 2 (tablet), 1 (mobile) */
+.grid-standard {
+  grid-template-columns: 1fr;
+}
+
 @media (min-width: 640px) {
-  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-standard { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (min-width: 1024px) {
-  .grid-3 { grid-template-columns: repeat(3, 1fr); }
-  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-standard { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Product grid: 3 (desktop), 2 (tablet), 2 (mobile) */
+.grid-products {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .grid-products { 
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Sidebar Styles */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100%;
+  background: var(--secondary-dark);
+  color: white;
+  z-index: 1001;
+  transition: left 0.3s ease;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.sidebar-link {
+  color: #ccc;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.sidebar-link:hover {
+  color: white;
+}
+
+.sidebar-category-list {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-left: 1px solid #444;
+}
+
+.sidebar-subcategory-link {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.sidebar-subcategory-link:hover {
+  color: var(--primary-accent);
 }
 
 .card {
@@ -112,7 +195,7 @@ button {
   border-radius: var(--radius);
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
-  background: var(--background);
+  background: var(--neutral-base); /* Instruction 4: Desert Mist for card background */
 }
 
 .card:hover {
@@ -129,10 +212,11 @@ button {
 
 .card-content {
   padding: 1rem;
+  background: var(--main-background); /* White background for text content in card? Or all card is Desert Mist? */
 }
 
 .btn {
-  background: var(--primary);
+  background: var(--primary); /* Royal Electric Blue */
   color: var(--primary-foreground);
   border: none;
   padding: 0.75rem 1.5rem;
@@ -140,8 +224,15 @@ button {
   font-weight: 600;
   display: inline-block;
   text-align: center;
+  transition: background 0.2s;
 }
 
 .btn:hover {
-  opacity: 0.9;
+  background: var(--secondary-dark); /* Instruction 3: Deep Midnight on hover */
+}
+
+@media (max-width: 1024px) {
+  .desktop-only {
+    display: none !important;
+  }
 }

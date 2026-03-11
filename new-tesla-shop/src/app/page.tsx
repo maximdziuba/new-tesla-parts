@@ -11,8 +11,8 @@ export default function Home() {
     <div style={{ paddingBottom: '4rem' }}>
       {/* Categories Hero Section */}
       <section style={{ marginBottom: '4rem' }}>
-        <h1 style={{ marginBottom: '2rem', textAlign: 'center' }}>Категорії Tesla</h1>
-        <div className="grid grid-2" style={{ gap: '1rem' }}>
+        <h1 style={{ marginBottom: '2rem', textAlign: 'center', color: 'var(--primary-text)' }}>Категорії Tesla</h1>
+        <div className="grid grid-standard" style={{ gap: '1.5rem' }}>
           {categories.map((category) => (
             <Link 
               key={category.id} 
@@ -52,10 +52,10 @@ export default function Home() {
       {/* Popular Products Section */}
       <section>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.75rem' }}>Популярні товари</h2>
-          <span style={{ color: 'var(--primary)', fontWeight: '500' }}>Дивитись всі →</span>
+          <h2 style={{ fontSize: '1.75rem', color: 'var(--primary-text)' }}>Популярні товари</h2>
+          <span style={{ color: 'var(--primary-accent)', fontWeight: '500' }}>Дивитись всі →</span>
         </div>
-        <div className="grid grid-2 grid-4">
+        <div className="grid grid-products">
           {popularProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

@@ -3,7 +3,7 @@ const Footer = () => {
     <footer style={{ 
       marginTop: '4rem', 
       padding: '3rem 0', 
-      background: 'var(--dark-navy)', 
+      background: 'var(--secondary-dark)', 
       color: '#ccc', 
       textAlign: 'center', 
       fontSize: '0.9rem' 
