@@ -4,6 +4,7 @@ import { AppProvider } from '../context/AppContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CartDrawer from '../components/CartDrawer';
+import Sidebar from '../components/Sidebar';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
@@ -26,10 +27,17 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <Header />
           </Suspense>
-          <main className="flex-grow container mx-auto px-4 py-8">
-            {children}
-          </main>
-          <Footer />
+          <div className="flex flex-grow w-full relative">
+            <Sidebar />
+            <div className="flex-grow flex flex-col min-w-0">
+                <main className="flex-grow px-4 py-8 md:px-8">
+                    <div className="container mx-auto">
+                        {children}
+                    </div>
+                </main>
+                <Footer />
+            </div>
+          </div>
           <CartDrawer />
         </AppProvider>
       </body>

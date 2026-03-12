@@ -1,3 +1,26 @@
+# Next.js
+.next/
+out/
+build/
+
+# Playwright
+.playwright-mcp/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Screenshots & Temporary Files
+*.png
+!public/*.png
+!public/fonts/*.png
+*.jpg
+!public/*.jpg
+replace_script.js
+
+# Legacy Project Files
+legacy/
+
 # Logs
 logs
 *.log

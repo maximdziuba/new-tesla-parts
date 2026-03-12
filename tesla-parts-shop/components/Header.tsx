@@ -20,6 +20,7 @@ const Header: React.FC = () => {
     categories,
     setCurrency,
     setIsCartOpen,
+    setIsSidebarOpen,
     socialLinks,
     contactInfo,
     headerPages,
@@ -31,24 +32,14 @@ const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
 
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = useState(false);
-  const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false);
   const [isPagesDropdownOpen, setIsPagesDropdownOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   
-  const desktopDropdownRef = useRef<HTMLDivElement>(null);
-  const mobileCategoryRef = useRef<HTMLDivElement>(null);
   const pagesDropdownRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     setIsMounted(true);
     const handleClickOutside = (event: MouseEvent) => {
-      if (desktopDropdownRef.current && !desktopDropdownRef.current.contains(event.target as Node)) {
-        setIsDesktopDropdownOpen(false);
-      }
-      if (mobileCategoryRef.current && !mobileCategoryRef.current.contains(event.target as Node)) {
-        setIsMobileCategoryOpen(false);
-      }
       if (pagesDropdownRef.current && !pagesDropdownRef.current.contains(event.target as Node)) {
         setIsPagesDropdownOpen(false);
       }
@@ -85,8 +76,6 @@ const Header: React.FC = () => {
     const rate = uahPerUsd > 0 ? uahPerUsd : 1;
     return currency === Currency.UAH ? cartTotalUSD * rate : cartTotalUSD;
   })();
-
-  const sortedCategories = [...categories].sort((a, b) => (b.sort_order ?? 0) - (a.sort_order ?? 0));
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -159,72 +148,23 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-2 md:py-4">
         <div className="flex items-center justify-between gap-4">
           
-          {/* Logo */}
-          <ShopLogo />
+          {/* Burger Menu for Mobile */}
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-2 -ml-2 text-slate-900 hover:text-blue-600 transition"
+            >
+              <Menu size={28} />
+            </button>
 
-          {/* === НАВІГАЦІЯ КАТЕГОРІЙ === */}
-          <div className="flex-1 max-w-2xl px-4 md:px-8">
-            
-            {/* 1. ВАРІАНТ ДЛЯ ВЕЛИКИХ ДЕСКТОПІВ (XL+) - Повний список */}
-            <div className="hidden xl:flex items-center gap-6 font-medium text-slate-900 whitespace-nowrap">
-              {sortedCategories.slice(0, 4).map(cat => (
-                <Link
-                  key={cat.id}
-                  href={`/category/${slugify(cat.name)}`}
-                  className="hover:text-blue-600 transition"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-              {sortedCategories.length > 4 && (
-                <div className="relative" ref={desktopDropdownRef}>
-                  <button 
-                    onClick={() => setIsDesktopDropdownOpen(!isDesktopDropdownOpen)}
-                    className="flex items-center hover:text-blue-600 transition"
-                  >
-                    Усі категорії <ChevronDown size={16} className="ml-1" />
-                  </button>
-                  <div className={`absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden z-10 ${isDesktopDropdownOpen ? 'block' : 'hidden'}`}>
-                    {sortedCategories.slice(4).map(cat => (
-                      <Link
-                        key={cat.id}
-                        href={`/category/${slugify(cat.name)}`}
-                        onClick={() => setIsDesktopDropdownOpen(false)}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+            {/* Logo - Mobile Only */}
+            <div className="lg:hidden flex-shrink-0">
+              <ShopLogo />
             </div>
-
-            {/* 2. ВАРІАНТ ДЛЯ МОБІЛЬНИХ/ПЛАНШЕТІВ (< XL) - Тільки кнопка "Усі категорії" */}
-            <div className="xl:hidden relative" ref={mobileCategoryRef}>
-               <button 
-                  onClick={() => setIsMobileCategoryOpen(!isMobileCategoryOpen)}
-                  className="flex items-center font-medium text-slate-900 hover:text-blue-600 transition whitespace-nowrap"
-                >
-                  Усі категорії <ChevronDown size={16} className="ml-1" />
-                </button>
-                
-                {/* Випадаюче меню для мобілок */}
-                <div className={`absolute left-0 top-full mt-2 w-56 bg-white shadow-lg rounded-md overflow-hidden z-20 ${isMobileCategoryOpen ? 'block' : 'hidden'}`}>
-                  {sortedCategories.map(cat => (
-                    <Link
-                      key={cat.id}
-                      href={`/category/${slugify(cat.name)}`}
-                      onClick={() => setIsMobileCategoryOpen(false)}
-                      className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-50 last:border-0"
-                    >
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-            </div>
-
           </div>
+
+          {/* Spacer for desktop search to be centered if needed, but here it's on the right */}
+          <div className="flex-grow hidden lg:block"></div>
 
           {/* Cart & Checkout */}
           <div className="flex items-center gap-4">

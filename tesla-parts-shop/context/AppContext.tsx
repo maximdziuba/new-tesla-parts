@@ -13,6 +13,8 @@ interface AppContextType {
   clearCart: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
   currency: Currency;
   setCurrency: (currency: Currency) => void;
   uahPerUsd: number;
@@ -106,6 +108,7 @@ const preloadImages = async (imageUrls: (string | undefined)[]) => {
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currency, setCurrency] = useState<Currency>(Currency.UAH);
   const [uahPerUsd, setUahPerUsd] = useState(DEFAULT_EXCHANGE_RATE_UAH_PER_USD);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -254,6 +257,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         clearCart,
         isCartOpen,
         setIsCartOpen,
+        isSidebarOpen,
+        setIsSidebarOpen,
         currency,
         setCurrency,
         uahPerUsd,
