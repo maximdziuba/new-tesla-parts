@@ -124,7 +124,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [uahPerUsd, setUahPerUsd] = useState(DEFAULT_EXCHANGE_RATE_UAH_PER_USD);
   const [categories, setCategories] = useState<Category[]>([]);
   const [headerPages, setHeaderPages] = useState<Page[]>([]);
-  const [socialLinks, setSocialLinks] = useState({ instagram: '', telegram: '', whatsapp: '', viber: '' });
+  const [socialLinks, setSocialLinks] = useState<{ instagram?: string; telegram?: string; whatsapp?: string; viber?: string }>({ 
+    instagram: '', 
+    telegram: '', 
+    whatsapp: '', 
+    viber: '' 
+  });
   const [contactInfo, setContactInfo] = useState({
     email: '',
     phone: '',

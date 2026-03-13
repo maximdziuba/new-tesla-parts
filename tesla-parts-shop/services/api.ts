@@ -162,7 +162,7 @@ export const api = {
         */
     },
 
-    getSocialLinks: async (): Promise<{ telegram: string; whatsapp: string; viber: string }> => {
+    getSocialLinks: async (): Promise<{ instagram?: string; telegram?: string; whatsapp?: string; viber?: string }> => {
         return { telegram: 'https://t.me', whatsapp: 'https://wa.me', viber: 'viber://chat?number=' };
         /*
         const res = await fetch(`${API_URL}/settings/social-links`);
