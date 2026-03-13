@@ -58,18 +58,15 @@ const Sidebar: React.FC = () => {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         flex flex-col transition-colors shadow-2xl lg:shadow-none
       `}>
-        {/* Sidebar Header with Logo */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-700">
-          <div onClick={closeSidebar}>
-            <ShopLogo />
-          </div>
-          <button onClick={closeSidebar} className="lg:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+        {/* Sidebar Header - Mobile Close Button Only */}
+        <div className="flex items-center justify-end p-4 lg:hidden border-b border-gray-100 dark:border-slate-700">
+          <button onClick={closeSidebar} className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
             <X size={24} />
           </button>
         </div>
 
         {/* Categories List */}
-        <div className="flex-grow overflow-y-auto py-6 px-4">
+        <div className="flex-grow overflow-y-auto py-6 px-4 lg:pt-8">
           <h2 className="text-xs font-semibold text-gray-400 dark:text-slate-400 uppercase tracking-wider mb-4 px-3">
             Категорії запчастин
           </h2>

@@ -145,17 +145,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTheme(getInitialTheme());
   }, []);
 
-  // Theme application
+  // Theme application and system listener
   useEffect(() => {
+    // Apply theme class to document
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      // ONLY auto-adjust if there is no manual preference in localStorage
+      const manualPreference = localStorage.getItem(THEME_STORAGE_KEY);
+      if (!manualPreference) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    // Explicitly save manual preference
+    localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+  };
 
   // Save cart to local storage on changes
   useEffect(() => {
