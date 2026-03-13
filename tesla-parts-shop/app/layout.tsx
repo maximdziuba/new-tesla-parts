@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="uk">
+    <html lang="uk" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col font-sans text-slate-900 bg-[#f8fafc]">
         <AppProvider>
           <Suspense fallback={null}>

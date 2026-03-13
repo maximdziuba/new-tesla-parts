@@ -53,24 +53,24 @@ const Sidebar: React.FC = () => {
       <aside className={`
         fixed lg:sticky inset-y-0 left-0 z-50
         lg:top-0 lg:h-screen
-        w-72 bg-white border-r border-gray-200 
+        w-72 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 
         transform transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        flex flex-col
+        flex flex-col transition-colors
       `}>
         {/* Sidebar Header with Logo */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-800">
           <div onClick={closeSidebar}>
             <ShopLogo />
           </div>
-          <button onClick={closeSidebar} className="lg:hidden p-2 text-slate-500 hover:text-slate-900 transition">
+          <button onClick={closeSidebar} className="lg:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
             <X size={24} />
           </button>
         </div>
 
         {/* Categories List */}
         <div className="flex-grow overflow-y-auto py-6 px-4">
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-3">
+          <h2 className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-4 px-3">
             Категорії запчастин
           </h2>
           <nav className="space-y-1">
@@ -90,7 +90,7 @@ const Sidebar: React.FC = () => {
                         flex-grow flex items-center px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200
                         ${isActive 
                           ? 'bg-blue-600 text-white shadow-md' 
-                          : 'text-slate-700 hover:bg-blue-50 hover:text-blue-600'}
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400'}
                       `}
                     >
                       <span>{category.name}</span>
@@ -102,7 +102,7 @@ const Sidebar: React.FC = () => {
                           p-2 ml-1 rounded-md transition-colors
                           ${isActive 
                             ? 'text-white/80 hover:text-white hover:bg-white/10' 
-                            : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}
+                            : 'text-gray-400 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800'}
                         `}
                       >
                         {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
@@ -112,7 +112,7 @@ const Sidebar: React.FC = () => {
                   
                   {/* Subcategories */}
                   {hasSubcategories && isExpanded && (
-                    <div className="ml-4 mt-2 space-y-1 border-l-2 border-blue-100 pl-3 transition-all duration-300 overflow-hidden">
+                    <div className="ml-4 mt-2 space-y-1 border-l-2 border-blue-100 dark:border-slate-800 pl-3 transition-all duration-300 overflow-hidden">
                       {category.subcategories!.map((sub) => {
                         const subUrl = `/category/${categorySlug}/sub/${sub.id}`;
                         const isSubActive = pathname === subUrl;
@@ -124,8 +124,8 @@ const Sidebar: React.FC = () => {
                             className={`
                               block px-3 py-2 text-xs rounded-md transition-colors
                               ${isSubActive
-                                ? 'text-blue-600 font-bold bg-blue-50/50'
-                                : 'text-slate-500 hover:text-blue-600 hover:bg-gray-50'}
+                                ? 'text-blue-600 dark:text-blue-400 font-bold bg-blue-50/50 dark:bg-blue-900/20'
+                                : 'text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-slate-800'}
                             `}
                           >
                             {sub.name}
@@ -141,7 +141,7 @@ const Sidebar: React.FC = () => {
         </div>
 
         {/* Footer info (optional) */}
-        <div className="p-6 border-t border-gray-100 text-[10px] text-gray-400 font-medium uppercase tracking-widest">
+        <div className="p-6 border-t border-gray-100 dark:border-slate-800 text-[10px] text-gray-400 dark:text-slate-600 font-medium uppercase tracking-widest">
             <p>© 2026 Tesla Parts Shop</p>
         </div>
       </aside>

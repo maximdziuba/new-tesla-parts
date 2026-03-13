@@ -162,8 +162,8 @@ export const api = {
         */
     },
 
-    getSocialLinks: async (): Promise<{ instagram: string; telegram: string }> => {
-        return { instagram: 'https://instagram.com', telegram: 'https://t.me' };
+    getSocialLinks: async (): Promise<{ telegram: string; whatsapp: string; viber: string }> => {
+        return { telegram: 'https://t.me', whatsapp: 'https://wa.me', viber: 'viber://chat?number=' };
         /*
         const res = await fetch(`${API_URL}/settings/social-links`);
         if (!res.ok) throw new Error('Failed to fetch social links');

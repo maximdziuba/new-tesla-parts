@@ -210,14 +210,14 @@ const CategoryViewComponent: React.FC = () => {
         fallbackTitle={fallbackTitle}
         fallbackDescription={fallbackDescription}
       />
-      <div className="flex items-center gap-2 mb-2 text-sm text-gray-500 overflow-x-auto whitespace-nowrap">
-        <Link href="/" className="hover:text-blue-600 transition">Головна</Link>
+      <div className="flex items-center gap-2 mb-2 text-sm text-gray-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap custom-scrollbar">
+        <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition">Головна</Link>
         {getBreadcrumbs().map((crumb, idx, arr) => (
           <React.Fragment key={crumb.url}>
-            <span className="text-gray-400">&gt;</span>
+            <span className="text-gray-400 dark:text-slate-600">&gt;</span>
             <Link 
               href={crumb.url} 
-              className={`hover:text-blue-600 transition ${idx === arr.length - 1 ? 'font-semibold text-slate-900' : ''}`}
+              className={`hover:text-blue-600 dark:hover:text-blue-400 transition ${idx === arr.length - 1 ? 'font-semibold text-slate-900 dark:text-white' : ''}`}
             >
               {crumb.name}
             </Link>
@@ -226,7 +226,7 @@ const CategoryViewComponent: React.FC = () => {
       </div>
       
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <h1 className="text-3xl font-bold">{pageHeading}</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{pageHeading}</h1>
       </div>
 
       {subcategoriesToShow.length > 0 && (
@@ -262,7 +262,7 @@ const CategoryViewComponent: React.FC = () => {
       )}
 
       {!loading && subcategoriesToShow.length === 0 && products.length === 0 && (
-        <p className="text-gray-500 italic">В цій категорії поки немає товарів чи підкатегорій.</p>
+        <p className="text-gray-500 dark:text-slate-400 italic">В цій категорії поки немає товарів чи підкатегорій.</p>
       )}
     </div>
   );

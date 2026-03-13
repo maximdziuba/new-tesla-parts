@@ -94,18 +94,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
             />
             <button
                 onClick={onBack}
-                className="flex items-center text-gray-600 hover:text-slate-900 mb-6 transition-colors"
+                className="flex items-center text-gray-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 transition-colors group"
             >
-                <ArrowLeft size={20} className="mr-2" />
+                <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
                 Назад
             </button>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden transition-colors">
                 <div className="flex flex-col md:flex-row">
                     {/* Image Gallery */}
-                    <div className="md:w-1/2 p-6 bg-gray-50">
+                    <div className="md:w-1/2 p-6 bg-gray-50 dark:bg-slate-900/50">
                         <div className="relative">
-                            <div className="aspect-square rounded-xl overflow-hidden bg-white mb-4 shadow-sm">
+                            <div className="aspect-square rounded-xl overflow-hidden bg-white dark:bg-slate-800 mb-4 shadow-sm border border-gray-100 dark:border-slate-700">
                                 <img
                                     src={selectedImage}
                                     alt={product.name}
@@ -116,13 +116,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                                 <>
                                     <button
                                         onClick={handlePrevImage}
-                                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition-all"
+                                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-full p-2 text-gray-700 dark:text-white hover:bg-white dark:hover:bg-slate-700 transition-all shadow-md"
                                     >
                                         <ChevronLeft size={24} />
                                     </button>
                                     <button
                                         onClick={handleNextImage}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition-all"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-full p-2 text-gray-700 dark:text-white hover:bg-white dark:hover:bg-slate-700 transition-all shadow-md"
                                     >
                                         <ChevronRight size={24} />
                                     </button>
@@ -131,12 +131,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                         </div>
 
                         {allImages.length > 1 && (
-                            <div className="flex gap-2 overflow-x-auto pb-2">
+                            <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
                                 {allImages.map((img, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setSelectedImage(img)}
-                                        className={`w-20 h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${selectedImage === img ? 'border-blue-600' : 'border-transparent hover:border-gray-300'
+                                        className={`w-20 h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${selectedImage === img ? 'border-blue-600' : 'border-transparent hover:border-gray-300 dark:hover:border-slate-600'
                                             }`}
                                     >
                                         <img src={img} alt="" className="w-full h-full object-cover" />
@@ -150,47 +150,47 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                     <div className="md:w-1/2 p-8 md:p-12 flex flex-col">
                         <div className="mb-auto">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-sm font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                         {product.category}
                                     </span>
                                     {product.detail_number && (
-                                        <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        <span className="text-xs font-medium text-gray-400 dark:text-slate-500 uppercase tracking-wider">
                                             Part #: {product.detail_number}
                                         </span>
                                     )}
                                     {product.cross_number && (
-                                        <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        <span className="text-xs font-medium text-gray-400 dark:text-slate-500 uppercase tracking-wider">
                                             Cross #: {product.cross_number}
                                         </span>
                                     )}
                                 </div>
                                 {product.inStock ? (
-                                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                    <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
                                         В наявності
                                     </span>
                                 ) : (
-                                    <span className="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                    <span className="bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
                                         Немає в наявності
                                     </span>
                                 )}
                             </div>
 
-                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
+                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 transition-colors">{product.name}</h1>
 
                             <div className="mb-8">
-                                <div className="text-3xl font-bold text-slate-900">
+                                <div className="text-3xl font-bold text-slate-900 dark:text-white">
                                     {getDisplayPrice()}
                                 </div>
                             </div>
 
-                            <div className="prose prose-sm text-gray-600 mb-8">
-                                <h3 className="text-gray-900 font-semibold mb-2">Опис</h3>
-                                <p className="whitespace-pre-line">{product.description}</p>
+                            <div className="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-slate-300 mb-8">
+                                <h3 className="text-gray-900 dark:text-white font-semibold mb-2">Опис</h3>
+                                <p className="whitespace-pre-line leading-relaxed">{product.description}</p>
                             </div>
                         </div>
 
-                        <div className="pt-8 border-t border-gray-100">
+                        <div className="pt-8 border-t border-gray-100 dark:border-slate-700">
                             <button
                                 onClick={handleAddToCart}
                                 disabled={!product.inStock}
@@ -198,7 +198,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                                     ? 'bg-green-600 text-white'
                                     : product.inStock
                                         ? 'bg-blue-600 text-white hover:bg-blue-800 shadow-lg hover:shadow-xl'
-                                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                        : 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-slate-500 cursor-not-allowed'
                                     }`}
                             >
                                 {added ? (
@@ -216,13 +216,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                             
                             {/* Delivery & Payment Info */}
                             {deliveryInfo && (
-                                <div className="mt-8 bg-gray-50 rounded-xl p-5 border border-gray-100">
-                                    <div className="flex items-center gap-2 mb-3 text-slate-900 font-bold">
-                                        <Truck size={20} />
+                                <div className="mt-8 bg-gray-50 dark:bg-slate-900/30 rounded-xl p-5 border border-gray-100 dark:border-slate-700 transition-colors">
+                                    <div className="flex items-center gap-2 mb-3 text-slate-900 dark:text-white font-bold">
+                                        <Truck size={20} className="text-blue-600 dark:text-blue-400" />
                                         <h3>Доставка та оплата</h3>
                                     </div>
-                                    <div className="prose prose-sm text-gray-600 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                                        <p className="whitespace-pre-line text-xs">{deliveryInfo}</p>
+                                    <div className="text-gray-600 dark:text-slate-300 max-h-48 overflow-y-auto pr-2 custom-scrollbar text-sm leading-relaxed">
+                                        <p className="whitespace-pre-line">{deliveryInfo}</p>
                                     </div>
                                 </div>
                             )}

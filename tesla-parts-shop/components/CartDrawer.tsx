@@ -52,53 +52,53 @@ const CartDrawer: React.FC = () => {
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       <div className="absolute inset-y-0 right-0 max-w-md w-full flex">
-        <div className="flex-1 flex flex-col bg-white shadow-xl animate-slide-in">
+        <div className="flex-1 flex flex-col bg-white dark:bg-slate-900 shadow-xl animate-slide-in transition-colors">
 
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-6 border-b border-gray-100">
-            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition">
-              <div className="flex items-center justify-between">
-                <ArrowLeft size={24} className="text-gray-500 mr-2"/>  Повернутись до покупок
+          <div className="flex items-center justify-between px-4 py-6 border-b border-gray-100 dark:border-slate-800">
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition group">
+              <div className="flex items-center justify-between text-gray-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">
+                <ArrowLeft size={24} className="mr-2"/>  Повернутись до покупок
               </div>
             </button>
-            <h2 className="text-lg font-bold text-gray-900">Кошик ({items.length})</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Кошик ({items.length})</h2>
           </div>
 
           {/* Items */}
           <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
             {items.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-gray-500 dark:text-slate-500">
                 <p>Ваш кошик порожній</p>
               </div>
             ) : (
               items.map((item) => (
                 <div key={item.id} className="flex gap-4">
-                  <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                  <div className="w-20 h-20 bg-gray-100 dark:bg-slate-800 rounded-md overflow-hidden flex-shrink-0">
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{item.name}</h3>
-                      <p className="text-xs text-gray-500 mt-1">{item.category}</p>
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">{item.name}</h3>
+                      <p className="text-xs text-gray-500 dark:text-slate-500 mt-1">{item.category}</p>
                     </div>
                     <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center border rounded-md">
+                      <div className="flex items-center border border-gray-200 dark:border-slate-700 rounded-md">
                         <button
                           onClick={() => onUpdateQuantity(item.id, -1)}
-                          className="p-1 hover:bg-gray-100 text-gray-600 disabled:opacity-50"
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-slate-400 disabled:opacity-50"
                           disabled={item.quantity <= 1}
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="px-2 text-sm font-medium w-8 text-center">{item.quantity}</span>
+                        <span className="px-2 text-sm font-medium w-8 text-center dark:text-white">{item.quantity}</span>
                         <button
                           onClick={() => onUpdateQuantity(item.id, 1)}
-                          className="p-1 hover:bg-gray-100 text-gray-600"
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-slate-400"
                         >
                           <Plus size={14} />
                         </button>
                       </div>
-                      <div className="text-sm font-bold">{formatPrice(item, item.quantity)}</div>
+                      <div className="text-sm font-bold dark:text-white">{formatPrice(item, item.quantity)}</div>
                     </div>
                   </div>
                   <button
@@ -114,12 +114,12 @@ const CartDrawer: React.FC = () => {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t border-gray-100 px-4 py-6 bg-gray-50">
-              <div className="flex justify-between items-center mb-4 text-lg font-bold text-gray-900">
+            <div className="border-t border-gray-100 dark:border-slate-800 px-4 py-6 bg-gray-50 dark:bg-slate-800/50">
+              <div className="flex justify-between items-center mb-4 text-lg font-bold text-gray-900 dark:text-white">
                 <span>Всього</span>
                 <span>{formatAmount(totalDisplay)}</span>
               </div>
-              <p className="text-xs text-gray-500 mb-4 text-center">Вартість доставки розраховується за тарифами перевізника</p>
+              <p className="text-xs text-gray-500 dark:text-slate-500 mb-4 text-center">Вартість доставки розраховується за тарифами перевізника</p>
               <button
                 onClick={() => { onClose(); router.push('/checkout'); }}
                 className="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-800 transition shadow-md"

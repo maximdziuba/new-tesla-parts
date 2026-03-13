@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ShoppingCart, Search, Menu, X, Instagram, Send, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Search, Menu, X, Send, ChevronDown, Sun, Moon, MessageSquare, Phone } from 'lucide-react';
 import { Currency } from '../types';
 import ShopLogo from './ShopLogo';
 import Link from 'next/link';
@@ -21,6 +21,8 @@ const Header: React.FC = () => {
     setCurrency,
     setIsCartOpen,
     setIsSidebarOpen,
+    theme,
+    toggleTheme,
     socialLinks,
     contactInfo,
     headerPages,
@@ -78,16 +80,16 @@ const Header: React.FC = () => {
   })();
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-white dark:bg-slate-900 shadow-md sticky top-0 z-50 transition-colors">
       {/* Top Row: Utilities & Info */}
-      <div className="bg-white text-slate-600 border-b border-gray-100 text-xs py-2 px-4 border-b border-gray-800">
+      <div className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-b border-gray-100 dark:border-slate-800 text-xs py-2 px-4 transition-colors">
         <div className="container mx-auto flex flex-row w-full justify-between items-center gap-2">
           <nav className="hidden md:flex flex-wrap gap-4 md:gap-6 justify-center md:justify-start">
             {headerPages.filter(page => page.is_published).map((page) => (
               <Link 
                 key={page.slug} 
                 href={`/info/${page.slug}`}
-                className="hover:text-white transition"
+                className="hover:text-blue-600 dark:hover:text-blue-400 transition"
               >
                 {page.title}
               </Link>
@@ -95,18 +97,18 @@ const Header: React.FC = () => {
           </nav>
           
           <div className="relative md:hidden" ref={pagesDropdownRef}>
-            <button onClick={() => setIsPagesDropdownOpen(!isPagesDropdownOpen)} className="flex items-center gap-1 hover:text-white transition">
+            <button onClick={() => setIsPagesDropdownOpen(!isPagesDropdownOpen)} className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400 transition">
               Навігація
               <ChevronDown size={16} />
             </button>
             {isPagesDropdownOpen && (
-              <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden z-20">
+              <div className="absolute left-0 top-full mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md overflow-hidden z-20">
                 {headerPages.filter(page => page.is_published).map((page) => (
                   <Link
                     key={page.slug}
                     href={`/info/${page.slug}`}
                     onClick={() => setIsPagesDropdownOpen(false)}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
                   >
                     {page.title}
                   </Link>
@@ -116,20 +118,40 @@ const Header: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-4">
-            {contactInfo.phone && (
-                <a href={`tel:${contactInfo.phone}`} className="hover:text-white transition">
+            {isMounted && contactInfo.phone && (
+                <a href={`tel:${contactInfo.phone}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
                     {contactInfo.phone}
                 </a>
             )}
-            <div className="flex items-center gap-2">
-              {socialLinks.instagram && (
-                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition"><Instagram size={16} /></a>
-              )}
-              {socialLinks.telegram && (
-                <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition"><Send size={16} /></a>
-              )}
-            </div>
-            <div className="border-l border-gray-700 pl-4 flex gap-2">
+            {isMounted && (
+              <div className="flex items-center gap-3">
+                {socialLinks.telegram && (
+                  <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition" title="Telegram">
+                    <Send size={16} />
+                  </a>
+                )}
+                {socialLinks.whatsapp && (
+                  <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-green-500 transition" title="WhatsApp">
+                    <MessageSquare size={16} />
+                  </a>
+                )}
+                {socialLinks.viber && (
+                  <a href={socialLinks.viber} target="_blank" rel="noopener noreferrer" className="hover:text-purple-500 transition" title="Viber">
+                    <Phone size={16} />
+                  </a>
+                )}
+              </div>
+            )}
+
+            <button 
+              onClick={toggleTheme}
+              className="p-1.5 rounded-full bg-gray-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
+              title={isMounted ? (theme === 'light' ? 'Увімкнути темну тему' : 'Увімкнути світлу тему') : ''}
+            >
+              {isMounted && (theme === 'light' ? <Moon size={16} /> : <Sun size={16} />)}
+            </button>
+
+            <div className="border-l border-gray-200 dark:border-slate-700 pl-4 flex gap-2">
               {Object.values(Currency).map((cur) => (
                 <button
                   key={cur}
@@ -152,7 +174,7 @@ const Header: React.FC = () => {
           <div className="flex items-center gap-2">
             <button 
               onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 -ml-2 text-slate-900 hover:text-blue-600 transition"
+              className="lg:hidden p-2 -ml-2 text-slate-900 dark:text-white hover:text-blue-600 transition"
             >
               <Menu size={28} />
             </button>
@@ -174,7 +196,7 @@ const Header: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Пошук..."
-                  className="w-full bg-gray-100 border-none rounded-full py-2 px-4 pl-10 focus:ring-2 focus:ring-blue-600 focus:bg-white transition outline-none"
+                  className="w-full bg-gray-100 dark:bg-slate-800 border-none rounded-full py-2 px-4 pl-10 focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-slate-700 text-slate-900 dark:text-white transition outline-none"
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                 />
@@ -187,7 +209,7 @@ const Header: React.FC = () => {
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className="relative">
-                <ShoppingCart className="text-slate-900 group-hover:text-blue-600 transition" size={24} />
+                <ShoppingCart className="text-slate-900 dark:text-white group-hover:text-blue-600 transition" size={24} />
                 {isMounted && cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
                     {cartCount}
@@ -195,8 +217,8 @@ const Header: React.FC = () => {
                 )}
               </div>
               <div className="hidden lg:block text-sm text-right leading-tight">
-                <div className="text-gray-500 text-xs">Кошик</div>
-                <div className="font-bold text-slate-900">{isMounted ? formatPrice(displayCartTotal) : formatPrice(0)}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-xs">Кошик</div>
+                <div className="font-bold text-slate-900 dark:text-white">{isMounted ? formatPrice(displayCartTotal) : formatPrice(0)}</div>
               </div>
             </div>
 
@@ -209,7 +231,7 @@ const Header: React.FC = () => {
 
             {/* Mobile Search Toggle */}
             <button
-              className="md:hidden text-slate-900"
+              className="md:hidden text-slate-900 dark:text-white"
               onClick={() => setIsMobileSearchOpen(true)}
             >
               <Search size={24} />
@@ -219,13 +241,13 @@ const Header: React.FC = () => {
 
         {/* Mobile Search Overlay */}
         {isMobileSearchOpen && (
-          <div className="md:hidden absolute top-0 left-0 w-full h-full bg-white z-20 flex items-center px-4">
+          <div className="md:hidden absolute top-0 left-0 w-full h-full bg-white dark:bg-slate-900 z-20 flex items-center px-4">
             <form onSubmit={(e) => { handleSearchSubmit(e); setIsMobileSearchOpen(false); }} className="flex items-center gap-2 w-full">
               <div className="relative flex-grow">
                 <input
                   type="text"
                   placeholder="Пошук..."
-                  className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10"
+                  className="w-full bg-gray-100 dark:bg-slate-800 rounded-lg py-3 px-4 pl-10 text-slate-900 dark:text-white"
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   autoFocus
@@ -235,7 +257,7 @@ const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsMobileSearchOpen(false)}
-                className="text-slate-900"
+                className="text-slate-900 dark:text-white"
               >
                 <X size={24} />
               </button>

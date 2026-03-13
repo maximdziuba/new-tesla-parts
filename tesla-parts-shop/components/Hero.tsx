@@ -24,7 +24,7 @@ const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
 
   return (
     <div className="mb-12">
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-slate-900">Оберіть модель вашого електромобіля</h1>
+      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-slate-900 dark:text-white transition-colors">Оберіть модель вашого електромобіля</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {categories.map((category) => (
           <div
@@ -40,9 +40,6 @@ const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
             />
             <div className="absolute bottom-0 left-0 p-6 z-20 text-white w-full">
               <h3 className="text-2xl font-bold mb-1">{category.name}</h3>
-              {/* <p className="text-gray-200 text-sm mb-4 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0"> */}
-                {/* {category.subcategories?.length || 0} підкатегорій */}
-              {/* </p> */}
               <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider">
                 Переглянути каталог <ArrowRight size={16} />
               </div>
@@ -51,7 +48,7 @@ const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
         ))}
       </div>
       {categories.length === 0 && (
-        <div className="text-center text-gray-500 py-12">
+        <div className="text-center text-gray-500 dark:text-gray-400 py-12">
           Завантаження категорій...
         </div>
       )}

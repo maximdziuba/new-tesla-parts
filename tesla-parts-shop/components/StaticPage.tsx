@@ -67,33 +67,33 @@ const StaticPage: React.FC<StaticPageProps> = ({ slug, onBack, seo }) => {
                 : trimmedContent;
 
     return (
-        <div className="py-12 max-w-2xl mx-auto">
+        <div className="py-12 max-w-2xl mx-auto transition-colors">
             <SeoHead
                 title={seo?.meta_title}
                 description={seo?.meta_description}
                 fallbackTitle={fallbackTitle}
                 fallbackDescription={fallbackDescription}
             />
-            <h1 className="text-3xl font-bold mb-6">
+            <h1 className="text-3xl font-bold mb-6 text-slate-900 dark:text-white">
                 {page?.title || PAGE_TITLES[slug] || slug}
             </h1>
 
             {page ? (
                 <div
-                    className="text-gray-600 leading-relaxed prose prose-lg max-w-none"
+                    className="text-gray-600 dark:text-slate-300 leading-relaxed prose prose-lg dark:prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: page.content.replace(/\n/g, '<br />') }}
                 />
             ) : (
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 dark:text-slate-400 leading-relaxed">
                     Ця сторінка знаходиться в розробці.
                 </p>
             )}
 
             <button
                 onClick={onBack}
-                className="mt-8 text-blue-600 font-medium hover:underline"
+                className="mt-8 text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center gap-2 group"
             >
-                ← Повернутись на головну
+                <span className="group-hover:-translate-x-1 transition-transform">←</span> Повернутись на головну
             </button>
         </div>
     );

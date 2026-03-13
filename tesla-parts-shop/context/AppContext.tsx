@@ -17,10 +17,12 @@ interface AppContextType {
   setIsSidebarOpen: (open: boolean) => void;
   currency: Currency;
   setCurrency: (currency: Currency) => void;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
   uahPerUsd: number;
   categories: Category[];
   headerPages: Page[];
-  socialLinks: { instagram: string; telegram: string };
+  socialLinks: { instagram?: string; telegram?: string; whatsapp?: string; viber?: string };
   contactInfo: {
     email: string;
     phone: string;
@@ -36,6 +38,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = 'tesla-parts-cart';
+const THEME_STORAGE_KEY = 'tesla-parts-theme';
 
 const getInitialCart = (): CartItem[] => {
   if (typeof window === 'undefined') return [];
@@ -51,6 +54,13 @@ const getInitialCart = (): CartItem[] => {
     console.warn('Failed to load cart from storage', err);
   }
   return [];
+};
+
+const getInitialTheme = (): 'light' | 'dark' => {
+  if (typeof window === 'undefined') return 'light';
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === 'light' || stored === 'dark') return stored;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 };
 
 const getProductUsdPrice = (product: Product, rate: number): number => {
@@ -110,10 +120,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currency, setCurrency] = useState<Currency>(Currency.UAH);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [uahPerUsd, setUahPerUsd] = useState(DEFAULT_EXCHANGE_RATE_UAH_PER_USD);
   const [categories, setCategories] = useState<Category[]>([]);
   const [headerPages, setHeaderPages] = useState<Page[]>([]);
-  const [socialLinks, setSocialLinks] = useState({ instagram: '', telegram: '' });
+  const [socialLinks, setSocialLinks] = useState({ instagram: '', telegram: '', whatsapp: '', viber: '' });
   const [contactInfo, setContactInfo] = useState({
     email: '',
     phone: '',
@@ -126,7 +137,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Load cart from local storage on mount
   useEffect(() => {
     setCart(getInitialCart());
+    setTheme(getInitialTheme());
   }, []);
+
+  // Theme application
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
   // Save cart to local storage on changes
   useEffect(() => {
@@ -261,6 +285,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsSidebarOpen,
         currency,
         setCurrency,
+        theme,
+        toggleTheme,
         uahPerUsd,
         categories,
         headerPages,

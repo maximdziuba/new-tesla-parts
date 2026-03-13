@@ -155,6 +155,7 @@ export const MOCK_PAGES: any[] = [
   { slug: 'delivery', title: 'Доставка та оплата', content: '<p>Доставка Новою Поштою по всій Україні.</p>', is_published: true },
   { slug: 'returns', title: 'Повернення', content: '<p>Повернення товару протягом 14 днів.</p>', is_published: true },
   { slug: 'contacts', title: 'Контакти', content: '<p>Наш офіс у Києві.</p>', is_published: true },
+  { slug: 'privacy-policy', title: 'Політика конфіденційності', content: '<p>Ваші дані в безпеці.</p>', is_published: true },
 ];
 
 export const MOCK_STATIC_SEO: any[] = [

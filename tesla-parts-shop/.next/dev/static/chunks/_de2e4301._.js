@@ -33,16 +33,16 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
     };
     if (products.length === 0) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "text-center py-20 bg-white rounded-lg shadow-sm",
+            className: "text-center py-20 bg-white dark:bg-slate-800 rounded-lg shadow-sm",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "text-gray-400 mb-4 flex justify-center",
+                    className: "text-gray-400 dark:text-slate-500 mb-4 flex justify-center",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__["AlertCircle"], {
                         size: 48
                     }, void 0, false, {
                         fileName: "[project]/components/ProductList.tsx",
                         lineNumber: 36,
-                        columnNumber: 65
+                        columnNumber: 85
                     }, ("TURBOPACK compile-time value", void 0))
                 }, void 0, false, {
                     fileName: "[project]/components/ProductList.tsx",
@@ -50,7 +50,7 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                    className: "text-xl font-medium text-gray-900",
+                    className: "text-xl font-medium text-gray-900 dark:text-white",
                     children: "Товарів не знайдено"
                 }, void 0, false, {
                     fileName: "[project]/components/ProductList.tsx",
@@ -58,7 +58,7 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    className: "text-gray-500 mt-2",
+                    className: "text-gray-500 dark:text-gray-400 mt-2",
                     children: "Спробуйте змінити параметри пошуку або обрати іншу категорію."
                 }, void 0, false, {
                     fileName: "[project]/components/ProductList.tsx",
@@ -76,7 +76,7 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
         className: "py-8",
         children: [
             title && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                className: "text-2xl font-bold mb-6 text-slate-900 border-l-4 border-blue-600 pl-4",
+                className: "text-2xl font-bold mb-6 text-slate-900 dark:text-white border-l-4 border-blue-600 pl-4",
                 children: title
             }, void 0, false, {
                 fileName: "[project]/components/ProductList.tsx",
@@ -87,18 +87,17 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
                 className: "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6",
                 children: products.map((product)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         onClick: ()=>onProductClick(product),
-                        className: "bg-white rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col cursor-pointer group select-none",
+                        className: "bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col cursor-pointer group select-none",
                         style: {
                             WebkitTapHighlightColor: 'transparent'
                         },
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "relative w-full pb-[100%] bg-gray-100",
+                                className: "relative w-full pb-[100%] bg-gray-100 dark:bg-slate-900",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
                                         src: product.image,
                                         alt: product.name,
-                                        // ЗМІНА 4: group-hover -> xl:group-hover (зум тільки на ПК)
                                         className: "absolute inset-0 w-full h-full object-cover xl:group-hover:scale-105 transition-transform duration-300"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ProductList.tsx",
@@ -110,7 +109,7 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
                                         children: "Немає в наявності"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ProductList.tsx",
-                                        lineNumber: 62,
+                                        lineNumber: 61,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
@@ -123,38 +122,38 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
                                 className: "p-4 flex-1 flex flex-col",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "text-xs text-gray-500 mb-1",
+                                        className: "text-xs text-gray-500 dark:text-gray-400 mb-1",
                                         children: product.category
                                     }, void 0, false, {
                                         fileName: "[project]/components/ProductList.tsx",
-                                        lineNumber: 69,
+                                        lineNumber: 68,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     product.detail_number && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "text-xs text-gray-500 mb-1",
+                                        className: "text-xs text-gray-500 dark:text-gray-400 mb-1",
                                         children: product.detail_number
                                     }, void 0, false, {
                                         fileName: "[project]/components/ProductList.tsx",
-                                        lineNumber: 71,
+                                        lineNumber: 70,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     product.cross_number && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "text-[11px] text-gray-400 mb-1",
+                                        className: "text-[11px] text-gray-400 dark:text-gray-500 mb-1",
                                         children: [
                                             "Cross: ",
                                             product.cross_number
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/ProductList.tsx",
-                                        lineNumber: 74,
+                                        lineNumber: 73,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                        className: "font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[3rem] active:text-blue-600 xl:group-hover:text-blue-600 transition-colors",
+                                        className: "font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 min-h-[3rem] active:text-blue-600 dark:active:text-blue-400 xl:group-hover:text-blue-600 dark:xl:group-hover:text-blue-400 transition-colors",
                                         children: product.name
                                     }, void 0, false, {
                                         fileName: "[project]/components/ProductList.tsx",
-                                        lineNumber: 78,
+                                        lineNumber: 76,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -163,16 +162,16 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "flex flex-col",
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-lg font-bold text-slate-900",
+                                                    className: "text-lg font-bold text-slate-900 dark:text-white",
                                                     children: formatPrice(product)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/ProductList.tsx",
-                                                    lineNumber: 84,
+                                                    lineNumber: 82,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/components/ProductList.tsx",
-                                                lineNumber: 83,
+                                                lineNumber: 81,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -181,31 +180,30 @@ const ProductList = ({ products, currency, uahPerUsd, onAddToCart, onProductClic
                                                     onAddToCart(product);
                                                 },
                                                 disabled: !product.inStock,
-                                                // ЗМІНА 6: Те саме для кнопки - active для моб, hover для ПК
-                                                className: `p-2 rounded-full transition ${product.inStock ? 'bg-slate-50 text-slate-900 active:bg-blue-600 active:text-white xl:hover:bg-blue-600 xl:hover:text-white' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`,
+                                                className: `p-2 rounded-full transition ${product.inStock ? 'bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white active:bg-blue-600 dark:active:bg-blue-500 active:text-white xl:hover:bg-blue-600 dark:xl:hover:bg-blue-500 xl:hover:text-white' : 'bg-gray-100 dark:bg-slate-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'}`,
                                                 "aria-label": "Додати в кошик",
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shopping$2d$bag$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ShoppingBag$3e$__["ShoppingBag"], {
                                                     size: 20
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/ProductList.tsx",
-                                                    lineNumber: 101,
+                                                    lineNumber: 98,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/components/ProductList.tsx",
-                                                lineNumber: 88,
+                                                lineNumber: 86,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/ProductList.tsx",
-                                        lineNumber: 82,
+                                        lineNumber: 80,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ProductList.tsx",
-                                lineNumber: 68,
+                                lineNumber: 67,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
@@ -248,17 +246,17 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 const SubcategoryCard = ({ subcategory, onClick })=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         onClick: onClick,
-        className: "bg-white rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden flex items-center p-3 sm:p-6 select-none",
+        className: "bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden flex flex-col p-4 select-none h-full",
         style: {
             WebkitTapHighlightColor: 'transparent'
         },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "w-24 h-16 sm:w-48 sm:h-[108px] bg-gray-100 flex-shrink-0 overflow-hidden mr-3 sm:mr-6 flex items-center justify-center",
+                className: "w-full aspect-[16/10] bg-gray-50 dark:bg-slate-900 flex-shrink-0 overflow-hidden mb-4 flex items-center justify-center rounded-lg",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
                     src: "https://www.tesla.com/ownersmanual/images/GUID-EE2A1356-1432-4B7F-86BB-7AB3569937C8-online-en-US.png",
                     alt: subcategory.name,
-                    className: "w-full h-full object-contain xl:group-hover:scale-105 transition-transform p-1 bg-white"
+                    className: "w-full h-full object-contain xl:group-hover:scale-105 transition-transform p-4 bg-white dark:bg-slate-900"
                 }, void 0, false, {
                     fileName: "[project]/components/SubcategoryCard.tsx",
                     lineNumber: 18,
@@ -270,42 +268,67 @@ const SubcategoryCard = ({ subcategory, onClick })=>{
                 columnNumber: 13
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex-grow min-w-0",
+                className: "flex-grow flex flex-col justify-between",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                        className: "font-bold text-sm sm:text-lg text-gray-900 active:text-blue-600 xl:group-hover:text-blue-600 transition-colors break-words pr-2 leading-tight",
-                        children: subcategory.name
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                className: "font-bold text-base sm:text-lg text-gray-900 dark:text-white active:text-blue-600 xl:group-hover:text-blue-600 dark:xl:group-hover:text-blue-400 transition-colors leading-tight mb-2",
+                                children: subcategory.name
+                            }, void 0, false, {
+                                fileName: "[project]/components/SubcategoryCard.tsx",
+                                lineNumber: 27,
+                                columnNumber: 21
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            subcategory.code && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded inline-block",
+                                children: subcategory.code
+                            }, void 0, false, {
+                                fileName: "[project]/components/SubcategoryCard.tsx",
+                                lineNumber: 31,
+                                columnNumber: 25
+                            }, ("TURBOPACK compile-time value", void 0))
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/components/SubcategoryCard.tsx",
-                        lineNumber: 30,
+                        lineNumber: 26,
                         columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0)),
-                    subcategory.code && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        className: "text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded inline-block mt-1 sm:mt-2",
-                        children: subcategory.code
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center justify-between mt-4 pt-4 border-t border-gray-50 dark:border-slate-700",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider",
+                                children: "Переглянути"
+                            }, void 0, false, {
+                                fileName: "[project]/components/SubcategoryCard.tsx",
+                                lineNumber: 38,
+                                columnNumber: 21
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-gray-400 dark:text-slate-500 active:text-blue-600 xl:group-hover:text-blue-600 dark:xl:group-hover:text-blue-400 transition-colors",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
+                                    size: 20
+                                }, void 0, false, {
+                                    fileName: "[project]/components/SubcategoryCard.tsx",
+                                    lineNumber: 40,
+                                    columnNumber: 25
+                                }, ("TURBOPACK compile-time value", void 0))
+                            }, void 0, false, {
+                                fileName: "[project]/components/SubcategoryCard.tsx",
+                                lineNumber: 39,
+                                columnNumber: 21
+                            }, ("TURBOPACK compile-time value", void 0))
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/components/SubcategoryCard.tsx",
-                        lineNumber: 34,
-                        columnNumber: 21
+                        lineNumber: 37,
+                        columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/SubcategoryCard.tsx",
                 lineNumber: 25,
-                columnNumber: 13
-            }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "text-gray-400 active:text-blue-600 xl:group-hover:text-blue-600 transition-colors flex-shrink-0 ml-2",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
-                    className: "w-5 h-5 sm:w-6 sm:h-6"
-                }, void 0, false, {
-                    fileName: "[project]/components/SubcategoryCard.tsx",
-                    lineNumber: 42,
-                    columnNumber: 17
-                }, ("TURBOPACK compile-time value", void 0))
-            }, void 0, false, {
-                fileName: "[project]/components/SubcategoryCard.tsx",
-                lineNumber: 41,
                 columnNumber: 13
             }, ("TURBOPACK compile-time value", void 0))
         ]
@@ -726,11 +749,11 @@ const CategoryViewComponent = ()=>{
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center gap-2 mb-2 text-sm text-gray-500 overflow-x-auto whitespace-nowrap",
+                className: "flex items-center gap-2 mb-2 text-sm text-gray-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap custom-scrollbar",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                         href: "/",
-                        className: "hover:text-blue-600 transition",
+                        className: "hover:text-blue-600 dark:hover:text-blue-400 transition",
                         children: "Головна"
                     }, void 0, false, {
                         fileName: "[project]/components/CategoryView.tsx",
@@ -740,7 +763,7 @@ const CategoryViewComponent = ()=>{
                     getBreadcrumbs().map((crumb, idx, arr)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].Fragment, {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "text-gray-400",
+                                    className: "text-gray-400 dark:text-slate-600",
                                     children: ">"
                                 }, void 0, false, {
                                     fileName: "[project]/components/CategoryView.tsx",
@@ -749,7 +772,7 @@ const CategoryViewComponent = ()=>{
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                     href: crumb.url,
-                                    className: `hover:text-blue-600 transition ${idx === arr.length - 1 ? 'font-semibold text-slate-900' : ''}`,
+                                    className: `hover:text-blue-600 dark:hover:text-blue-400 transition ${idx === arr.length - 1 ? 'font-semibold text-slate-900 dark:text-white' : ''}`,
                                     children: crumb.name
                                 }, void 0, false, {
                                     fileName: "[project]/components/CategoryView.tsx",
@@ -771,7 +794,7 @@ const CategoryViewComponent = ()=>{
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "flex items-center gap-4 mb-6 flex-wrap",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                    className: "text-3xl font-bold",
+                    className: "text-3xl font-bold text-slate-900 dark:text-white",
                     children: pageHeading
                 }, void 0, false, {
                     fileName: "[project]/components/CategoryView.tsx",
@@ -840,7 +863,7 @@ const CategoryViewComponent = ()=>{
                 columnNumber: 11
             }, ("TURBOPACK compile-time value", void 0)),
             !loading && subcategoriesToShow.length === 0 && products.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                className: "text-gray-500 italic",
+                className: "text-gray-500 dark:text-slate-400 italic",
                 children: "В цій категорії поки немає товарів чи підкатегорій."
             }, void 0, false, {
                 fileName: "[project]/components/CategoryView.tsx",

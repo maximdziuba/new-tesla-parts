@@ -153,8 +153,8 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-slate-900">Оформлення замовлення</h1>
+    <div className="max-w-4xl mx-auto py-8 px-4 transition-colors">
+      <h1 className="text-3xl font-bold mb-8 text-slate-900 dark:text-white">Оформлення замовлення</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
@@ -164,42 +164,42 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
           <form id="checkout-form" onSubmit={handleSubmit} className="space-y-8">
             
             {/* 1. Contact Info */}
-            <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">1</div>
+            <section className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 transition-colors">
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 dark:text-white">
+                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-sm font-bold text-gray-600 dark:text-slate-300">1</div>
                 Контактні дані
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ім'я</label>
-                  <input required type="text" value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-600 outline-none" />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Ім'я</label>
+                  <input required type="text" value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full border dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-md p-2 focus:ring-2 focus:ring-blue-600 outline-none transition-colors" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Прізвище</label>
-                  <input required type="text" value={lastName} onChange={e => setLastName(e.target.value)} className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-600 outline-none" />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Прізвище</label>
+                  <input required type="text" value={lastName} onChange={e => setLastName(e.target.value)} className="w-full border dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-md p-2 focus:ring-2 focus:ring-blue-600 outline-none transition-colors" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Телефон</label>
                   <input
                     required
                     type="tel"
                     placeholder="0XX XX XX XX"
                     value={phone}
                     onChange={e => handlePhoneChange(e.target.value)}
-                    className={`w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-600 outline-none ${phoneError ? 'border-red-500' : ''}`}
+                    className={`w-full border dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-md p-2 focus:ring-2 focus:ring-blue-600 outline-none transition-colors ${phoneError ? 'border-red-500 dark:border-red-500' : ''}`}
                   />
                   {phoneError && (
-                    <p className="text-sm text-red-600 mt-1">{phoneError}</p>
+                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">{phoneError}</p>
                   )}
                 </div>
               </div>
             </section>
 
             {/* 2. Delivery (Using NovaPostWidget) */}
-            <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">2</div>
-                Доставка <span className="text-red-500 font-bold ml-2 text-sm flex items-center gap-1"><Truck size={14} /> Nova Post</span>
+            <section className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 transition-colors">
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 dark:text-white">
+                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-sm font-bold text-gray-600 dark:text-slate-300">2</div>
+                Доставка <span className="text-red-500 dark:text-red-400 font-bold ml-2 text-sm flex items-center gap-1"><Truck size={14} /> Nova Post</span>
               </h2>
               
               <div className="space-y-4">
@@ -208,14 +208,14 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
 
                 {/* Validation / Selection Message */}
                 {deliveryData ? (
-                  <div className="p-3 bg-green-50 border border-green-200 rounded text-sm text-green-800 flex flex-col">
+                  <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded text-sm text-green-800 dark:text-green-300 flex flex-col">
                     <span className="font-bold">✓ Вибрано:</span>
                     <span>{deliveryData.city}</span>
                     <span>{deliveryData.branch}</span>
-                    <span className="text-xs text-gray-500 mt-1">{deliveryData.address}</span>
+                    <span className="text-xs text-gray-500 dark:text-slate-500 mt-1">{deliveryData.address}</span>
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-500 italic pl-1">
+                  <div className="text-sm text-gray-500 dark:text-slate-500 italic pl-1">
                     * Оберіть відділення або поштомат на карті вище
                   </div>
                 )}
@@ -223,29 +223,28 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
             </section>
 
             {/* 3. Payment */}
-            <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">3</div>
+            <section className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 transition-colors">
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 dark:text-white">
+                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-sm font-bold text-gray-600 dark:text-slate-300">3</div>
                 Оплата
               </h2>
               <div className="space-y-3">
-                <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition ${paymentMethod === PaymentMethod.IBAN ? 'border-blue-600 bg-red-50' : 'hover:bg-gray-50'}`}>
+                <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition ${paymentMethod === PaymentMethod.IBAN ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-900/20' : 'border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50'}`}>
                   <input type="radio" name="payment" value={PaymentMethod.IBAN} checked={paymentMethod === PaymentMethod.IBAN} onChange={() => setPaymentMethod(PaymentMethod.IBAN)} className="text-blue-600 focus:ring-blue-600" />
                   <div className="ml-3 flex items-center gap-3">
-                    <Building className="text-gray-600" />
+                    <Building className="text-gray-600 dark:text-slate-400" />
                     <div>
-                      <div className="font-medium text-gray-900">Оплата на рахунок ФОП</div>
-                  
+                      <div className="font-medium text-gray-900 dark:text-white">Оплата на рахунок ФОП</div>
                     </div>
                   </div>
                 </label>
 
-                <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition ${paymentMethod === PaymentMethod.COD ? 'border-blue-600 bg-red-50' : 'hover:bg-gray-50'}`}>
+                <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition ${paymentMethod === PaymentMethod.COD ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-900/20' : 'border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50'}`}>
                   <input type="radio" name="payment" value={PaymentMethod.COD} checked={paymentMethod === PaymentMethod.COD} onChange={() => setPaymentMethod(PaymentMethod.COD)} className="text-blue-600 focus:ring-blue-600" />
                   <div className="ml-3 flex items-center gap-3">
-                    <Wallet className="text-gray-600" />
+                    <Wallet className="text-gray-600 dark:text-slate-400" />
                     <div>
-                      <div className="font-medium text-gray-900">Накладений платіж</div>
+                      <div className="font-medium text-gray-900 dark:text-white">Накладений платіж</div>
                     </div>
                   </div>
                 </label>
@@ -255,34 +254,34 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
 
         </div>
 
-        {/* Right Column: Order Summary */}
+        {/* Order Summary */}
         <div className="md:col-span-1">
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 sticky top-24">
-            <h3 className="text-lg font-bold mb-4 text-gray-900">Ваше замовлення</h3>
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 sticky top-24 transition-colors">
+            <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Ваше замовлення</h3>
             <div className="space-y-4 max-h-60 overflow-y-auto mb-4 pr-2 custom-scrollbar">
               {cartItems.map((item) => (
                 <div key={item.id} className="flex gap-3 text-sm">
-                  <div className="w-12 h-12 bg-gray-100 rounded flex-shrink-0">
+                  <div className="w-12 h-12 bg-gray-100 dark:bg-slate-900 rounded flex-shrink-0 border border-gray-100 dark:border-slate-700">
                     <img src={item.image} className="w-full h-full object-cover rounded" alt={item.name} />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium line-clamp-2">{item.name}</div>
-                    <div className="text-gray-500">{item.quantity} x {formatItemPrice(item)}</div>
+                    <div className="font-medium line-clamp-2 dark:text-slate-200">{item.name}</div>
+                    <div className="text-gray-500 dark:text-slate-500">{item.quantity} x {formatItemPrice(item)}</div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="border-t pt-4 space-y-2 mb-6">
-              <div className="flex justify-between text-gray-600">
+            <div className="border-t border-gray-100 dark:border-slate-700 pt-4 space-y-2 mb-6">
+              <div className="flex justify-between text-gray-600 dark:text-slate-400">
                 <span>Сума товарів</span>
                 <span>{formatAmount(totalDisplayAmount)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-gray-600 dark:text-slate-400">
                 <span>Доставка</span>
                 <span className="text-xs">(за тарифами перевізника)</span>
               </div>
-              <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t mt-2">
+              <div className="flex justify-between text-xl font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-100 dark:border-slate-700 mt-2">
                 <span>Разом</span>
                 <span>{formatAmount(totalDisplayAmount)}</span>
               </div>
@@ -292,7 +291,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
               form="checkout-form"
               disabled={processing}
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-800 transition disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+              className="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-800 dark:hover:bg-blue-700 transition disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
             >
               {processing ? (
                 <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-pulse"></span>
@@ -300,8 +299,8 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
                 "Підтвердити замовлення"
               )}
             </button>
-            <p className="text-xs text-gray-400 mt-4 text-center">
-              Натискаючи кнопку, ви погоджуєтесь з умовами <Link href="/info/terms-of-service" className="text-blue-600 hover:underline">публічної оферти</Link>
+            <p className="text-xs text-gray-400 dark:text-slate-500 mt-4 text-center">
+              Натискаючи кнопку, ви погоджуєтесь з умовами <Link href="/info/terms-of-service" className="text-blue-600 dark:text-blue-400 hover:underline">публічної оферти</Link>
             </p>
           </div>
         </div>
