@@ -1,10 +1,25 @@
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useApp } from '../context/AppContext';
 
 const ShopLogo = () => {
+  const { theme } = useApp();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
-    <Link href="/" className="flex items-center gap-3 group">
-      <div className="flex items-center justify-center px-4 py-2 border-2 border-blue-600 bg-white dark:bg-slate-900 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 rounded-sm">
-        <span className="text-blue-600 group-hover:text-white dark:text-blue-400 font-bold text-xl tracking-tighter uppercase animate-pulse">MOCK LOGO</span>
+    <Link href="/" className="flex items-center group">
+      <div className="flex items-center justify-center transition-all duration-300 group-hover:scale-105 h-20 md:h-28 overflow-hidden">
+        {isMounted && (
+          <img 
+            src={theme === 'dark' ? "/tesla-fix_dark.png" : "/tesla-fix.png"} 
+            alt="TeslaFix Logo" 
+            className="h-full w-auto object-contain transform scale-125"
+          />
+        )}
       </div>
     </Link>
   );

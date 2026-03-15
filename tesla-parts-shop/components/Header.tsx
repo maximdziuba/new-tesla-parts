@@ -81,8 +81,8 @@ const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-[60] shadow-md transition-colors">
-      {/* Top Row: Utilities & Info - BLUE */}
-      <div className="bg-blue-600 text-white text-xs py-2 px-4 transition-colors">
+      {/* Top Row: Utilities & Info - BLUE (Hidden in mobile landscape to save space) */}
+      <div className="bg-blue-600 text-white text-xs py-2 px-4 transition-colors max-md:landscape:hidden">
         <div className="container mx-auto flex flex-row w-full justify-between items-center gap-2">
           <nav className="hidden md:flex flex-wrap gap-4 md:gap-6 justify-center md:justify-start">
             {headerPages.filter(page => page.is_published).map((page) => (
@@ -119,28 +119,9 @@ const Header: React.FC = () => {
           
           <div className="flex items-center gap-4">
             {isMounted && contactInfo.phone && (
-                <a href={`tel:${contactInfo.phone}`} className="hidden md:inline-block hover:text-blue-100 transition font-bold">
-                    {contactInfo.phone}
+                <a href={`tel:${contactInfo.phone}`} className="hover:text-blue-100 transition p-1.5 bg-white/10 rounded-full" title={contactInfo.phone}>
+                    <Phone size={16} className="text-white" />
                 </a>
-            )}
-            {isMounted && (
-              <div className="flex items-center gap-3">
-                {socialLinks.telegram && (
-                  <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="hover:text-blue-100 transition" title="Telegram">
-                    <Send size={16} />
-                  </a>
-                )}
-                {socialLinks.whatsapp && (
-                  <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-blue-100 transition" title="WhatsApp">
-                    <MessageSquare size={16} />
-                  </a>
-                )}
-                {socialLinks.viber && (
-                  <a href={socialLinks.viber} target="_blank" rel="noopener noreferrer" className="hover:text-blue-100 transition" title="Viber">
-                    <Phone size={16} />
-                  </a>
-                )}
-              </div>
             )}
 
             <button 
@@ -168,7 +149,7 @@ const Header: React.FC = () => {
 
       {/* Second Row: Logo, Search, Cart - WHITE/DARK */}
       <div className="bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-colors relative">
-        <div className="px-4 py-2 md:py-4 flex items-center justify-between gap-4">
+        <div className="px-4 py-0.5 md:py-1 flex items-center justify-between gap-4">
 
           {/* Burger & Logo Area - Align with Sidebar width on desktop if possible */}
           <div className="flex items-center gap-2 lg:gap-4 lg:w-72">

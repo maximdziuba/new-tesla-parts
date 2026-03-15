@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # --- Database ---
+  db:
+    image: postgres:15-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=tesla
+      - POSTGRES_PASSWORD=teslapass
+      - POSTGRES_DB=tesladb
+
+  # --- Nginx Gateway ---
+  gateway:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"  # <--- ДОДАНО: Відкриваємо порт для HTTPS
+    volumes:
+      - ./nginx-gateway/conf.d:/etc/nginx/conf.d:z
+      # --- ДОДАНО: Монтуємо сертифікати всередину контейнера ---
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - backend
+      - shop
+      - admin
+
+  # --- Backend ---
+  backend:
+    build:
+      context: ./tesla-parts-backend
+    restart: always
+    volumes:
+      - ./tesla-parts-backend/static/images:/app/static/images:z
+    environment:
+      - DATABASE_URL=postgresql://tesla:teslapass@db:5432/tesladb
+      - FRONTEND_URL=https://teslapartscenter.com.ua,https://admin.teslapartscenter.com.ua # Краще змінити на https
+      - BACKEND_URL=https://api.teslapartscenter.com.ua # Краще змінити на https
+      - JWT_SECRET_KEY=super-secret-jwt-key
+    depends_on:
+      - db
+      
+  # --- Shop Frontend ---
+  shop:
+    build:
+      context: ./tesla-parts-shop
+      args:
+        VITE_API_URL: https://api.teslapartscenter.com.ua # Змініть на HTTPS
+    restart: always
+
+  # --- Admin Frontend ---
+  admin:
+    build:
+      context: ./tesla-parts-admin
+      args:
+        VITE_API_URL: https://api.teslapartscenter.com.ua # Змініть на HTTPS
+    restart: always
+
+volumes:
+  postgres_data:
