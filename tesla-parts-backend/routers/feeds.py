@@ -7,13 +7,15 @@ from database import get_session
 from models import Product
 from services.pricing import get_exchange_rate, compute_price_fields
 
+import os
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/feed", tags=["feeds"])
 
-# Base URL for the shop - should ideally be in environment variables
-SHOP_BASE_URL = "https://teslapartscenter.com.ua"
+# Base URL for the shop
+SHOP_BASE_URL = os.getenv("FRONTEND_URL", "https://teslapartscenter.com.ua")
 
 async def get_active_products(session: Session) -> List[Product]:
     """

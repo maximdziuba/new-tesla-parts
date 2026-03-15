@@ -36,6 +36,10 @@ DEFAULT_STATIC_SEO = {
         "meta_title": "Контакти Tesla Parts Center",
         "meta_description": "Зв’яжіться з нами для консультації або замовлення запчастин."
     },
+    "search": {
+        "meta_title": "Пошук запчастин | Tesla Parts Center",
+        "meta_description": "Знайдіть необхідні запчастини для вашої Tesla у нашому каталозі."
+    },
 }
 
 def ensure_static_seo_records():
@@ -75,11 +79,14 @@ origins = [
 ]
 
 # Add frontend URL from environment variable if set
-frontend_url = os.getenv("FRONTEND_URL")
-if frontend_url:
-    origins.append(frontend_url)
-    # Also add with trailing slash
-    origins.append(frontend_url.rstrip("/"))
+frontend_url_env = os.getenv("FRONTEND_URL")
+if frontend_url_env:
+    for url in frontend_url_env.split(","):
+        url = url.strip()
+        if url:
+            origins.append(url)
+            # Also add with trailing slash
+            origins.append(url.rstrip("/"))
 
 app.add_middleware(
     CORSMiddleware,
@@ -111,7 +118,7 @@ def _slugify(value: str) -> str:
 
 @app.get("/sitemap.xml", response_class=Response)
 def get_sitemap():
-    base_url = "https://teslapartscenter.com.ua"
+    base_url = os.getenv("FRONTEND_URL", "https://teslapartscenter.com.ua")
     with Session(engine) as session:
         products = session.exec(select(Product)).all()
         categories = session.exec(select(Category)).all()

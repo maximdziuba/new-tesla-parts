@@ -168,13 +168,37 @@ def _serialize_product(product: Product, rate: float) -> dict:
     prod_data["subcategory_ids"] = _collect_subcategory_ids(product)
     return prod_data
 
-@router.get("/", response_model=List[CategoryListSchema])
+@router.get("/", response_model=List[CategoryDetailSchema])
 def get_categories(session: Session = Depends(get_session)):
     categories = session.exec(
         select(Category)
         .order_by(Category.sort_order.desc(), Category.id)
     ).all()
-    return categories
+    
+    # We need to manually build the tree for each category if we want to use CategoryDetailSchema
+    # because it uses _serialize_subcategory_tree_no_products logic in the single get route.
+    # Alternatively, we can use a simpler approach if the relationships are loaded.
+    
+    results = []
+    for category in categories:
+        # Load subcategories for this category
+        subcategories = session.exec(
+            select(Subcategory)
+            .where(Subcategory.category_id == category.id)
+            .order_by(Subcategory.sort_order.desc(), Subcategory.id)
+        ).all()
+
+        # Filter for top-level subcategories (no parent)
+        root_subs = _sort_subcategories([s for s in subcategories if s.parent_id is None])
+        
+        cat_data = category.model_dump()
+        cat_data["subcategories"] = [
+            _serialize_subcategory_tree_no_products(sub, subcategories) 
+            for sub in root_subs
+        ]
+        results.append(CategoryDetailSchema(**cat_data))
+        
+    return results
 
 @router.get("/{category_id}", response_model=CategoryDetailSchema)
 def get_category_details(category_id: int, session: Session = Depends(get_session)):

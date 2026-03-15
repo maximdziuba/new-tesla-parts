@@ -16,7 +16,7 @@ const SubcategoryCard: React.FC<SubcategoryCardProps> = ({ subcategory, onClick 
         >
             <div className="w-full aspect-[16/10] bg-gray-50 dark:bg-slate-900 flex-shrink-0 overflow-hidden mb-4 flex items-center justify-center rounded-lg">
                     <img 
-                        src="https://www.tesla.com/ownersmanual/images/GUID-EE2A1356-1432-4B7F-86BB-7AB3569937C8-online-en-US.png" 
+                        src={subcategory.image || "https://www.tesla.com/ownersmanual/images/GUID-EE2A1356-1432-4B7F-86BB-7AB3569937C8-online-en-US.png"} 
                         alt={subcategory.name} 
                         className="w-full h-full object-contain xl:group-hover:scale-105 transition-transform p-4 bg-white dark:bg-slate-900" 
                     />
