@@ -44,25 +44,28 @@ export const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-gray-900">Змінити Пароль Адміністратора</h1>
+    <div className="max-w-xl mx-auto animate-fade-in">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+        <h1 className="text-xl font-black uppercase tracking-widest text-slate-900 leading-none">Зміна пароля</h1>
+      </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 transition-all">
         <form onSubmit={handleResetPassword} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Поточний Пароль</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Поточний пароль</label>
             <div className="relative">
               <input
                 type={showOldPassword ? 'text' : 'password'}
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowOldPassword(!showOldPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600"
               >
                 {showOldPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -70,19 +73,19 @@ export const ResetPasswordPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Новий Пароль</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Новий пароль</label>
             <div className="relative">
               <input
                 type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600"
               >
                 {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -90,33 +93,42 @@ export const ResetPasswordPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Підтвердіть Новий Пароль</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Підтвердження пароля</label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600"
               >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
 
-          {message && <div className="text-green-600 text-center">{message}</div>}
-          {error && <div className="text-red-600 text-center">{error}</div>}
+          {message && (
+            <div className="bg-emerald-50 text-emerald-600 text-xs p-4 rounded-xl border border-emerald-100 font-bold text-center">
+              {message}
+            </div>
+          )}
+          
+          {error && (
+            <div className="bg-red-50 text-red-600 text-xs p-4 rounded-xl border border-red-100 font-bold text-center">
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
-            className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition"
+            className="w-full bg-blue-600 text-white py-4 rounded-xl font-black shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all uppercase tracking-widest mt-4 transform active:scale-[0.99]"
           >
-            Змінити Пароль
+            ОНОВИТИ ПАРОЛЬ
           </button>
         </form>
       </div>

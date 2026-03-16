@@ -74,7 +74,7 @@ export const Dashboard: React.FC = () => {
   if (loading || !stats) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -99,28 +99,28 @@ export const Dashboard: React.FC = () => {
           title="Загальний Дохід"
           value={`${stats.totalRevenue.toLocaleString()} ₴`}
           icon={DollarSign}
-          color="bg-green-500"
+          color="bg-emerald-500"
           subtext="За весь час"
         />
         <StatCard
           title="Всього Замовлень"
           value={stats.totalOrders}
           icon={ShoppingBag}
-          color="bg-blue-500"
+          color="bg-blue-600"
           subtext="Оброблено"
         />
         <StatCard
           title="Нові Замовлення"
           value={stats.pendingOrders}
           icon={Package}
-          color="bg-yellow-500"
+          color="bg-amber-500"
           subtext="Потребують уваги"
         />
         <StatCard
           title="Немає в наявності"
           value={stats.lowStockItems}
           icon={AlertTriangle}
-          color="bg-red-500"
+          color="bg-slate-700"
           subtext="Товари не в наявності"
         />
       </div>
@@ -128,18 +128,19 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Chart 1: Sales by Category */}
         <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Продажі за категоріями (шт)</h3>
+          <h3 className="text-lg font-bold text-slate-900 mb-4">Продажі за категоріями (шт)</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salesByCategories}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                <YAxis axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
-                  itemStyle={{ color: '#374151' }}
+                  cursor={{fill: '#f8fafc'}}
+                  contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
                 />
-                <Bar dataKey="value" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={50} />
+                <Bar dataKey="value" fill="#4169E1" radius={[6, 6, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -147,7 +148,7 @@ export const Dashboard: React.FC = () => {
 
         {/* Chart 2: Order Status Distribution */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Статус Замовлень</h3>
+          <h3 className="text-lg font-bold text-slate-900 mb-4">Статус Замовлень</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -159,24 +160,26 @@ export const Dashboard: React.FC = () => {
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
+                  outerRadius={85}
+                  paddingAngle={8}
                   dataKey="value"
                 >
-                  <Cell fill="#f59e0b" />
-                  <Cell fill="#10b981" />
+                  <Cell fill="#f59e0b" stroke="none" />
+                  <Cell fill="#10b981" stroke="none" />
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                />
               </PieChart>
             </ResponsiveContainer>
-            <div className="flex justify-center gap-4 mt-2">
+            <div className="flex justify-center gap-6 mt-2">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <span className="text-xs text-gray-500">Нові</span>
+                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                <span className="text-xs font-bold text-slate-600 uppercase tracking-tight">Нові</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-xs text-gray-500">Завершені</span>
+                <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                <span className="text-xs font-bold text-slate-600 uppercase tracking-tight">Завершені</span>
               </div>
             </div>
           </div>

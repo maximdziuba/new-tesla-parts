@@ -156,170 +156,192 @@ export const SettingsPage: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
                 <form onSubmit={handleSaveRate} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
                             Курс долара (USD до UAH)
                         </label>
                         <div className="flex items-center">
-                            <span className="text-gray-500 mr-2">1 USD = </span>
-                            <input
-                                type="number"
-                                step="0.01"
-                                required
-                                value={rate}
-                                onChange={e => setRate(e.target.value)}
-                                className="w-32 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            />
-                            <span className="text-gray-500 ml-2">UAH</span>
+                            <span className="text-slate-400 font-bold mr-3">1 USD = </span>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    required
+                                    value={rate}
+                                    onChange={e => setRate(e.target.value)}
+                                    className="w-32 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 font-black text-slate-900 transition-all"
+                                />
+                                <span className="absolute right-3 top-2.5 text-gray-400 text-xs font-bold">UAH</span>
+                            </div>
                         </div>
-                        <p className="text-sm text-gray-500 mt-2">
-                            Цей курс буде використовуватись для автоматичного розрахунку цін в гривнях при додаванні товарів.
+                        <p className="text-[10px] font-bold text-blue-400 mt-3 uppercase tracking-tight">
+                            Використовується для автоматичного перерахунку цін на сайті
                         </p>
                     </div>
 
                     <button
                         type="submit"
                         disabled={savingRate}
-                        className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+                        className="bg-blue-600 text-white px-8 py-2.5 rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-100 font-bold text-sm disabled:opacity-50"
                     >
                         {savingRate ? 'Збереження...' : 'Зберегти курс'}
                     </button>
                 </form>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1.5 h-4 bg-blue-600 rounded-full"></div>
+                    <h2 className="text-sm font-black uppercase tracking-widest text-slate-700">Соціальні мережі</h2>
+                </div>
                 <form onSubmit={handleSaveSocial} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Instagram Link
-                        </label>
-                        <input
-                            type="text"
-                            value={instagram}
-                            onChange={e => setInstagram(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                        />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                                Instagram Link
+                            </label>
+                            <input
+                                type="text"
+                                value={instagram}
+                                onChange={e => setInstagram(e.target.value)}
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
+                                placeholder="https://instagram.com/..."
+                            />
+                        </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Telegram Link
-                        </label>
-                        <input
-                            type="text"
-                            value={telegram}
-                            onChange={e => setTelegram(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                        />
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                                Telegram Link
+                            </label>
+                            <input
+                                type="text"
+                                value={telegram}
+                                onChange={e => setTelegram(e.target.value)}
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
+                                placeholder="https://t.me/..."
+                            />
+                        </div>
                     </div>
 
                     <button
                         type="submit"
                         disabled={savingSocial}
-                        className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+                        className="bg-blue-600 text-white px-8 py-2.5 rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-100 font-bold text-sm disabled:opacity-50"
                     >
                         {savingSocial ? 'Збереження...' : 'Зберегти посилання'}
                     </button>
                 </form>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1.5 h-4 bg-blue-600 rounded-full"></div>
+                    <h2 className="text-sm font-black uppercase tracking-widest text-slate-700">Контактна інформація</h2>
+                </div>
                 <form onSubmit={handleSaveContactInfo} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Email
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                                Email магазину
                             </label>
                             <input
                                 type="email"
                                 value={contactEmail}
                                 onChange={e => setContactEmail(e.target.value)}
-                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
                                 placeholder="info@teslafix.com.ua"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Телефон
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                                Телефонний номер
                             </label>
                             <input
                                 type="text"
                                 value={contactPhone}
                                 onChange={e => setContactPhone(e.target.value)}
-                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                placeholder="+38 (099) 123-45-67"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
+                                placeholder="+38 (0XX) XXX-XX-XX"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
                             Опис під логотипом (footer)
                         </label>
                         <textarea
                             value={footerDescription}
                             onChange={e => setFooterDescription(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all resize-none"
                             rows={3}
-                            placeholder="Короткий текст під логотипом магазину"
+                            placeholder="Короткий текст про магазин у футері"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
                             Текст футера (copyright)
                         </label>
                         <input
                             type="text"
                             value={footerText}
                             onChange={e => setFooterText(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            placeholder="© 2024 TeslaFix. Всі права захищені."
+                            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
+                            placeholder="© 2026 TeslaFix. Всі права захищені."
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={savingContactInfo}
-                        className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+                        className="bg-blue-600 text-white px-8 py-2.5 rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-100 font-bold text-sm disabled:opacity-50"
                     >
                         {savingContactInfo ? 'Збереження...' : 'Зберегти контактні дані'}
                     </button>
                 </form>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1.5 h-4 bg-blue-600 rounded-full"></div>
+                    <h2 className="text-sm font-black uppercase tracking-widest text-slate-700">Сповіщення в Telegram</h2>
+                </div>
                 <form onSubmit={handleSaveTelegramSettings} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Telegram Bot Token
-                        </label>
-                        <input
-                            type="text"
-                            value={botToken}
-                            onChange={e => setBotToken(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                        />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                                Telegram Bot Token
+                            </label>
+                            <input
+                                type="text"
+                                value={botToken}
+                                onChange={e => setBotToken(e.target.value)}
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-mono transition-all"
+                                placeholder="123456789:ABCDEF..."
+                            />
+                        </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Telegram Chat ID
-                        </label>
-                        <input
-                            type="text"
-                            value={chatId}
-                            onChange={e => setChatId(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                        />
-                        <p className="text-sm text-gray-500 mt-2">
-                            Використовуйте ID чату або каналу, куди потрібно надсилати повідомлення про замовлення.
-                        </p>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                                Telegram Chat ID
+                            </label>
+                            <input
+                                type="text"
+                                value={chatId}
+                                onChange={e => setChatId(e.target.value)}
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-mono transition-all"
+                                placeholder="-100XXXXXXXXX"
+                            />
+                        </div>
                     </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight bg-slate-50 p-3 rounded-lg border border-slate-100 italic">
+                        ID чату або каналу, куди будуть надходити нові замовлення. Бот має бути доданий в цей чат як адміністратор.
+                    </p>
 
                     <button
                         type="submit"
                         disabled={savingTelegramSettings}
-                        className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+                        className="bg-blue-600 text-white px-8 py-2.5 rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-100 font-bold text-sm disabled:opacity-50"
                     >
                         {savingTelegramSettings ? 'Збереження...' : 'Зберегти Telegram налаштування'}
                     </button>

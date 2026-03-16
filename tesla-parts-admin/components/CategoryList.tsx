@@ -236,7 +236,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                     }
                                 }}
                                 disabled={siblingIndex === 0}
-                                className={`p-0.5 ${siblingIndex === 0 ? 'text-gray-100' : 'text-gray-400 hover:text-tesla-red'}`}
+                                className={`p-0.5 ${siblingIndex === 0 ? 'text-gray-100' : 'text-gray-400 hover:text-blue-600'}`}
                             >
                                 <ArrowUp size={12} />
                             </button>
@@ -248,7 +248,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                     }
                                 }}
                                 disabled={siblingIndex === siblings.length - 1}
-                                className={`p-0.5 ${siblingIndex === siblings.length - 1 ? 'text-gray-100' : 'text-gray-400 hover:text-tesla-red'}`}
+                                className={`p-0.5 ${siblingIndex === siblings.length - 1 ? 'text-gray-100' : 'text-gray-400 hover:text-blue-600'}`}
                             >
                                 <ArrowDown size={12} />
                             </button>
@@ -260,14 +260,14 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                     type="text"
                                     value={editName}
                                     onChange={e => setEditName(e.target.value)}
-                                    className="border rounded px-2 py-1 text-sm outline-none focus:border-tesla-red w-32"
+                                    className="border rounded-md px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 w-32"
                                     autoFocus
                                 />
                                 <input
                                     type="text"
                                     value={editCode}
                                     onChange={e => setEditCode(e.target.value)}
-                                    className="border rounded px-2 py-1 text-sm outline-none focus:border-tesla-red w-20"
+                                    className="border rounded-md px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 w-20"
                                     placeholder="Код"
                                 />
                                 <div className="flex items-center gap-2">
@@ -278,9 +278,9 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                             className="h-8 w-auto rounded object-contain bg-white border border-gray-200"
                                         />
                                     )}
-                                    <label className="cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-xs flex items-center gap-1">
+                                    <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-colors">
                                         <ImageIcon size={14} />
-                                        <span>Завантажити</span>
+                                        <span>Файл</span>
                                         <input
                                             type="file"
                                             className="hidden"
@@ -291,51 +291,45 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                             }}
                                         />
                                     </label>
-                                    {editFile && (
-                                        <span className="text-xs text-gray-500 max-w-[120px] truncate">
-                                            {editFile.name}
-                                        </span>
-                                    )}
                                 </div>
-                                <button onClick={handleSaveEdit} className="text-green-600 hover:bg-green-50 p-1 rounded">
-                                    <Check size={16} />
+                                <button onClick={handleSaveEdit} className="text-emerald-600 hover:bg-emerald-50 p-1 rounded-md transition-colors">
+                                    <Check size={18} />
                                 </button>
-                                <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:bg-gray-100 p-1 rounded">
-                                    <X size={16} />
+                                <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:bg-gray-100 p-1 rounded-md transition-colors">
+                                    <X size={18} />
                                 </button>
                             </div>
                         ) : (
                             <>
                                 {subcategory.image ? (
-                                    /* FIX 1: Use h-6 and w-auto object-contain to prevent cropping */
                                     <img 
                                         src={subcategory.image} 
                                         alt="" 
-                                        className="h-6 w-auto max-w-[4rem] rounded object-contain bg-white" 
+                                        className="h-6 w-auto max-w-[4rem] rounded object-contain bg-white shadow-sm" 
                                     />
                                 ) : (
-                                    <Folder size={16} className="text-gray-400" />
+                                    <Folder size={16} className="text-blue-400" />
                                 )}
-                                <span className="font-medium">{subcategory.name}</span>
-                                {subcategory.code && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">Код: {subcategory.code}</span>}
-                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                                    {productCount} товарів
+                                <span className="font-bold text-slate-700">{subcategory.name}</span>
+                                {subcategory.code && <span className="text-[10px] font-black uppercase bg-slate-100 text-slate-500 px-2 py-0.5 rounded tracking-tighter">ID: {subcategory.code}</span>}
+                                <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase tracking-wider">
+                                    {productCount} тов.
                                 </span>
                             </>
                         )}
                     </div>
                     {!isEditing && (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <Link
                                 to={`/products/new?subcategory_id=${subcategory.id}&category_id=${categoryId}`}
-                                className="text-gray-400 hover:text-green-600 p-1"
+                                className="text-gray-400 hover:text-emerald-600 p-1.5 hover:bg-emerald-50 rounded-lg transition-colors"
                                 title="Додати товар"
                             >
                                 <Package size={16} />
                             </Link>
                             <button
                                 onClick={() => setIsEditing(true)}
-                                className="text-gray-400 hover:text-blue-500 p-1"
+                                className="text-gray-400 hover:text-blue-600 p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
                                 title="Редагувати"
                             >
                                 <Pencil size={16} />
@@ -345,7 +339,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                     e.stopPropagation();
                                     setIsAddingChild(!isAddingChild);
                                 }}
-                                className="text-gray-400 hover:text-tesla-red p-1"
+                                className="text-gray-400 hover:text-blue-600 p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
                                 title="Додати підкатегорію"
                             >
                                 <Plus size={16} />
@@ -355,7 +349,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                     e.stopPropagation();
                                     setShowTransfer(!showTransfer);
                                 }}
-                                className="text-gray-400 hover:text-red-500 p-1"
+                                className="text-gray-400 hover:text-indigo-600 p-1.5 hover:bg-indigo-50 rounded-lg transition-colors"
                                 title="Перемістити / копіювати"
                             >
                                 <ArrowLeftRight size={16} />
@@ -365,7 +359,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                     e.stopPropagation();
                                     onDelete(subcategory.id);
                                 }}
-                                className="text-gray-400 hover:text-red-500 p-1"
+                                className="text-gray-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-colors"
                                 title="Видалити"
                             >
                                 <Trash2 size={16} />
@@ -376,13 +370,13 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
     
                 {/* Add Child Form */}
                 {isAddingChild && (
-                    <div className={`ml-8 mt-2 mb-2 p-3 bg-gray-50 rounded border border-gray-200 flex gap-2 items-center flex-wrap`}>
-                        <CornerDownRight size={16} className="text-gray-400" />
+                    <div className={`ml-8 mt-2 mb-2 p-4 bg-blue-50/30 rounded-xl border border-blue-100 flex gap-3 items-center flex-wrap shadow-sm`}>
+                        <CornerDownRight size={16} className="text-blue-400" />
                         <input
                             type="text"
                             value={newName}
                             onChange={e => setNewName(e.target.value)}
-                            className="flex-1 min-w-[150px] border rounded px-2 py-1 text-sm outline-none focus:border-tesla-red"
+                            className="flex-1 min-w-[150px] border border-blue-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-white"
                             placeholder="Назва..."
                             autoFocus
                         />
@@ -390,15 +384,14 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                             type="text"
                             value={newCode}
                             onChange={e => setNewCode(e.target.value)}
-                            className="w-20 border rounded px-2 py-1 text-sm outline-none focus:border-tesla-red"
+                            className="w-24 border border-blue-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-white"
                             placeholder="Код"
                         />
     
-                        {/* Image Input Group */}
-                        <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-                            <label className="cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-xs flex items-center gap-1">
-                                <ImageIcon size={14} />
-                                <span>Обрати файл</span>
+                        <div className="flex items-center gap-2">
+                            <label className="cursor-pointer bg-white hover:bg-gray-50 text-slate-600 px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-blue-100 transition-all shadow-sm">
+                                <ImageIcon size={14} className="text-blue-500" />
+                                <span>Обрати фото</span>
                                 <input
                                     type="file"
                                     className="hidden"
@@ -412,22 +405,22 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                 />
                             </label>
                             {newFile && (
-                                <span className="text-xs text-gray-500 max-w-[140px] truncate">
+                                <span className="text-[10px] text-blue-600 font-bold max-w-[100px] truncate">
                                     {newFile.name}
                                 </span>
                             )}
                         </div>
     
-                        <button onClick={handleAddChild} className="bg-gray-100 text-gray-700 px-3 py-2 rounded-md hover:bg-gray-200 transition text-sm font-medium">
-                            Додати
+                        <button onClick={handleAddChild} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all text-sm font-bold shadow-md shadow-blue-100">
+                            Створити
                         </button>
                     </div>
                 )}
     
                 {/* Transfer Form */}
                 {showTransfer && (
-                    <div className="ml-8 mt-2 mb-2 p-3 bg-indigo-50 rounded border border-indigo-200 space-y-2">
-                        <div className="flex flex-col gap-2 md:flex-row">
+                    <div className="ml-8 mt-2 mb-2 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-3 shadow-sm">
+                        <div className="flex flex-col gap-3 md:flex-row">
                             <select
                                 value={transferCategoryId}
                                 onChange={e => {
@@ -435,7 +428,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                     setTransferCategoryId(value);
                                     setTransferParentId('');
                                 }}
-                                className="flex-1 border rounded px-2 py-1 text-sm outline-none focus:border-tesla-red"
+                                className="flex-1 border border-indigo-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-white"
                             >
                                 {categories.map(cat => (
                                     <option key={cat.id} value={cat.id}>
@@ -449,7 +442,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                     const value = e.target.value;
                                     setTransferParentId(value === '' ? '' : Number(value));
                                 }}
-                                className="flex-1 border rounded px-2 py-1 text-sm outline-none focus:border-tesla-red"
+                                className="flex-1 border border-indigo-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-white"
                             >
                                 <option value="">Корінь категорії</option>
                                 {parentOptions.map(option => (
@@ -459,24 +452,24 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                 ))}
                             </select>
                         </div>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-3 flex-wrap">
                             <button
                                 onClick={() => handleTransferAction('move')}
                                 disabled={isTransferring}
-                                className="bg-red-600 text-white px-3 py-1.5 rounded text-sm hover:bg-red-700 disabled:opacity-50"
+                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 disabled:opacity-50"
                             >
-                                Перемістити
+                                ПЕРЕМІСТИТИ
                             </button>
                             <button
                                 onClick={() => handleTransferAction('copy')}
                                 disabled={isTransferring}
-                                className="bg-white text-red-700 border border-red-600 px-3 py-1.5 rounded text-sm hover:bg-red-50 disabled:opacity-50"
+                                className="bg-white text-indigo-600 border border-indigo-200 px-4 py-2 rounded-lg text-xs font-bold hover:bg-indigo-50 transition-all shadow-sm disabled:opacity-50"
                             >
-                                Копіювати
+                                КОПІЮВАТИ
                             </button>
                             <button
                                 onClick={() => setShowTransfer(false)}
-                                className="text-gray-600 text-sm hover:underline"
+                                className="text-gray-400 text-[10px] font-bold uppercase tracking-widest hover:text-slate-600 px-2 transition-colors"
                             >
                                 Скасувати
                             </button>
@@ -486,25 +479,25 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
     
                 {/* Products List & Children */}
                 {isExpanded && (
-                    <div className="mt-2">
+                    <div className="mt-2 space-y-2">
                         {/* Products List */}
                         {hasProducts && (
-                            <div className="ml-8 mb-4 bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
-                                <div className="bg-gray-50 px-3 py-2 border-b border-gray-100 flex justify-between items-center">
-                                    <span className="text-xs font-bold uppercase text-gray-500">Товари в підкатегорії</span>
-                                    <button onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }} className="text-gray-400 hover:text-gray-600">
+                            <div className="ml-8 mb-4 bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                                <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-100 flex justify-between items-center">
+                                    <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Товари в підкатегорії</span>
+                                    <button onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }} className="text-gray-300 hover:text-gray-600 transition-colors">
                                         <X size={14} />
                                     </button>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-xs text-left">
-                                        <thead className="bg-gray-50 text-gray-500 uppercase border-b border-gray-100">
+                                        <thead className="bg-gray-50/50 text-gray-400 text-[9px] font-black uppercase tracking-tighter border-b border-gray-50">
                                             <tr>
-                                                <th className="px-3 py-2 w-12 text-center">Сорт.</th>
-                                                <th className="px-3 py-2">Товар</th>
-                                                <th className="px-3 py-2">Ціна</th>
-                                                <th className="px-3 py-2">Статус</th>
-                                                <th className="px-3 py-2 text-right">Дії</th>
+                                                <th className="px-4 py-2 w-12 text-center">Сорт.</th>
+                                                <th className="px-4 py-2">Назва товару</th>
+                                                <th className="px-4 py-2">Ціна</th>
+                                                <th className="px-4 py-2">Наявність</th>
+                                                <th className="px-4 py-2 text-right">Дії</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-50">
@@ -513,8 +506,8 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                                     .sort((a, b) => (b.sort_order ?? 0) - (a.sort_order ?? 0) || a.name.localeCompare(b.name));
                                                 
                                                 return sortedProducts.map((product, idx) => (
-                                                    <tr key={product.id} className="hover:bg-gray-50">
-                                                        <td className="px-3 py-2">
+                                                    <tr key={product.id} className="hover:bg-blue-50/20 transition-colors group/row">
+                                                        <td className="px-4 py-2">
                                                             <div className="flex flex-col items-center">
                                                                 <button 
                                                                     onClick={(e) => { 
@@ -525,10 +518,9 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                                                         }
                                                                     }}
                                                                     disabled={idx === 0}
-                                                                    className={`p-0.5 ${idx === 0 ? 'text-gray-200' : 'text-gray-400 hover:text-tesla-red'}`}
-                                                                    title="Вгору"
+                                                                    className={`p-0.5 ${idx === 0 ? 'text-gray-100' : 'text-gray-300 hover:text-blue-600 transition-colors'}`}
                                                                 >
-                                                                    <ArrowUp size={14} />
+                                                                    <ArrowUp size={12} />
                                                                 </button>
                                                                 <button 
                                                                     onClick={(e) => { 
@@ -539,36 +531,36 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                                                         }
                                                                     }}
                                                                     disabled={idx === sortedProducts.length - 1}
-                                                                    className={`p-0.5 ${idx === sortedProducts.length - 1 ? 'text-gray-200' : 'text-gray-400 hover:text-tesla-red'}`}
-                                                                    title="Вниз"
+                                                                    className={`p-0.5 ${idx === sortedProducts.length - 1 ? 'text-gray-100' : 'text-gray-300 hover:text-blue-600 transition-colors'}`}
                                                                 >
-                                                                    <ArrowDown size={14} />
+                                                                    <ArrowDown size={12} />
                                                                 </button>
                                                             </div>
                                                         </td>
-                                                        <td className="px-3 py-2">
+                                                        <td className="px-4 py-2">
                                                             <div className="flex items-center gap-2">
-                                                                <img src={product.image} alt="" className="w-8 h-8 rounded object-cover border border-gray-100" />
+                                                                <img src={product.image} alt="" className="w-8 h-8 rounded-md object-cover border border-gray-100 shadow-xs" />
                                                                 <div>
-                                                                    <div className="font-medium text-gray-900">{product.name}</div>
-                                                                    <div className="text-[10px] text-gray-400">{product.detail_number}</div>
+                                                                    <div className="font-bold text-slate-700 group-hover/row:text-blue-600 transition-colors">{product.name}</div>
+                                                                    <div className="text-[9px] font-bold text-gray-400 uppercase">{product.detail_number}</div>
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td className="px-3 py-2 font-medium">{product.priceUSD} $</td>
-                                                        <td className="px-3 py-2">
-                                                            <span className={`${product.inStock ? 'text-green-600' : 'text-red-600 font-bold'}`}>
-                                                                {product.inStock ? 'В наявності' : 'Немає'}
+                                                        <td className="px-4 py-2">
+                                                            <span className="font-black text-slate-900">{product.priceUSD} $</span>
+                                                        </td>
+                                                        <td className="px-4 py-2">
+                                                            <span className={`${product.inStock ? 'text-emerald-600' : 'text-red-500'} font-bold`}>
+                                                                {product.inStock ? 'Так' : 'Ні'}
                                                             </span>
                                                         </td>
-                                                        <td className="px-3 py-2 text-right">
-                                                            <div className="flex justify-end gap-1">
+                                                        <td className="px-4 py-2 text-right">
+                                                            <div className="flex justify-end gap-1 opacity-0 group-hover/row:opacity-100 transition-opacity">
                                                                 <Link
                                                                     to={`/products/edit/${product.id}`}
-                                                                    className="p-1 text-blue-500 hover:bg-blue-50 rounded"
-                                                                    title="Редагувати"
+                                                                    className="p-1 text-blue-500 hover:bg-blue-50 rounded-md transition-colors"
                                                                 >
-                                                                    <Pencil size={14} />
+                                                                    <Pencil size={12} />
                                                                 </Link>
                                                                 <button
                                                                     onClick={(e) => {
@@ -577,10 +569,9 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                                                             onDeleteProduct(product.id);
                                                                         }
                                                                     }}
-                                                                    className="p-1 text-red-500 hover:bg-red-50 rounded"
-                                                                    title="Видалити"
+                                                                    className="p-1 text-red-500 hover:bg-red-50 rounded-md transition-colors"
                                                                 >
-                                                                    <Trash2 size={14} />
+                                                                    <Trash2 size={12} />
                                                                 </button>
                                                             </div>
                                                         </td>
@@ -867,39 +858,39 @@ const CategoryList: React.FC = () => {
         }
     };
 
-    if (loading) return <div className="p-8 text-center">Loading...</div>;
+    if (loading) return <div className="p-8 text-center text-gray-500 font-medium tracking-tight">Завантаження...</div>;
 
     const sortedCategories = [...categories].sort((a, b) => (b.sort_order ?? 0) - (a.sort_order ?? 0));
 
     return (
         <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6 text-gray-800">Керування категоріями</h1>
+            <h1 className="text-2xl font-bold mb-6 text-slate-900 tracking-tight">Керування категоріями</h1>
 
             {/* Create Category Form */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
-                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <FolderPlus size={20} className="text-tesla-red" />
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8 transition-all">
+                <h2 className="text-lg font-bold mb-6 flex items-center gap-2 text-slate-800">
+                    <FolderPlus size={22} className="text-blue-600" />
                     Додати нову категорію
                 </h2>
-                <form onSubmit={handleCreateCategory} className="space-y-4">
-                    <div className="flex flex-wrap gap-4 items-end">
+                <form onSubmit={handleCreateCategory} className="space-y-6">
+                    <div className="flex flex-wrap gap-6 items-end">
                         <div className="flex-1 min-w-[220px]">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Назва категорії</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Назва категорії</label>
                             <input
                                 type="text"
                                 value={newCategoryName}
                                 onChange={e => setNewCategoryName(e.target.value)}
-                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-tesla-red outline-none"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50 font-medium"
                                 placeholder="Наприклад: Model 3"
                                 required
                             />
                         </div>
                         <div className="flex-1 min-w-[220px]">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Зображення (опціонально)</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Обкладинка</label>
                             <div className="flex flex-col gap-2">
-                                <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-md inline-flex items-center gap-2 border border-gray-300 w-full justify-center">
-                                    <ImageIcon size={20} />
-                                    <span>Завантажити файл</span>
+                                <label className="cursor-pointer bg-white hover:bg-blue-50 text-blue-600 px-4 py-2.5 rounded-xl inline-flex items-center gap-2 border border-blue-100 w-full justify-center transition-all shadow-sm font-bold text-sm">
+                                    <ImageIcon size={18} />
+                                    <span>Завантажити фото</span>
                                     <input
                                         type="file"
                                         className="hidden"
@@ -913,38 +904,38 @@ const CategoryList: React.FC = () => {
                                     />
                                 </label>
                                 {newCategoryFile && (
-                                    <span className="text-xs text-gray-500 truncate">
-                                        Обрано: {newCategoryFile.name}
+                                    <span className="text-[10px] text-blue-600 font-bold truncate text-center px-2">
+                                        {newCategoryFile.name}
                                     </span>
                                 )}
                             </div>
                         </div>
                         <button
                             type="submit"
-                            className="bg-gray-100 text-gray-700 px-3 py-2 rounded-md hover:bg-gray-200 transition text-sm font-medium"
+                            className="bg-blue-600 text-white px-6 py-2.5 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 font-bold text-sm"
                         >
-                            Додати
+                            СТВОРИТИ
                         </button>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">SEO Title</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">SEO Title</label>
                             <input
                                 type="text"
                                 value={newCategoryMetaTitle}
                                 onChange={e => setNewCategoryMetaTitle(e.target.value)}
-                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-tesla-red outline-none"
-                                placeholder="Meta title для категорії"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50 text-sm"
+                                placeholder="Заголовок для вкладки браузера"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">SEO Description</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">SEO Description</label>
                             <textarea
                                 value={newCategoryMetaDescription}
                                 onChange={e => setNewCategoryMetaDescription(e.target.value)}
-                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-tesla-red outline-none"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50 text-sm resize-none"
                                 rows={2}
-                                placeholder="Короткий опис для пошукових систем"
+                                placeholder="Короткий опис для Google"
                             />
                         </div>
                     </div>
@@ -952,31 +943,33 @@ const CategoryList: React.FC = () => {
             </div>
 
             {/* Categories List */}
-            <div className="space-y-4">
+            <div className="space-y-6">
                 {sortedCategories.map((category, idx) => (
-                    <div key={category.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                        <div className="flex items-center justify-between p-4 bg-gray-50 border-b border-gray-100">
+                    <div key={category.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all hover:shadow-md">
+                        <div className="flex items-center justify-between p-5 bg-gray-50/50 border-b border-gray-100 group">
                             {editingCategory === category.id ? (
-                                <div className="flex flex-col gap-4 flex-1">
-                                    <div className="flex flex-wrap gap-4 items-end">
-                                        <input
-                                            type="text"
-                                            value={editCategoryName}
-                                            onChange={e => setEditCategoryName(e.target.value)}
-                                            className="flex-1 min-w-[180px] border rounded px-2 py-1 text-lg font-semibold outline-none focus:border-tesla-red"
-                                            autoFocus
-                                        />
-                                        <div className="flex items-center gap-2 flex-1 min-w-[220px]">
+                                <div className="flex flex-col gap-6 flex-1 pr-4">
+                                    <div className="flex flex-wrap gap-6 items-end">
+                                        <div className="flex-1 min-w-[180px]">
+                                            <input
+                                                type="text"
+                                                value={editCategoryName}
+                                                onChange={e => setEditCategoryName(e.target.value)}
+                                                className="w-full border border-blue-200 rounded-xl px-3 py-2 text-lg font-bold outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-white"
+                                                autoFocus
+                                            />
+                                        </div>
+                                        <div className="flex items-center gap-3 flex-1 min-w-[220px]">
                                             {category.image && (
                                                 <img
                                                     src={category.image}
                                                     alt=""
-                                                    className="h-10 w-auto rounded object-contain bg-white border border-gray-200"
+                                                    className="h-12 w-12 rounded-lg object-cover bg-white border border-gray-200 shadow-xs"
                                                 />
                                             )}
-                                            <label className="cursor-pointer bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded inline-flex items-center gap-1 text-sm">
+                                            <label className="cursor-pointer bg-white hover:bg-blue-50 text-blue-600 px-3 py-2 rounded-xl inline-flex items-center gap-2 text-xs font-bold border border-blue-100 transition-all shadow-sm">
                                                 <ImageIcon size={16} />
-                                                <span>Змінити</span>
+                                                <span>ЗМІНИТИ ФОТО</span>
                                                 <input
                                                     type="file"
                                                     className="hidden"
@@ -990,64 +983,67 @@ const CategoryList: React.FC = () => {
                                                 />
                                             </label>
                                             {editCategoryFile && (
-                                                <span className="text-xs text-gray-500 truncate max-w-[140px]">
+                                                <span className="text-[10px] text-blue-600 font-bold truncate max-w-[100px]">
                                                     {editCategoryFile.name}
                                                 </span>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <button onClick={handleUpdateCategory} className="text-green-600 hover:bg-green-50 p-2 rounded">
+                                            <button onClick={handleUpdateCategory} className="bg-emerald-500 text-white p-2 rounded-xl hover:bg-emerald-600 transition-all shadow-md shadow-emerald-100">
                                                 <Check size={20} />
                                             </button>
-                                            <button onClick={() => setEditingCategory(null)} className="text-gray-400 hover:bg-gray-100 p-2 rounded">
+                                            <button onClick={() => setEditingCategory(null)} className="bg-gray-200 text-gray-500 p-2 rounded-xl hover:bg-gray-300 transition-all shadow-sm">
                                                 <X size={20} />
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">SEO Title</label>
+                                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">SEO Title</label>
                                             <input
                                                 type="text"
                                                 value={editCategoryMetaTitle}
                                                 onChange={e => setEditCategoryMetaTitle(e.target.value)}
-                                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-tesla-red outline-none"
-                                                placeholder="Meta title для категорії"
+                                                className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600/20 text-sm"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">SEO Description</label>
+                                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">SEO Description</label>
                                             <textarea
                                                 value={editCategoryMetaDescription}
                                                 onChange={e => setEditCategoryMetaDescription(e.target.value)}
-                                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-tesla-red outline-none"
+                                                className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600/20 text-sm resize-none"
                                                 rows={2}
-                                                placeholder="Короткий опис для пошукових систем"
                                             />
                                         </div>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-4 cursor-pointer flex-1" onClick={() => toggleExpand(category.id)}>
-                                    {expandedCategories.includes(category.id) ? <ChevronDown size={20} className="text-gray-500" /> : <ChevronRight size={20} className="text-gray-500" />}
+                                    <div className={`p-1 rounded-md transition-colors ${expandedCategories.includes(category.id) ? 'bg-blue-100 text-blue-600' : 'text-gray-400 group-hover:text-blue-600'}`}>
+                                        {expandedCategories.includes(category.id) ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+                                    </div>
                                     {category.image && (
-                                        /* FIX 2: Use h-8 and w-auto object-contain for main category images */
                                         <img 
                                             src={category.image} 
                                             alt="" 
-                                            className="h-8 w-auto max-w-[6rem] rounded object-contain bg-gray-50" 
+                                            className="h-10 w-10 rounded-xl object-cover bg-white shadow-sm border border-gray-100" 
                                         />
                                     )}
-                                    <span className="font-semibold text-lg">{category.name}</span>
-                                    <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">{category.subcategories.length} підкатегорій</span>
-                                    <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">({getCategoryProductCount(category)} товарів всього)</span>
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{category.name}</span>
+                                        <div className="flex gap-2 mt-0.5">
+                                            <span className="text-[9px] font-black uppercase tracking-tighter text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded leading-none">{category.subcategories.length} ПІДКАТЕГОРІЙ</span>
+                                            <span className="text-[9px] font-black uppercase tracking-tighter text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded leading-none">{getCategoryProductCount(category)} ТОВАРІВ</span>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 
                             {!editingCategory && (
-                                <div className="flex items-center gap-2 pr-4">
+                                <div className="flex items-center gap-1 pr-2">
                                     {/* Sorting Arrows for Category */}
-                                    <div className="flex flex-col items-center mr-2">
+                                    <div className="flex flex-col items-center mr-3">
                                         <button 
                                             onClick={() => {
                                                 if (idx > 0) {
@@ -1056,7 +1052,7 @@ const CategoryList: React.FC = () => {
                                                 }
                                             }}
                                             disabled={idx === 0}
-                                            className={`p-0.5 ${idx === 0 ? 'text-gray-100' : 'text-gray-400 hover:text-tesla-red'}`}
+                                            className={`p-0.5 transition-colors ${idx === 0 ? 'text-gray-100' : 'text-gray-300 hover:text-blue-600'}`}
                                             title="Вгору"
                                         >
                                             <ArrowUp size={16} />
@@ -1069,7 +1065,7 @@ const CategoryList: React.FC = () => {
                                                 }
                                             }}
                                             disabled={idx === sortedCategories.length - 1}
-                                            className={`p-0.5 ${idx === sortedCategories.length - 1 ? 'text-gray-100' : 'text-gray-400 hover:text-tesla-red'}`}
+                                            className={`p-0.5 transition-colors ${idx === sortedCategories.length - 1 ? 'text-gray-100' : 'text-gray-300 hover:text-blue-600'}`}
                                             title="Вниз"
                                         >
                                             <ArrowDown size={16} />
@@ -1077,59 +1073,59 @@ const CategoryList: React.FC = () => {
                                     </div>
                                     <Link
                                         to={`/products/new?category_id=${category.id}`}
-                                        className="text-gray-400 hover:text-green-600 p-2 rounded transition"
-                                        title="Додати товар в категорію"
+                                        className="text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 p-2 rounded-xl transition-all"
+                                        title="Додати товар"
                                     >
-                                        <Package size={18} />
+                                        <Package size={20} />
                                     </Link>
                                     <button
                                         onClick={() => startEditCategory(category)}
-                                        className="text-gray-400 hover:text-blue-500 p-2 rounded transition"
-                                        title="Редагувати категорію"
+                                        className="text-gray-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-xl transition-all"
+                                        title="Редагувати"
                                     >
-                                        <Pencil size={18} />
+                                        <Pencil size={20} />
                                     </button>
                                     <button
                                         onClick={() => handleDeleteCategory(category.id)}
-                                        className="text-red-500 hover:bg-red-50 p-2 rounded transition"
-                                        title="Видалити категорію"
+                                        className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-xl transition-all"
+                                        title="Видалити"
                                     >
-                                        <Trash2 size={18} />
+                                        <Trash2 size={20} />
                                     </button>
                                 </div>
                             )}
                         </div>
 
                         {expandedCategories.includes(category.id) && (
-                            <div className="p-4 bg-white">
+                            <div className="p-6 bg-white animate-fade-in">
                                 {/* Category Products (Directly in Category, No Subcategory) */}
                                 {category.products && category.products.length > 0 && (
-                                    <div className="ml-4 mb-6 bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
-                                        <div className="bg-gray-50 px-3 py-2 border-b border-gray-100 flex justify-between items-center">
-                                            <span className="text-xs font-bold uppercase text-gray-500">Товари без підкатегорії</span>
-                                            <button onClick={() => toggleExpand(category.id)} className="text-gray-400 hover:text-gray-600">
+                                    <div className="mb-8 bg-blue-50/20 border border-blue-100 rounded-2xl overflow-hidden shadow-xs">
+                                        <div className="bg-blue-50/50 px-4 py-2.5 border-b border-blue-100 flex justify-between items-center">
+                                            <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest">ТОВАРИ БЕЗ ПІДКАТЕГОРІЇ</span>
+                                            <button onClick={() => toggleExpand(category.id)} className="text-blue-300 hover:text-blue-600 transition-colors">
                                                 <X size={14} />
                                             </button>
                                         </div>
                                         <div className="overflow-x-auto">
                                             <table className="w-full text-xs text-left">
-                                                <thead className="bg-gray-50 text-gray-500 uppercase border-b border-gray-100">
+                                                <thead className="bg-white/50 text-gray-400 text-[9px] font-black uppercase tracking-tighter">
                                                     <tr>
-                                                        <th className="px-3 py-2 w-12 text-center">Сорт.</th>
-                                                        <th className="px-3 py-2">Товар</th>
-                                                        <th className="px-3 py-2">Ціна</th>
-                                                        <th className="px-3 py-2">Статус</th>
-                                                        <th className="px-3 py-2 text-right">Дії</th>
+                                                        <th className="px-4 py-2 w-12 text-center">СОРТ.</th>
+                                                        <th className="px-4 py-2">ТОВАР</th>
+                                                        <th className="px-4 py-2 text-center">ЦІНА</th>
+                                                        <th className="px-4 py-2 text-center">СТАТУС</th>
+                                                        <th className="px-4 py-2 text-right">ДІЇ</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody className="divide-y divide-gray-50">
+                                                <tbody className="divide-y divide-blue-50">
                                                     {(() => {
                                                         const sortedCatProducts = [...category.products]
                                                             .sort((a, b) => (b.sort_order ?? 0) - (a.sort_order ?? 0) || a.name.localeCompare(b.name));
                                                         
                                                         return sortedCatProducts.map((product, idx) => (
-                                                            <tr key={product.id} className="hover:bg-gray-50">
-                                                                <td className="px-3 py-2">
+                                                            <tr key={product.id} className="hover:bg-white transition-colors group/p">
+                                                                <td className="px-4 py-2">
                                                                     <div className="flex flex-col items-center">
                                                                         <button 
                                                                             onClick={(e) => { 
@@ -1140,10 +1136,9 @@ const CategoryList: React.FC = () => {
                                                                                 }
                                                                             }}
                                                                             disabled={idx === 0}
-                                                                            className={`p-0.5 ${idx === 0 ? 'text-gray-200' : 'text-gray-400 hover:text-tesla-red'}`}
-                                                                            title="Вгору"
+                                                                            className={`p-0.5 transition-colors ${idx === 0 ? 'text-gray-100' : 'text-gray-300 hover:text-blue-600'}`}
                                                                         >
-                                                                            <ArrowUp size={14} />
+                                                                            <ArrowUp size={12} />
                                                                         </button>
                                                                         <button 
                                                                             onClick={(e) => { 
@@ -1153,35 +1148,37 @@ const CategoryList: React.FC = () => {
                                                                                     handleUpdateProductSort(product, targetOrder);
                                                                                 }
                                                                             }}
-                                                                            disabled={idx < sortedCatProducts.length - 1 ? false : true}
-                                                                            className={`p-0.5 ${idx === sortedCatProducts.length - 1 ? 'text-gray-200' : 'text-gray-400 hover:text-tesla-red'}`}
-                                                                            title="Вниз"
+                                                                            disabled={idx === sortedCatProducts.length - 1}
+                                                                            className={`p-0.5 transition-colors ${idx === sortedCatProducts.length - 1 ? 'text-gray-100' : 'text-gray-300 hover:text-blue-600'}`}
                                                                         >
-                                                                            <ArrowDown size={14} />
+                                                                            <ArrowDown size={12} />
                                                                         </button>
                                                                     </div>
                                                                 </td>
-                                                                <td className="px-3 py-2">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <img src={product.image} alt="" className="w-8 h-8 rounded object-cover border border-gray-100" />
+                                                                <td className="px-4 py-2">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <img src={product.image} alt="" className="w-9 h-9 rounded-lg object-cover border border-gray-100 shadow-sm" />
                                                                         <div>
-                                                                            <div className="font-medium text-gray-900">{product.name}</div>
-                                                                            <div className="text-[10px] text-gray-400">{product.detail_number}</div>
+                                                                            <div className="font-bold text-slate-800 group-hover/p:text-blue-600 transition-colors leading-none">{product.name}</div>
+                                                                            <div className="text-[9px] font-black text-gray-400 uppercase mt-1 tracking-tighter">{product.detail_number}</div>
                                                                         </div>
                                                                     </div>
                                                                 </td>
-                                                                <td className="px-3 py-2 font-medium">{product.priceUSD} $</td>
-                                                                <td className="px-3 py-2">
-                                                                    <span className={`${product.inStock ? 'text-green-600' : 'text-red-600 font-bold'}`}>
-                                                                        {product.inStock ? 'В наявності' : 'Немає'}
-                                                                    </span>
+                                                                <td className="px-4 py-2 text-center">
+                                                                    <span className="font-black text-slate-900">{product.priceUSD} $</span>
                                                                 </td>
-                                                                <td className="px-3 py-2 text-right">
-                                                                    <div className="flex justify-end gap-1">
+                                                                <td className="px-4 py-2 text-center">
+                                                                    {product.inStock ? (
+                                                                        <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] uppercase">Є</span>
+                                                                    ) : (
+                                                                        <span className="text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded text-[10px] uppercase">Ні</span>
+                                                                    )}
+                                                                </td>
+                                                                <td className="px-4 py-2 text-right">
+                                                                    <div className="flex justify-end gap-1 opacity-0 group-hover/p:opacity-100 transition-opacity">
                                                                         <Link
                                                                             to={`/products/edit/${product.id}`}
-                                                                            className="p-1 text-blue-500 hover:bg-blue-50 rounded"
-                                                                            title="Редагувати"
+                                                                            className="p-1.5 text-blue-500 hover:bg-blue-100 rounded-lg transition-colors"
                                                                         >
                                                                             <Pencil size={14} />
                                                                         </Link>
@@ -1191,8 +1188,7 @@ const CategoryList: React.FC = () => {
                                                                                     handleDeleteProduct(product.id);
                                                                                 }
                                                                             }}
-                                                                            className="p-1 text-red-500 hover:bg-red-50 rounded"
-                                                                            title="Видалити"
+                                                                            className="p-1.5 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
                                                                         >
                                                                             <Trash2 size={14} />
                                                                         </button>
@@ -1208,7 +1204,7 @@ const CategoryList: React.FC = () => {
                                 )}
 
                                 {/* Subcategories List */}
-                                <div className="space-y-2 mb-4 pl-4">
+                                <div className="space-y-2 mb-8 pr-2 border-l border-blue-50 ml-2">
                                     {category.subcategories.map(sub => (
                                         <SubcategoryItem
                                             key={sub.id}
@@ -1225,59 +1221,65 @@ const CategoryList: React.FC = () => {
                                         />
                                     ))}
                                     {category.subcategories.length === 0 && (
-                                        <p className="text-sm text-gray-400 italic pl-4">Немає підкатегорій</p>
+                                        <p className="text-xs text-gray-400 font-medium italic pl-8 py-4 bg-gray-50/50 rounded-xl border border-dashed border-gray-200">Немає створених підкатегорій для цієї моделі</p>
                                     )}
                                 </div>
 
                                 {/* Add Top-Level Subcategory */}
-                                <div className="flex gap-2 pl-8 mt-4 items-center border-t border-gray-100 pt-4">
-                                    <div className="flex-1 flex gap-2">
-                                        <input
-                                            type="text"
-                                            value={newSubcategoryNames[category.id] || ''}
-                                            onChange={e => setNewSubcategoryNames(prev => ({ ...prev, [category.id]: e.target.value }))}
-                                            className="flex-1 border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-tesla-red outline-none"
-                                            placeholder="Нова коренева підкатегорія..."
-                                            onKeyDown={e => {
-                                                if (e.key === 'Enter') triggerRootSubcategoryCreate(category);
-                                            }}
-                                        />
-                                        <input
-                                            type="text"
-                                            value={newSubcategoryCodes[category.id] || ''}
-                                            onChange={e => setNewSubcategoryCodes(prev => ({ ...prev, [category.id]: e.target.value }))}
-                                            className="w-24 border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-tesla-red outline-none"
-                                            placeholder="Код (11)"
-                                            onKeyDown={e => {
-                                                if (e.key === 'Enter') triggerRootSubcategoryCreate(category);
-                                            }}
-                                        />
-                                        <div className="flex items-center gap-2 flex-1">
-                                            <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-md flex items-center gap-1 border border-gray-300">
-                                                <ImageIcon size={16} />
-                                                <span>Завантажити</span>
-                                                <input
-                                                    type="file"
-                                                    className="hidden"
-                                                    onChange={e => {
-                                                        const file = e.target.files?.[0] || null;
-                                                        setNewSubcategoryFiles(prev => ({ ...prev, [category.id]: file }));
-                                                    }}
-                                                />
-                                            </label>
-                                            {newSubcategoryFiles[category.id] && (
-                                                <span className="text-xs text-gray-500 truncate max-w-[160px]">
-                                                    {newSubcategoryFiles[category.id]?.name}
-                                                </span>
-                                            )}
-                                        </div>
+                                <div className="mt-6 pt-6 border-t border-gray-100 bg-gray-50/30 rounded-b-2xl -mx-6 px-6">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-1.5 h-4 bg-blue-600 rounded-full"></div>
+                                        <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Додати нову кореневу підкатегорію</span>
                                     </div>
-                                    <button
-                                        onClick={() => triggerRootSubcategoryCreate(category)}
-                                        className="bg-gray-100 text-gray-700 px-3 py-2 rounded-md hover:bg-gray-200 transition text-sm font-medium"
-                                    >
-                                        Додати
-                                    </button>
+                                    <div className="flex gap-3 items-center flex-wrap">
+                                        <div className="flex-grow flex gap-3 min-w-[300px]">
+                                            <input
+                                                type="text"
+                                                value={newSubcategoryNames[category.id] || ''}
+                                                onChange={e => setNewSubcategoryNames(prev => ({ ...prev, [category.id]: e.target.value }))}
+                                                className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all outline-none bg-white font-medium"
+                                                placeholder="Назва..."
+                                                onKeyDown={e => {
+                                                    if (e.key === 'Enter') triggerRootSubcategoryCreate(category);
+                                                }}
+                                            />
+                                            <input
+                                                type="text"
+                                                value={newSubcategoryCodes[category.id] || ''}
+                                                onChange={e => setNewSubcategoryCodes(prev => ({ ...prev, [category.id]: e.target.value }))}
+                                                className="w-24 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all outline-none bg-white font-black"
+                                                placeholder="Код"
+                                                onKeyDown={e => {
+                                                    if (e.key === 'Enter') triggerRootSubcategoryCreate(category);
+                                                }}
+                                            />
+                                            <div className="flex items-center gap-2">
+                                                <label className="cursor-pointer bg-white hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-xl flex items-center gap-2 border border-blue-100 shadow-sm transition-all text-xs font-bold whitespace-nowrap">
+                                                    <ImageIcon size={16} />
+                                                    <span>ОБРАТИ ФОТО</span>
+                                                    <input
+                                                        type="file"
+                                                        className="hidden"
+                                                        onChange={e => {
+                                                            const file = e.target.files?.[0] || null;
+                                                            setNewSubcategoryFiles(prev => ({ ...prev, [category.id]: file }));
+                                                        }}
+                                                    />
+                                                </label>
+                                                {newSubcategoryFiles[category.id] && (
+                                                    <span className="text-[10px] text-blue-600 font-bold max-w-[120px] truncate">
+                                                        {newSubcategoryFiles[category.id]?.name}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => triggerRootSubcategoryCreate(category)}
+                                            className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-all text-sm font-bold shadow-md shadow-blue-100 uppercase tracking-tight"
+                                        >
+                                            Створити
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}

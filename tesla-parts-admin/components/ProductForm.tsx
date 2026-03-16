@@ -55,7 +55,7 @@ const SubcategorySelector: React.FC<SubcategorySelectorProps> = ({
                     setCurrentSelection(newValue);
                     onChange(assignmentId, level, newValue);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-white transition-all text-sm font-medium"
             >
                 <option value="">Оберіть підкатегорію</option>
                 {subs.map((sub) => (
@@ -415,113 +415,126 @@ export const ProductForm: React.FC = () => {
     };
 
     return (
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
             <div className="mb-6">
                 <button 
                     onClick={() => navigate(-1)} 
-                    className="inline-flex items-center text-gray-600 hover:text-gray-900"
+                    className="inline-flex items-center text-gray-400 hover:text-blue-600 font-bold text-xs uppercase tracking-widest transition-colors group"
                 >
-                    <ArrowLeft size={20} className="mr-2" />
-                    Назад
+                    <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                    Назад до списку
                 </button>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                <h1 className="text-2xl font-bold mb-6 text-gray-900">{isEditMode ? 'Редагувати Товар' : 'Додати Новий Товар'}</h1>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-10 transition-all">
+                <h1 className="text-2xl font-black mb-8 text-slate-900 tracking-tight">{isEditMode ? 'Редагувати товар' : 'Новий товар'}</h1>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-3 gap-6">
-                        <div className="col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Назва Товару</label>
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="md:col-span-3">
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Назва товару</label>
                             <input
                                 type="text"
                                 required
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                placeholder="Наприклад: Передній бампер"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50 font-bold text-slate-800"
+                                placeholder="Наприклад: Передній бампер Model 3"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Номер деталі</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Номер деталі</label>
                             <input
                                 type="text"
                                 value={formData.detail_number}
                                 onChange={e => setFormData({ ...formData, detail_number: e.target.value })}
-                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                placeholder="112201"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50 font-mono text-sm"
+                                placeholder="112201-00-A"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Cross-номер</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Cross-номер</label>
                             <input
                                 type="text"
                                 value={formData.cross_number}
                                 onChange={e => setFormData({ ...formData, cross_number: e.target.value })}
-                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                placeholder="Наприклад: 5Q0972887B"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50 font-mono text-sm"
+                                placeholder="5Q0972887B"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Порядок (Sort)</label>
+                            <input
+                                type="number"
+                                value={formData.sort_order}
+                                onChange={e => setFormData({ ...formData, sort_order: Number(e.target.value) })}
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50 font-bold"
                             />
                         </div>
                     </div>
 
-                    <div>
-                        <div className="flex items-center justify-between mb-3">
+                    <div className="bg-blue-50/30 rounded-2xl p-6 border border-blue-100">
+                        <div className="flex items-center justify-between mb-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Категорії</label>
-                                <p className="text-xs text-gray-500 mt-1">Додайте одну або декілька категорій та відповідні підкатегорії</p>
+                                <label className="block text-sm font-black uppercase tracking-widest text-blue-600">Категорії та зв'язки</label>
+                                <p className="text-[10px] font-bold text-blue-400 mt-1 uppercase">Оберіть де саме відображати цей товар</p>
                             </div>
                             <button
                                 type="button"
                                 onClick={handleAddAssignment}
-                                className="inline-flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700"
+                                className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 bg-white px-3 py-2 rounded-lg shadow-sm border border-blue-100 transition-all"
                             >
-                                <Plus size={16} />
+                                <Plus size={14} />
                                 Додати
                             </button>
                         </div>
                         <div className="space-y-4">
                             {categoryAssignments.map((assignment, index) => (
-                                <div key={assignment.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className="text-sm font-semibold text-gray-700">
-                                            Категорія #{index + 1}
-                                        </span>
+                                <div key={assignment.id} className="bg-white border border-blue-100 rounded-xl p-5 shadow-sm relative">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-5 h-5 bg-blue-600 text-white rounded-md flex items-center justify-center text-[10px] font-black">{index + 1}</div>
+                                            <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                                Зв'язок з каталогом
+                                            </span>
+                                        </div>
                                         {categoryAssignments.length > 1 && (
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveAssignment(assignment.id)}
-                                                className="text-gray-400 hover:text-red-500 transition"
-                                                title="Видалити категорію"
+                                                className="text-gray-300 hover:text-red-500 transition-colors"
+                                                title="Видалити"
                                             >
-                                                <X size={14} />
+                                                <X size={16} />
                                             </button>
                                         )}
                                     </div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Категорія</label>
-                                    <select
-                                        value={assignment.categoryId ?? ''}
-                                        onChange={e => handleAssignmentCategoryChange(assignment.id, e.target.value)}
-                                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
-                                    >
-                                        <option value="">Оберіть категорію</option>
-                                        {categories.map(c => (
-                                            <option key={c.id} value={c.id}>{c.name}</option>
-                                        ))}
-                                    </select>
-                                    {renderSubcategorySelectors(assignment)}
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Основна модель (Категорія)</label>
+                                            <select
+                                                value={assignment.categoryId ?? ''}
+                                                onChange={e => handleAssignmentCategoryChange(assignment.id, e.target.value)}
+                                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-white transition-all text-sm font-bold text-slate-700"
+                                            >
+                                                <option value="">Оберіть модель</option>
+                                                {categories.map(c => (
+                                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        {renderSubcategorySelectors(assignment)}
+                                    </div>
                                 </div>
                             ))}
-                            {categoryAssignments.length === 0 && (
-                                <div className="text-sm text-gray-500">Додайте принаймні одну категорію</div>
-                            )}
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Ціна (USD)</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Ціна в доларах (USD)</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                <span className="absolute left-4 top-3 text-gray-400 font-bold">$</span>
                                 <input
                                     type="number"
                                     required
@@ -530,67 +543,72 @@ export const ProductForm: React.FC = () => {
                                     value={formData.priceUSD}
                                     onChange={e => handleUsdChange(Number(e.target.value))}
                                     onWheel={e => e.currentTarget.blur()}
-                                    className="w-full border border-gray-300 rounded-md pl-7 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    className="w-full border border-gray-200 rounded-xl pl-8 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all font-black text-lg text-slate-900"
                                 />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Ціна (UAH) - Автоматично</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Ціна в гривнях (UAH)</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-2 text-gray-500">₴</span>
+                                <span className="absolute left-4 top-3 text-gray-400 font-bold">₴</span>
                                 <input
                                     type="number"
                                     required
                                     min="0"
                                     value={formData.priceUAH}
                                     readOnly
-                                    className="w-full border border-gray-300 rounded-md pl-7 pr-3 py-2 bg-gray-50 text-gray-600 cursor-not-allowed"
+                                    className="w-full border border-gray-100 rounded-xl pl-8 pr-4 py-3 bg-gray-100 text-gray-500 font-black text-lg cursor-not-allowed"
                                 />
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">Курс: {exchangeRate} UAH/USD</p>
+                            <p className="text-[10px] font-bold text-emerald-600 mt-2 uppercase tracking-tight">Автоматично за курсом: {exchangeRate} грн/$</p>
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Зображення (можна обрати декілька)</label>
-                        <div className="space-y-4">
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-red-500 transition-colors cursor-pointer relative">
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Фотографії товару</label>
+                        <div className="space-y-6">
+                            <div className="border-2 border-dashed border-gray-200 rounded-2xl p-10 text-center hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer relative group">
                                 <input
                                     type="file"
                                     accept="image/*"
                                     multiple
                                     onChange={(e) => {
                                         if (e.target.files) {
-                                            // Append new files to existing ones
                                             setFiles(prev => [...prev, ...Array.from(e.target.files || [])]);
                                         }
                                     }}
-                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                 />
                                 <div className="flex flex-col items-center">
-                                    <Upload className="text-gray-400 mb-2" size={32} />
-                                    <span className="text-sm text-gray-600">
-                                        Натисніть щоб додати файли
+                                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                        <Upload size={24} />
+                                    </div>
+                                    <span className="text-sm font-bold text-slate-600">
+                                        Натисніть або перетягніть файли
                                     </span>
+                                    <span className="text-[10px] font-medium text-gray-400 mt-1 uppercase tracking-widest">JPG, PNG, WEBP до 10MB</span>
                                 </div>
                             </div>
 
                             {/* Existing Images (Edit Mode) */}
                             {keptImages.length > 0 && (
-                                <div className="space-y-2">
-                                    <p className="text-sm font-medium text-gray-700">Існуючі зображення:</p>
-                                    <div className="grid grid-cols-3 gap-4">
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1 h-3 bg-blue-600 rounded-full"></div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Галерея на сайті:</p>
+                                    </div>
+                                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                                         {keptImages.map((img, idx) => (
-                                            <div key={idx} className="relative group">
+                                            <div key={idx} className="relative group aspect-square">
                                                 <img
                                                     src={img}
                                                     alt={`existing-${idx}`}
-                                                    className="w-full h-24 object-cover rounded-md border border-gray-200"
+                                                    className="w-full h-full object-cover rounded-xl border border-gray-100 shadow-sm"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => setKeptImages(keptImages.filter((_, i) => i !== idx))}
-                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    className="absolute -top-2 -right-2 bg-white text-red-500 rounded-full p-1.5 shadow-md hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100 border border-red-100"
                                                     title="Видалити"
                                                 >
                                                     <X size={12} />
@@ -603,20 +621,23 @@ export const ProductForm: React.FC = () => {
 
                             {/* New Image Previews */}
                             {files.length > 0 && (
-                                <div className="space-y-2">
-                                    <p className="text-sm font-medium text-gray-700">Нові файли:</p>
-                                    <div className="grid grid-cols-3 gap-4 mt-4">
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1 h-3 bg-emerald-500 rounded-full"></div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Нові файли до завантаження:</p>
+                                    </div>
+                                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                                         {files.map((file, idx) => (
-                                            <div key={idx} className="relative group">
+                                            <div key={idx} className="relative group aspect-square">
                                                 <img
                                                     src={URL.createObjectURL(file)}
                                                     alt={`preview-${idx}`}
-                                                    className="w-full h-24 object-cover rounded-md border border-gray-200"
+                                                    className="w-full h-full object-cover rounded-xl border-2 border-emerald-100 shadow-sm"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => setFiles(files.filter((_, i) => i !== idx))}
-                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    className="absolute -top-2 -right-2 bg-white text-red-500 rounded-full p-1.5 shadow-md hover:bg-red-50 transition-all border border-red-100"
                                                     title="Видалити"
                                                 >
                                                     <X size={12} />
@@ -631,55 +652,64 @@ export const ProductForm: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Опис</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Опис товару</label>
                         <textarea
                             required
-                            rows={4}
+                            rows={6}
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            placeholder="Детальний опис товару..."
+                            className="w-full border border-gray-200 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50 text-sm leading-relaxed"
+                            placeholder="Опишіть стан деталі, сумісність та інші важливі характеристики..."
                         />
                     </div>
 
-                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                        <h2 className="text-lg font-semibold text-gray-900 mb-4">SEO Налаштування</h2>
-                        <div className="space-y-4">
+                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                        <div className="flex items-center gap-2 mb-6">
+                            <Settings size={18} className="text-slate-400" />
+                            <h2 className="text-sm font-black uppercase tracking-widest text-slate-600">SEO Оптимізація</h2>
+                        </div>
+                        <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Meta Title</label>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Meta Title</label>
                                 <input
                                     type="text"
                                     value={formData.meta_title}
                                     onChange={e => setFormData({ ...formData, meta_title: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                    placeholder="Наприклад: Купити {назва товару}"
+                                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 text-sm bg-white"
+                                    placeholder="Наприклад: Купити передній бампер Tesla Model 3 | Оригінал"
                                 />
-                                <p className="text-xs text-gray-500 mt-1">Використовується як заголовок сторінки продукту</p>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Meta Description</label>
                                 <textarea
                                     rows={3}
                                     value={formData.meta_description}
                                     onChange={e => setFormData({ ...formData, meta_description: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                    placeholder="Короткий опис для пошукових систем"
+                                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 text-sm bg-white resize-none"
+                                    placeholder="Короткий опис, який клієнти побачать у Google..."
                                 />
-                                <p className="text-xs text-gray-500 mt-1">Рекомендовано до 160 символів</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center">
-                        <input
-                            type="checkbox"
-                            id="inStock"
-                            checked={formData.inStock}
-                            onChange={e => setFormData({ ...formData, inStock: e.target.checked })}
-                            className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor="inStock" className="ml-2 block text-sm text-gray-900">
-                            В наявності
+                    <div className="flex items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input
+                                type="checkbox"
+                                name="toggle"
+                                id="inStock"
+                                checked={formData.inStock}
+                                onChange={e => setFormData({ ...formData, inStock: e.target.checked })}
+                                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                                style={{
+                                    right: formData.inStock ? '0' : 'auto',
+                                    borderColor: formData.inStock ? '#10b981' : '#d1d5db'
+                                }}
+                            />
+                            <label htmlFor="inStock" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-colors ${formData.inStock ? 'bg-emerald-400' : 'bg-gray-300'}`}></label>
+                        </div>
+                        <label htmlFor="inStock" className="text-sm font-bold text-slate-700 uppercase tracking-tight ml-2">
+                            Товар в наявності та доступний для замовлення
                         </label>
                     </div>
 
@@ -687,13 +717,19 @@ export const ProductForm: React.FC = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 transition disabled:opacity-50 font-medium"
+                            className="w-full bg-blue-600 text-white py-4 rounded-2xl hover:bg-blue-700 transition-all disabled:opacity-50 font-black text-lg shadow-xl shadow-blue-100 uppercase tracking-widest transform active:scale-[0.99]"
                         >
-                            {loading ? 'Збереження...' : (isEditMode ? 'Зберегти Зміни' : 'Створити Товар')}
+                            {loading ? (
+                                <div className="flex items-center justify-center gap-2">
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                    <span>Збереження...</span>
+                                </div>
+                            ) : (isEditMode ? 'Зберегти зміни' : 'Опублікувати товар')}
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     );
+};
 };

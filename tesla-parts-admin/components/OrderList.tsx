@@ -64,36 +64,36 @@ export const OrderList: React.FC = () => {
   const getStatusDisplay = (status: string) => {
     switch (status) {
       case 'new':
-        return { text: 'Нове', className: 'bg-yellow-100 text-yellow-800' };
+        return { text: 'Нове', className: 'bg-amber-100 text-amber-700' };
       case 'processed':
-        return { text: 'Оброблено', className: 'bg-green-100 text-green-800' };
+        return { text: 'Оброблено', className: 'bg-emerald-100 text-emerald-700' };
       default:
-        return { text: status, className: 'bg-gray-100 text-gray-800' };
+        return { text: status, className: 'bg-slate-100 text-slate-700' };
     }
   };
 
-  if (loading) return <div className="p-8 text-center">Завантаження...</div>;
+  if (loading) return <div className="p-8 text-center text-gray-500 font-medium">Завантаження...</div>;
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">Керування Замовленнями</h2>
-        <div className="flex items-center justify-between gap-4">
-          <div className="relative flex-grow">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="relative flex-grow max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
               placeholder="Пошук за TTN або Ім'ям..."
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all text-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-tight">Сортувати:</span>
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
-              className="py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
+              className="py-2.5 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-white text-sm font-bold text-slate-700 transition-all cursor-pointer"
             >
               <option value="newest">Спочатку нові</option>
               <option value="oldest">Спочатку старі</option>
@@ -102,86 +102,86 @@ export const OrderList: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+            <thead className="bg-gray-50 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
               <tr>
-                <th className="px-6 py-4">ID & Дата</th>
-                <th className="px-6 py-4">Клієнт</th>
-                <th className="px-6 py-4">Доставка</th>
-                <th className="px-6 py-4">Сума</th>
-                <th className="px-6 py-4">Оплата</th>
-                <th className="px-6 py-4">Статус</th>
-                <th className="px-6 py-4">ТТН</th>
+                <th className="px-6 py-5">ID & Дата</th>
+                <th className="px-6 py-5">Клієнт</th>
+                <th className="px-6 py-5">Доставка</th>
+                <th className="px-6 py-5">Сума</th>
+                <th className="px-6 py-5">Оплата</th>
+                <th className="px-6 py-5">Статус</th>
+                <th className="px-6 py-5">ТТН</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-50">
               {filteredAndSortedOrders.map((order) => {
                 const statusDisplay = getStatusDisplay(order.status);
                 return (
-                <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">{order.id}</div>
-                    <div className="text-xs text-gray-500">{new Date(order.created_at).toLocaleDateString()}</div>
+                <tr key={order.id} className="hover:bg-blue-50/30 transition-colors group">
+                  <td className="px-6 py-5">
+                    <div className="font-bold text-slate-900">#{order.id}</div>
+                    <div className="text-[10px] font-bold text-gray-400 mt-0.5 uppercase">{new Date(order.created_at).toLocaleDateString()}</div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="font-medium">{order.customer_first_name} {order.customer_last_name}</div>
-                    <div className="text-xs text-gray-500">{order.customer_phone}</div>
+                  <td className="px-6 py-5">
+                    <div className="font-bold text-slate-800">{order.customer_first_name} {order.customer_last_name}</div>
+                    <div className="text-xs text-gray-500 font-medium">{order.customer_phone}</div>
                   </td>
-                  <td className="px-6 py-4 max-w-xs">
-                    <div className="flex items-start gap-2">
-                      <Truck size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
-                      <div className="text-xs">
-                        <div>{order.delivery_city}</div>
-                        <div className="text-gray-500">{order.delivery_branch}</div>
+                  <td className="px-6 py-5 max-w-xs">
+                    <div className="flex items-start gap-2 text-slate-600">
+                      <Truck size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
+                      <div className="text-xs leading-relaxed">
+                        <div className="font-bold">{order.delivery_city}</div>
+                        <div className="text-gray-400 font-medium">{order.delivery_branch}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-bold">
-                    <div>${(order.totalUSD ?? 0).toFixed(2)}</div>
-                    <div className="text-xs text-gray-500">{(order.totalUAH ?? 0).toFixed(2)} ₴</div>
+                  <td className="px-6 py-5">
+                    <div className="font-black text-slate-900">${(order.totalUSD ?? 0).toFixed(2)}</div>
+                    <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-tighter">{(order.totalUAH ?? 0).toFixed(2)} ₴</div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-xs bg-gray-100 px-2 py-1 rounded w-fit">
-                      <CreditCard size={12} />
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md uppercase w-fit tracking-tighter">
+                      <CreditCard size={10} />
                       {order.payment_method}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusDisplay.className}`}>
+                  <td className="px-6 py-5">
+                    <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${statusDisplay.className}`}>
                       {statusDisplay.text}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
+                  <td className="px-6 py-5 text-sm text-gray-700">
                     {editingTtnOrderId === order.id ? (
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
                           value={editingTtnValue}
                           onChange={(e) => setEditingTtnValue(e.target.value)}
-                          className="w-full border rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-red-500 outline-none"
+                          className="w-full border border-blue-200 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none transition-all"
                           autoFocus
                         />
-                        <button onClick={() => handleUpdateTtn(order.id)} className="text-green-600 hover:bg-green-50 p-1 rounded">
+                        <button onClick={() => handleUpdateTtn(order.id)} className="text-emerald-600 hover:bg-emerald-50 p-1.5 rounded-lg transition-colors">
                           <Check size={16} />
                         </button>
-                        <button onClick={() => setEditingTtnOrderId(null)} className="text-gray-400 hover:bg-gray-100 p-1 rounded">
+                        <button onClick={() => setEditingTtnOrderId(null)} className="text-gray-400 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
                           <X size={16} />
                         </button>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between">
-                        <span>{order.ttn || '-'}</span>
+                      <div className="flex items-center justify-between gap-2 min-w-[120px]">
+                        <span className="font-mono text-xs font-bold text-slate-700">{order.ttn || '---'}</span>
                         <button
                           onClick={() => {
                             setEditingTtnOrderId(order.id);
                             setEditingTtnValue(order.ttn || '');
                           }}
-                          className="text-gray-400 hover:text-blue-500 p-1 rounded"
+                          className="text-gray-400 hover:text-blue-600 hover:bg-blue-50 p-1.5 rounded-lg transition-all"
                           title="Редагувати ТТН"
                         >
-                          <Pencil size={16} />
+                          <Pencil size={14} />
                         </button>
                       </div>
                     )}

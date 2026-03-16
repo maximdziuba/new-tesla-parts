@@ -135,7 +135,7 @@ export const ProductList: React.FC = () => {
           <input
             type="text"
             placeholder="Пошук за назвою..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -147,14 +147,14 @@ export const ProductList: React.FC = () => {
             disabled={selectedProducts.length === 0}
             className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors border flex-1 sm:flex-none ${
               selectedProducts.length === 0
-                ? 'text-gray-300 border-gray-200 cursor-not-allowed'
-                : 'text-red-600 border-red-200 hover:bg-red-50'
+                ? 'text-gray-300 border-gray-100 cursor-not-allowed'
+                : 'text-red-600 border-red-100 hover:bg-red-50'
             }`}
           >
             <Trash2 size={16} />
-            <span className="whitespace-nowrap">Видалити вибрані</span>
+            <span className="whitespace-nowrap font-medium text-sm">Видалити вибрані</span>
             {selectedProducts.length > 0 && (
-              <span className="text-xs font-semibold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
                 {selectedProducts.length}
               </span>
             )}
@@ -162,7 +162,7 @@ export const ProductList: React.FC = () => {
           
           <div className="relative flex-1 sm:flex-none">
             <select
-              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full appearance-none pl-10 pr-8 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all text-sm font-medium"
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
@@ -175,7 +175,7 @@ export const ProductList: React.FC = () => {
 
           <div className="relative flex-1 sm:flex-none">
             <select
-              className="w-full appearance-none pl-10 pr-8 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full appearance-none pl-10 pr-8 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all text-sm font-medium"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
@@ -192,7 +192,7 @@ export const ProductList: React.FC = () => {
             <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
           </div>
 
-          <Link to="/products/new" className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex-1 sm:flex-none">
+          <Link to="/products/new" className="flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-all shadow-md shadow-blue-100 font-bold text-sm flex-1 sm:flex-none">
             <Plus size={20} />
             <span className="whitespace-nowrap">Додати Товар</span>
           </Link>
@@ -200,10 +200,10 @@ export const ProductList: React.FC = () => {
       </div>
 
       <div className="px-2">
-          <span className="text-sm text-gray-500">
-              Всього товарів: <span className="font-medium text-gray-900">{products.length}</span>
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+              Всього товарів: <span className="text-slate-900">{products.length}</span>
               {filteredProducts.length !== products.length && (
-                  <> • Знайдено: <span className="font-medium text-gray-900">{filteredProducts.length}</span></>
+                  <> • Знайдено: <span className="text-blue-600">{filteredProducts.length}</span></>
               )}
           </span>
       </div>
@@ -212,14 +212,14 @@ export const ProductList: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+            <thead className="bg-gray-50 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
               <tr>
                 <th className="px-4 py-4 w-10">
                   <input
                     type="checkbox"
                     checked={isAllSelected}
                     onChange={toggleSelectAll}
-                    className="w-4 h-4 text-red-600 border-gray-300 rounded"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                 </th>
                 <th className="px-6 py-4">Товар</th>
@@ -229,53 +229,59 @@ export const ProductList: React.FC = () => {
                 <th className="px-6 py-4 text-right">Дії</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-50">
               {filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
+                <tr key={product.id} className="hover:bg-blue-50/30 transition-colors group">
                   <td className="px-4 py-4">
                     <input
                       type="checkbox"
                       checked={selectedProducts.includes(product.id)}
                       onChange={() => toggleSelect(product.id)}
-                      className="w-4 h-4 text-red-600 border-gray-300 rounded"
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded bg-gray-100 overflow-hidden">
+                      <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden border border-gray-100 shadow-sm flex-shrink-0">
                         <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                       </div>
                       <div>
-                        <div className="font-medium text-gray-900">{product.name}</div>
-                        <div className="text-xs text-gray-400 truncate max-w-[200px]">{product.description}</div>
+                        <div className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{product.name}</div>
+                        <div className="text-xs text-gray-400 line-clamp-1 max-w-[250px]">{product.description}</div>
                         {product.cross_number && (
-                          <div className="text-xs text-gray-500 mt-1">Cross: {product.cross_number}</div>
+                          <div className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-tight">Cross: {product.cross_number}</div>
                         )}
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                    <span className="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">
                       {product.category}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`${product.inStock ? 'text-green-600' : 'text-red-600 font-bold'}`}>
-                      {product.inStock ? 'В наявності' : 'Немає'}
-                    </span>
+                    {product.inStock ? (
+                      <span className="text-emerald-600 bg-emerald-50 px-2 py-1 rounded text-xs font-bold">В наявності</span>
+                    ) : (
+                      <span className="text-red-600 bg-red-50 px-2 py-1 rounded text-xs font-bold uppercase">Немає</span>
+                    )}
                   </td>
-                  <td className="px-6 py-4 font-medium">{product.priceUSD} $</td>
+                  <td className="px-6 py-4">
+                    <div className="font-bold text-slate-900">{product.priceUSD} $</div>
+                  </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-1">
                       <Link
                         to={`/products/edit/${product.id}`}
-                        className="p-1.5 text-blue-500 hover:bg-blue-50 rounded"
+                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                        title="Редагувати"
                       >
                         <Pencil size={16} />
                       </Link>
                       <button
                         onClick={() => handleDelete(product.id)}
-                        className="p-1.5 text-red-500 hover:bg-red-50 rounded"
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Видалити"
                       >
                         <Trash2 size={16} />
                       </button>

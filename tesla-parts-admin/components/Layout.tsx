@@ -25,12 +25,12 @@ const SidebarItem = ({ to, icon: Icon, label, active, collapsed }: { to: string,
     to={to}
     title={collapsed ? label : undefined}
     className={`flex items-center rounded-lg transition-all duration-200 ${collapsed ? 'justify-center px-2 py-3' : 'gap-3 px-4 py-3'} ${active
-      ? 'bg-red-600 text-white'
-      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+      ? 'bg-blue-600 text-white shadow-md'
+      : 'text-slate-700 hover:bg-gray-50 hover:text-blue-600'
       }`}
   >
     <Icon size={20} className="shrink-0" />
-    {!collapsed && <span className="font-medium whitespace-nowrap overflow-hidden transition-all duration-200">{label}</span>}
+    {!collapsed && <span className="font-semibold whitespace-nowrap overflow-hidden transition-all duration-200">{label}</span>}
   </Link>
 );
 
@@ -48,7 +48,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const getPageTitle = (path: string) => {
     switch (path) {
-      case '/': return 'Огляд';
+      case '/': return 'Дашборд';
       case '/products': return 'Товари';
       case '/orders': return 'Замовлення';
       case '/categories': return 'Категорії';
@@ -59,24 +59,32 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-[#f8fafc] overflow-hidden text-slate-900">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 bg-gray-900 text-white transform transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-          } ${collapsed ? 'lg:w-20' : 'lg:w-64'} w-64`}
+        className={`fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 transform transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          } ${collapsed ? 'lg:w-20' : 'lg:w-64'} w-64 flex flex-col transition-colors shadow-2xl lg:shadow-none`}
       >
-        <div className={`flex items-center border-b border-gray-800 transition-all duration-300 ${collapsed ? 'justify-center p-4' : 'gap-2 p-6'}`}>
-          <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center shrink-0">
+        <div className={`flex items-center border-b border-gray-100 transition-all duration-300 ${collapsed ? 'justify-center p-4' : 'gap-3 p-6'}`}>
+          <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center shrink-0 shadow-sm">
             <span className="font-bold text-white text-lg">T</span>
           </div>
-          {!collapsed && <span className="text-xl font-bold tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300">Tesla Admin</span>}
+          {!collapsed && (
+            <div className="flex flex-col leading-tight overflow-hidden transition-all duration-300">
+              <span className="text-lg font-bold tracking-tight text-slate-900 whitespace-nowrap">TeslaFix</span>
+              <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Admin</span>
+            </div>
+          )}
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="flex-grow p-4 space-y-1 overflow-y-auto custom-scrollbar">
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 px-4">
+            Меню керування
+          </div>
           <SidebarItem
             to="/"
             icon={LayoutDashboard}
-            label="Дашборд"
+            label="Огляд"
             active={location.pathname === '/'}
             collapsed={collapsed}
           />
@@ -96,42 +104,47 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           />
           <SidebarItem
             to="/products"
-            icon={Layers}
+            icon={Package}
             label="Товари"
-            active={location.pathname === '/products'}
+            active={location.pathname === '/products' || location.pathname.startsWith('/products/')}
             collapsed={collapsed}
           />
-          <SidebarItem
-            to="/settings"
-            icon={Settings}
-            label="Налаштування"
-            active={location.pathname === '/settings'}
-            collapsed={collapsed}
-          />
-          <SidebarItem
-            to="/settings/reset-password"
-            icon={Key}
-            label="Змінити Пароль"
-            active={location.pathname === '/settings/reset-password'}
-            collapsed={collapsed}
-          />
-          <SidebarItem
-            to="/cms"
-            icon={FileText}
-            label="Контент"
-            active={location.pathname === '/cms'}
-            collapsed={collapsed}
-          />
+          <div className="pt-4">
+            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 px-4">
+              Сайт та контент
+            </div>
+            <SidebarItem
+              to="/cms"
+              icon={FileText}
+              label="Сторінки"
+              active={location.pathname === '/cms'}
+              collapsed={collapsed}
+            />
+            <SidebarItem
+              to="/settings"
+              icon={Settings}
+              label="Налаштування"
+              active={location.pathname === '/settings'}
+              collapsed={collapsed}
+            />
+            <SidebarItem
+              to="/settings/reset-password"
+              icon={Key}
+              label="Безпека"
+              active={location.pathname === '/settings/reset-password'}
+              collapsed={collapsed}
+            />
+          </div>
         </nav>
 
-        <div className="absolute bottom-0 w-full p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-gray-100">
           <button
             onClick={handleLogout}
             title={collapsed ? "Вийти" : undefined}
-            className={`flex items-center rounded-lg text-gray-400 hover:text-white transition-all duration-200 w-full ${collapsed ? 'justify-center px-2 py-3' : 'gap-3 px-4 py-3'}`}
+            className={`flex items-center rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 w-full ${collapsed ? 'justify-center px-2 py-3' : 'gap-3 px-4 py-3'}`}
           >
             <LogOut size={20} className="shrink-0" />
-            {!collapsed && <span className="whitespace-nowrap overflow-hidden">Вийти</span>}
+            {!collapsed && <span className="font-semibold whitespace-nowrap overflow-hidden">Вийти</span>}
           </button>
         </div>
       </aside>
@@ -139,35 +152,39 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b z-40">
+        <header className="bg-white border-b border-gray-100 z-40">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-4">
               <button
-                className="lg:hidden p-2 rounded-md hover:bg-gray-100"
+                className="lg:hidden p-2 rounded-md hover:bg-gray-50 text-slate-600"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 <Menu size={24} />
               </button>
               <button
-                className="hidden lg:flex p-2 rounded-md hover:bg-gray-100 text-gray-500 transition-colors"
+                className="hidden lg:flex p-2 rounded-md hover:bg-gray-50 text-gray-400 transition-colors"
                 onClick={() => setCollapsed(!collapsed)}
               >
                 <Menu size={24} />
               </button>
-              <h1 className="text-xl font-semibold text-gray-800">
+              <h1 className="text-xl font-bold text-slate-900">
                 {getPageTitle(location.pathname)}
               </h1>
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-semibold text-sm border border-red-200">
-                A
+              <div className="flex flex-col items-end mr-2 hidden sm:flex">
+                <span className="text-sm font-bold text-slate-900">Адміністратор</span>
+                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter text-right">Повний доступ</span>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-sm border border-blue-100 shadow-sm">
+                AD
               </div>
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-6 bg-[#f8fafc] custom-scrollbar">
           {children}
         </main>
       </div>
@@ -175,7 +192,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Overlay for mobile */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}

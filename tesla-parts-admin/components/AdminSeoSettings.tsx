@@ -63,39 +63,52 @@ const AdminSeoSettings: React.FC = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6 text-gray-800">SEO for Static Pages</h1>
-            <div className="space-y-6">
+        <div className="max-w-4xl mx-auto animate-fade-in">
+            <div className="flex items-center gap-3 mb-8">
+                <div className="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+                <h1 className="text-xl font-black uppercase tracking-widest text-slate-900">SEO статичних сторінок</h1>
+            </div>
+            <div className="space-y-8">
                 {seoRecords.map(record => (
-                    <div key={record.slug} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                        <h2 className="text-lg font-semibold capitalize mb-4 text-gray-700">{record.slug.replace(/_/g, ' ')} Page</h2>
-                        <div className="space-y-4">
+                    <div key={record.slug} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 transition-all hover:shadow-md">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-sm font-black uppercase tracking-widest text-blue-600">Сторінка: {record.slug.replace(/_/g, ' ')}</h2>
+                            <div className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">URL: /{record.slug}</div>
+                        </div>
+                        <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-600 mb-1">Meta Title</label>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Meta Title</label>
                                 <input
                                     type="text"
                                     value={record.meta_title}
                                     onChange={(e) => handleUpdate(record.slug, 'meta_title', e.target.value)}
-                                    className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-tesla-red outline-none"
+                                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
+                                    placeholder="Заголовок для вкладки..."
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-600 mb-1">Meta Description</label>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Meta Description</label>
                                 <textarea
                                     value={record.meta_description}
                                     onChange={(e) => handleUpdate(record.slug, 'meta_description', e.target.value)}
-                                    className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-tesla-red outline-none"
+                                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all resize-none"
                                     rows={3}
+                                    placeholder="Короткий опис для Google..."
                                 />
                             </div>
                         </div>
-                        <div className="text-right mt-4">
+                        <div className="flex justify-end mt-6">
                             <button
                                 onClick={() => handleSave(record.slug)}
                                 disabled={saving[record.slug]}
-                                className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+                                className="bg-blue-600 text-white px-8 py-2.5 rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-100 font-bold text-sm disabled:opacity-50 min-w-[140px]"
                             >
-                                {saving[record.slug] ? <Loader size={20} className="animate-spin mx-auto" /> : 'Зберегти'}
+                                {saving[record.slug] ? (
+                                    <div className="flex items-center justify-center gap-2">
+                                        <Loader size={16} className="animate-spin" />
+                                        <span>ЗБЕРЕЖЕННЯ</span>
+                                    </div>
+                                ) : 'ЗБЕРЕГТИ'}
                             </button>
                         </div>
                     </div>
