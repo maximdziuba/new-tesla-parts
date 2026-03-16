@@ -11,6 +11,12 @@ services:
       - POSTGRES_USER=tesla
       - POSTGRES_PASSWORD=teslapass
       - POSTGRES_DB=tesladb
+  
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot:z
+      - ./certbot/conf:/etc/letsencrypt:z
 
   # --- Nginx Gateway ---
   gateway:
