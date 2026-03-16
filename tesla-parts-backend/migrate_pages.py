@@ -40,8 +40,8 @@ def migrate():
         ("delivery", "Доставка", "Інформація про доставку та оплату.", True, "footer"),
         ("contacts", "Контакти", "Наші контактні дані.", True, "footer"),
         ("warranty", "Гарантія", "Умови гарантійного обслуговування.", True, "footer"),
-        ("privacy-policy", "Політика конфіденційності", "Політика конфіденційності інтернет-магазину Tesla Parts Center.", True, "footer"),
-        ("terms-of-service", "Умови сервісу", "Умови сервісу інтернет-магазину Tesla Parts Center.", True, "footer"),
+        ("privacy-policy", "Політика конфіденційності", "Політика конфіденційності інтернет-магазину TeslaFix.", True, "footer"),
+        ("terms-of-service", "Умови сервісу", "Умови сервісу інтернет-магазину TeslaFix.", True, "footer"),
     ]
     
     cursor.executemany(

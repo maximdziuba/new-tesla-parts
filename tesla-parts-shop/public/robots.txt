@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://api.autopartsstore.com.ua/sitemap.xml
+Sitemap: https://api.teslafix.com.ua/sitemap.xml

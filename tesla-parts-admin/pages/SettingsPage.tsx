@@ -234,7 +234,7 @@ export const SettingsPage: React.FC = () => {
                                 value={contactEmail}
                                 onChange={e => setContactEmail(e.target.value)}
                                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                placeholder="info@teslaparts.ua"
+                                placeholder="info@teslafix.com.ua"
                             />
                         </div>
                         <div>
@@ -273,7 +273,7 @@ export const SettingsPage: React.FC = () => {
                             value={footerText}
                             onChange={e => setFooterText(e.target.value)}
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            placeholder="© 2024 Tesla Parts Center. Всі права захищені."
+                            placeholder="© 2024 TeslaFix. Всі права захищені."
                         />
                     </div>
 

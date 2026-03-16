@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
       <div className="container mx-auto px-4 mt-8 pt-8 border-t border-gray-100 dark:border-slate-800 text-center text-xs">
-        {isMounted ? (contactInfo.footerText || '© 2026 Tesla Parts Shop. Всі права захищені.') : ''}
+        {isMounted ? (contactInfo.footerText || '© 2026 TeslaFix. Всі права захищені.') : ''}
       </div>
     </footer>
   );

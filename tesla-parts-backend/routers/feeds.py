@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/feed", tags=["feeds"])
 
 # Base URL for the shop
-SHOP_BASE_URL = os.getenv("FRONTEND_URL", "https://teslapartscenter.com.ua")
+SHOP_BASE_URL = os.getenv("FRONTEND_URL", "https://teslafix.com.ua")
 
 async def get_active_products(session: Session) -> List[Product]:
     """
@@ -40,7 +40,7 @@ async def get_google_merchant_feed(session: Session = Depends(get_session)):
             '<?xml version="1.0" encoding="UTF-8"?>',
             '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">',
             '<channel>',
-            f'<title>{saxutils.escape("Tesla Parts Center")}</title>',
+            f'<title>{saxutils.escape("TeslaFix")}</title>',
             f'<link>{SHOP_BASE_URL}</link>',
             f'<description>{saxutils.escape("Запчастини для Tesla з доставкою по Україні")}</description>'
         ]
@@ -57,7 +57,7 @@ async def get_google_merchant_feed(session: Session = Depends(get_session)):
             p_image_link = saxutils.escape(product.image)
             p_price = f"{price_uah:.2f} UAH"
             p_availability = "in_stock" if product.inStock else "out_of_stock"
-            p_condition = "new" # Default for Tesla Parts shop
+            p_condition = "new" # Default for TeslaFix
             p_brand = saxutils.escape("Tesla")
 
             # Construct item XML

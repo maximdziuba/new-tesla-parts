@@ -13,31 +13,31 @@ from dependencies import get_current_admin
 
 DEFAULT_STATIC_SEO = {
     "home": {
-        "meta_title": "Tesla Parts Center | Магазин запчастин для Tesla",
+        "meta_title": "TeslaFix | Магазин запчастин для Tesla",
         "meta_description": "Купуйте оригінальні та перевірені запчастини для Tesla з доставкою по Україні."
     },
     "about": {
-        "meta_title": "Про Tesla Parts Center",
-        "meta_description": "Дізнайтеся більше про команду Tesla Parts Center та наш підхід до сервісу."
+        "meta_title": "Про TeslaFix",
+        "meta_description": "Дізнайтеся більше про команду TeslaFix та наш підхід до сервісу."
     },
     "delivery": {
-        "meta_title": "Доставка та оплата | Tesla Parts Center",
-        "meta_description": "Інформація про варіанти доставки та оплати у Tesla Parts Center."
+        "meta_title": "Доставка та оплата | TeslaFix",
+        "meta_description": "Інформація про варіанти доставки та оплати у TeslaFix."
     },
     "returns": {
-        "meta_title": "Повернення та гарантія | Tesla Parts Center",
-        "meta_description": "Правила повернення товарів та гарантійні умови інтернет-магазину Tesla Parts Center."
+        "meta_title": "Повернення та гарантія | TeslaFix",
+        "meta_description": "Правила повернення товарів та гарантійні умови інтернет-магазину TeslaFix."
     },
     "faq": {
-        "meta_title": "Часті питання | Tesla Parts Center",
-        "meta_description": "Відповіді на популярні питання клієнтів Tesla Parts Center."
+        "meta_title": "Часті питання | TeslaFix",
+        "meta_description": "Відповіді на популярні питання клієнтів TeslaFix."
     },
     "contacts": {
-        "meta_title": "Контакти Tesla Parts Center",
+        "meta_title": "Контакти TeslaFix",
         "meta_description": "Зв’яжіться з нами для консультації або замовлення запчастин."
     },
     "search": {
-        "meta_title": "Пошук запчастин | Tesla Parts Center",
+        "meta_title": "Пошук запчастин | TeslaFix",
         "meta_description": "Знайдіть необхідні запчастини для вашої Tesla у нашому каталозі."
     },
 }
@@ -73,9 +73,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 origins = [
     "http://localhost:3000",
     "http://localhost:3001",
-    "https://teslapartscenter.com.ua",
-    "https://www.teslapartscenter.com.ua",
-    "https://admin.teslapartscenter.com.ua",
+    "https://teslafix.com.ua",
+    "https://www.teslafix.com.ua",
+    "https://admin.teslafix.com.ua",
 ]
 
 # Add frontend URL from environment variable if set
@@ -106,7 +106,7 @@ app.include_router(feeds.router) # Include feeds router
 
 @app.get("/")
 def read_root():
-    return {"message": "Tesla Parts API is running"}
+    return {"message": "TeslaFix API is running"}
 
 def _slugify(value: str) -> str:
     return (
@@ -118,7 +118,7 @@ def _slugify(value: str) -> str:
 
 @app.get("/sitemap.xml", response_class=Response)
 def get_sitemap():
-    base_url = os.getenv("FRONTEND_URL", "https://teslapartscenter.com.ua")
+    base_url = os.getenv("FRONTEND_URL", "https://teslafix.com.ua")
     with Session(engine) as session:
         products = session.exec(select(Product)).all()
         categories = session.exec(select(Category)).all()

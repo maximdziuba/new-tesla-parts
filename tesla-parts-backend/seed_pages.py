@@ -20,7 +20,7 @@ def seed_pages():
         (
             'about',
             'Про магазин',
-            '''Ласкаво просимо до Tesla Parts Shop!
+            '''Ласкаво просимо до TeslaFix!
 
 Ми - ваш надійний постачальник оригінальних запчастин для електромобілів Tesla.
 
@@ -129,8 +129,8 @@ def seed_pages():
 +38 (097) 765-43-21
 
 Email:
-info@teslaparts.ua
-support@teslaparts.ua
+info@teslafix.com.ua
+support@teslafix.com.ua
 
 Адреса складу:
 м. Київ, вул. Хрещатик, 1
@@ -146,8 +146,8 @@ Telegram: @teslaparts_ua
 Viber: +38 (099) 123-45-67
 
 Соціальні мережі:
-Instagram: @teslaparts.ua
-Facebook: facebook.com/teslaparts.ua
+Instagram: @teslafix.com.ua
+Facebook: facebook.com/teslafix.com.ua
 
 Як нас знайти:
 Ми знаходимося в центрі Києва, недалеко від станції метро "Хрещатик".

@@ -139,7 +139,7 @@ const Sidebar: React.FC = () => {
 
         {/* Footer info */}
         <div className="p-6 border-t border-gray-100 dark:border-slate-700 text-[10px] text-gray-400 dark:text-slate-500 font-medium uppercase tracking-widest bg-gray-50/50 dark:bg-slate-800/50">
-            <p>© 2026 Tesla Parts Shop</p>
+            <p>© 2026 TeslaFix</p>
         </div>
       </aside>
     </>

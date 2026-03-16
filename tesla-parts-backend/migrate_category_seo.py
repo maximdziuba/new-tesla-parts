@@ -6,40 +6,40 @@ DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///tesla_parts.db")
 
 DEFAULT_STATIC_SEO = {
     "home": {
-        "meta_title": "Tesla Parts Center | Магазин запчастин для Tesla",
+        "meta_title": "TeslaFix | Магазин запчастин для Tesla",
         "meta_description": "Купуйте оригінальні та перевірені запчастини для Tesla з доставкою по Україні.",
     },
     "about": {
-        "meta_title": "Про Tesla Parts Center",
-        "meta_description": "Дізнайтеся більше про команду Tesla Parts Center та наш підхід до сервісу.",
+        "meta_title": "Про TeslaFix",
+        "meta_description": "Дізнайтеся більше про команду TeslaFix та наш підхід до сервісу.",
     },
     "delivery": {
-        "meta_title": "Доставка та оплата | Tesla Parts Center",
-        "meta_description": "Дізнайтеся про варіанти доставки та оплати в Tesla Parts Center.",
+        "meta_title": "Доставка та оплата | TeslaFix",
+        "meta_description": "Дізнайтеся про варіанти доставки та оплати в TeslaFix.",
     },
     "returns": {
-        "meta_title": "Повернення та гарантія | Tesla Parts Center",
-        "meta_description": "Умови повернення товарів та гарантії інтернет-магазину Tesla Parts Center.",
+        "meta_title": "Повернення та гарантія | TeslaFix",
+        "meta_description": "Умови повернення товарів та гарантії інтернет-магазину TeslaFix.",
     },
     "faq": {
-        "meta_title": "Часті питання | Tesla Parts Center",
-        "meta_description": "Відповіді на найпоширеніші запитання клієнтів Tesla Parts Center.",
+        "meta_title": "Часті питання | TeslaFix",
+        "meta_description": "Відповіді на найпоширеніші запитання клієнтів TeslaFix.",
     },
     "contacts": {
-        "meta_title": "Контакти Tesla Parts Center",
+        "meta_title": "Контакти TeslaFix",
         "meta_description": "Зв’яжіться з нами для консультації або замовлення запчастин.",
     },
     "search": {
-        "meta_title": "Пошук запчастин | Tesla Parts Center",
+        "meta_title": "Пошук запчастин | TeslaFix",
         "meta_description": "Знайдіть необхідні запчастини для вашої Tesla у нашому каталозі.",
     },
     "privacy-policy": {
-        "meta_title": "Політика конфіденційності | Tesla Parts Center",
-        "meta_description": "Політика конфіденційності інтернет-магазину Tesla Parts Center.",
+        "meta_title": "Політика конфіденційності | TeslaFix",
+        "meta_description": "Політика конфіденційності інтернет-магазину TeslaFix.",
     },
     "terms-of-service": {
-        "meta_title": "Умови сервісу | Tesla Parts Center",
-        "meta_description": "Умови сервісу інтернет-магазину Tesla Parts Center.",
+        "meta_title": "Умови сервісу | TeslaFix",
+        "meta_description": "Умови сервісу інтернет-магазину TeslaFix.",
     },
 }
 

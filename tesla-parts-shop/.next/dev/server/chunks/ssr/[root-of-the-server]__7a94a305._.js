@@ -387,7 +387,7 @@ const MOCK_PAGES = [
 const MOCK_STATIC_SEO = [
     {
         slug: 'home',
-        meta_title: 'Головна - Tesla Parts Shop',
+        meta_title: 'Головна - TeslaFix',
         meta_description: 'Магазин запчастин для Tesla'
     }
 ];
@@ -1566,7 +1566,7 @@ const Footer = ()=>{
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "container mx-auto px-4 mt-8 pt-8 border-t border-gray-100 dark:border-slate-800 text-center text-xs",
-                children: isMounted ? contactInfo.footerText || '© 2026 Tesla Parts Shop. Всі права захищені.' : ''
+                children: isMounted ? contactInfo.footerText || '© 2026 TeslaFix. Всі права захищені.' : ''
             }, void 0, false, {
                 fileName: "[project]/components/Footer.tsx",
                 lineNumber: 83,
@@ -2137,7 +2137,7 @@ const Sidebar = ()=>{
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "p-6 border-t border-gray-100 dark:border-slate-700 text-[10px] text-gray-400 dark:text-slate-500 font-medium uppercase tracking-widest bg-gray-50/50 dark:bg-slate-800/50",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            children: "© 2026 Tesla Parts Shop"
+                            children: "© 2026 TeslaFix"
                         }, void 0, false, {
                             fileName: "[project]/components/Sidebar.tsx",
                             lineNumber: 142,

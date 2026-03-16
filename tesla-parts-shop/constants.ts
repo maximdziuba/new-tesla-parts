@@ -159,6 +159,6 @@ export const MOCK_PAGES: any[] = [
 ];
 
 export const MOCK_STATIC_SEO: any[] = [
-  { slug: 'home', meta_title: 'Головна - Tesla Parts Shop', meta_description: 'Магазин запчастин для Tesla' },
+  { slug: 'home', meta_title: 'Головна - TeslaFix', meta_description: 'Магазин запчастин для Tesla' },
 ];
 
