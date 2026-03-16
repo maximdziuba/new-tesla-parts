@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ApiService } from '../services/api';
-import { ArrowLeft, Upload, X, Plus } from 'lucide-react';
+import { ArrowLeft, Upload, X, Plus, Settings } from 'lucide-react';
 import { Category, Subcategory } from '../types';
 
 interface CategoryAssignment {
@@ -731,5 +731,4 @@ export const ProductForm: React.FC = () => {
             </div>
         </div>
     );
-};
 };
