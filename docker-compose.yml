@@ -37,8 +37,8 @@ services:
       - ./tesla-parts-backend/static/images:/app/static/images:z
     environment:
       - DATABASE_URL=postgresql://tesla:teslapass@db:5432/tesladb
-      - FRONTEND_URL=https://teslapartscenter.com.ua,https://admin.teslapartscenter.com.ua
-      - BACKEND_URL=https://api.teslapartscenter.com.ua
+      - FRONTEND_URL=https://teslafix.com.ua,https://admin.teslafix.com.ua,https://www.teslafix.com.ua
+      - BACKEND_URL=https://api.teslafix.com.ua
       - JWT_SECRET_KEY=super-secret-jwt-key
     depends_on:
       - db
@@ -48,7 +48,7 @@ services:
     build:
       context: ./tesla-parts-shop
       args:
-        NEXT_PUBLIC_API_URL: https://api.teslapartscenter.com.ua
+        NEXT_PUBLIC_API_URL: https://api.teslafix.com.ua
     restart: always
 
   # --- Admin Frontend ---
@@ -56,7 +56,7 @@ services:
     build:
       context: ./tesla-parts-admin
       args:
-        VITE_API_URL: https://api.teslapartscenter.com.ua
+        VITE_API_URL: https://api.teslafix.com.ua
     restart: always
 
 volumes:
