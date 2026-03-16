@@ -217,7 +217,7 @@ const metadata = {
     title: 'Магазин запчастин',
     description: 'Купуйте оригінальні та перевірені запчастини для Tesla з доставкою по Україні.',
     icons: {
-        icon: '/tesla-favicon.png'
+        icon: '/tesla-fix.png'
     }
 };
 function RootLayout({ children }) {
