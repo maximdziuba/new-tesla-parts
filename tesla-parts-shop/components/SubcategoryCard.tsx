@@ -14,11 +14,11 @@ const SubcategoryCard: React.FC<SubcategoryCardProps> = ({ subcategory, onClick 
             className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden flex flex-col p-4 select-none h-full"
             style={{ WebkitTapHighlightColor: 'transparent' }}
         >
-            <div className="w-full aspect-[16/10] bg-gray-50 dark:bg-slate-900 flex-shrink-0 overflow-hidden mb-4 flex items-center justify-center rounded-lg">
+            <div className="w-full aspect-[16/10] bg-white dark:bg-slate-900 flex-shrink-0 overflow-hidden mb-4 flex items-center justify-center rounded-lg p-4">
                     <img 
                         src={subcategory.image || "https://www.tesla.com/ownersmanual/images/GUID-EE2A1356-1432-4B7F-86BB-7AB3569937C8-online-en-US.png"} 
                         alt={subcategory.name} 
-                        className="w-full h-full object-contain xl:group-hover:scale-105 transition-transform p-4 bg-white dark:bg-slate-900" 
+                        className="max-w-full max-h-full object-contain xl:group-hover:scale-105 transition-transform" 
                     />
             </div>
 
