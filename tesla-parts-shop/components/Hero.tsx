@@ -30,15 +30,15 @@ const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
           <div
             key={category.id}
             onClick={() => onSelectCategory(category.name)}
-            className="group relative h-64 md:h-96 rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"
+            className="group relative h-64 md:h-96 rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 bg-white dark:bg-slate-900"
           >
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-all z-10" />
             <img
               src={category.image || 'https://imgd.aeplcdn.com/1920x1080/n/cw/ec/201411/model-y-exterior-right-front-three-quarter.jpeg?isig=0&q=80&q=80'}
               alt={category.name}
-              className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+              className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-102 transition-transform duration-700"
             />
-            <div className="absolute bottom-0 left-0 p-6 z-20 text-white w-full">
+            <div className="absolute bottom-0 left-0 p-6 z-20 text-white w-full bg-gradient-to-t from-black/60 to-transparent">
               <h3 className="text-2xl font-bold mb-1">{category.name}</h3>
               <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider">
                 Переглянути каталог <ArrowRight size={16} />

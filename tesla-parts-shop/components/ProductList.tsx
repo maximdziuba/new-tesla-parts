@@ -55,7 +55,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, currency, uahPerUsd
               <img
                 src={product.image}
                 alt={product.name}
-                className="absolute inset-0 w-full h-full object-cover xl:group-hover:scale-105 transition-transform duration-300"
+                className="absolute inset-0 w-full h-full object-cover xl:group-hover:scale-102 transition-transform duration-300"
               />
               {!product.inStock && (
                 <div className="absolute top-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded">

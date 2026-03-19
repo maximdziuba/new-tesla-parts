@@ -53,9 +53,11 @@ const Sidebar: React.FC = () => {
       <aside className={`
         fixed lg:sticky inset-y-0 left-0 z-[66] lg:z-50
         lg:top-[96px] lg:h-[calc(100vh-96px)]
-        w-72 lg:w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700
-        transform transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700
+        transform transition-all duration-300 ease-in-out
+        ${isSidebarOpen 
+          ? 'translate-x-0 w-72 lg:w-64 opacity-100' 
+          : '-translate-x-full lg:translate-x-0 w-0 lg:w-0 opacity-0 pointer-events-none lg:pointer-events-none overflow-hidden'}
         flex flex-col transition-colors shadow-2xl lg:shadow-none
       `}>
         {/* Sidebar Header - Mobile Close Button Only */}
