@@ -52,8 +52,8 @@ const Sidebar: React.FC = () => {
       {/* Sidebar Container */}
       <aside className={`
         fixed lg:sticky inset-y-0 left-0 z-[66] lg:z-50
-        lg:top-[112px] lg:h-[calc(100vh-112px)]
-        w-72 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 
+        lg:top-[96px] lg:h-[calc(100vh-96px)]
+        w-72 lg:w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700
         transform transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         flex flex-col transition-colors shadow-2xl lg:shadow-none

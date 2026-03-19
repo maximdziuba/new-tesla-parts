@@ -149,10 +149,10 @@ const Header: React.FC = () => {
 
       {/* Second Row: Logo, Search, Cart - WHITE/DARK */}
       <div className="bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-colors relative">
-        <div className="px-4 py-0.5 md:py-1 flex items-center justify-between gap-4">
+        <div className="px-4 py-0.5 md:py-1 min-h-16 lg:min-h-[64px] flex items-center justify-between gap-4">
 
           {/* Burger & Logo Area - Align with Sidebar width on desktop if possible */}
-          <div className="flex items-center gap-2 lg:gap-4 lg:w-72">
+          <div className="flex items-center gap-2 lg:gap-4 lg:w-64">
             <button 
               onClick={() => setIsSidebarOpen(true)}
               className="lg:hidden p-2 -ml-2 text-slate-900 dark:text-white hover:text-blue-600 transition"
@@ -162,7 +162,7 @@ const Header: React.FC = () => {
 
             {/* Logo - Moved to the left */}
             <div className="flex-shrink-0 lg:pl-2">
-              <ShopLogo />
+              <ShopLogo compact />
             </div>
           </div>
 
