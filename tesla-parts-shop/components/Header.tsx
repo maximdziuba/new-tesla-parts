@@ -20,6 +20,7 @@ const Header: React.FC = () => {
     categories,
     setCurrency,
     setIsCartOpen,
+    isSidebarOpen,
     setIsSidebarOpen,
     theme,
     toggleTheme,
@@ -154,14 +155,15 @@ const Header: React.FC = () => {
           {/* Burger & Logo Area - Align with Sidebar width on desktop if possible */}
           <div className="flex items-center gap-2 lg:gap-4 lg:w-64">
             <button 
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 -ml-2 text-slate-900 dark:text-white hover:text-blue-600 transition"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 -ml-2 text-slate-900 dark:text-white hover:text-blue-600 transition flex items-center justify-center"
+              aria-label={isMounted ? (isSidebarOpen ? "Закрити меню" : "Відкрити меню") : "Меню"}
             >
-              <Menu size={28} />
+              {isMounted ? (isSidebarOpen ? <X size={28} /> : <Menu size={28} />) : <Menu size={28} />}
             </button>
 
             {/* Logo - Moved to the left */}
-            <div className="flex-shrink-0 lg:pl-2">
+            <div className="flex-shrink-0">
               <ShopLogo compact />
             </div>
           </div>

@@ -118,7 +118,7 @@ const preloadImages = async (imageUrls: (string | undefined)[]) => {
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currency, setCurrency] = useState<Currency>(Currency.UAH);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [uahPerUsd, setUahPerUsd] = useState(DEFAULT_EXCHANGE_RATE_UAH_PER_USD);
@@ -143,6 +143,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     setCart(getInitialCart());
     setTheme(getInitialTheme());
+
+    // Close sidebar on mobile initially
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
   }, []);
 
   // Theme application and system listener
