@@ -8,9 +8,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=tesla
-      - POSTGRES_PASSWORD=teslapass
-      - POSTGRES_DB=tesladb
+      POSTGRES_USER: tesla
+      POSTGRES_PASSWORD: teslapass
+      POSTGRES_DB: tesladb
   
   certbot:
     image: certbot/certbot
@@ -42,10 +42,10 @@ services:
     volumes:
       - ./tesla-parts-backend/static/images:/app/static/images:z
     environment:
-      - DATABASE_URL=postgresql://tesla:  teslapass@db:5432/tesladb
-      - FRONTEND_URL=https://teslafix.com.ua
-      - BACKEND_URL=https://api.teslafix.com.ua
-      - JWT_SECRET_KEY=super-secret-jwt-key
+      DATABASE_URL: "postgresql://tesla:teslapass@db:5432/tesladb"
+      FRONTEND_URL: "https://teslafix.com.ua"
+      BACKEND_URL: "https://api.teslafix.com.ua"
+      JWT_SECRET_KEY: "super-secret-jwt-key"
     depends_on:
       - db
       
