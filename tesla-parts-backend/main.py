@@ -75,7 +75,7 @@ origins = [
     "http://localhost:3001",
     "https://teslafix.com.ua",
     "https://www.teslafix.com.ua",
-    "https://admin.teslafix.com.ua",
+    "https://admin.teslafix.com.ua"
 ]
 
 # Add frontend URL from environment variable if set
