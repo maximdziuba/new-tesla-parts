@@ -11,7 +11,12 @@ export const metadata: Metadata = {
   title: 'Магазин запчастин',
   description: 'Купуйте оригінальні та перевірені запчастини для Tesla з доставкою по Україні.',
   icons: {
-    icon: '/tesla-fix.png',
+    icon: [
+      {
+        url: 'https://www.teslafix.com.ua/tesla-fix.png',
+        type: 'image/png',
+      },
+    ],
   },
 };
 
@@ -22,6 +27,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="uk" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Tesla Fix",
+              "url": "https://teslafix.com.ua"
+            })
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col font-sans text-slate-900 bg-[#f8fafc]">
         <AppProvider>
           <Suspense fallback={null}>
