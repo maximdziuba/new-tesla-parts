@@ -7,7 +7,7 @@ from database import create_db_and_tables, engine, get_session
 from routers import products, orders, categories, settings, pages, auth, feeds # Import auth and feeds routers
 from contextlib import asynccontextmanager
 import os
-from models import Product, Category, StaticPageSEO
+from models import Product, Category, Subcategory, StaticPageSEO
 from schemas import StaticPageSEORead, StaticPageSEOUpdate
 from dependencies import get_current_admin
 
