@@ -16,7 +16,11 @@ const Sidebar: React.FC = () => {
 
   const sortedCategories = [...categories].sort((a, b) => (b.sort_order ?? 0) - (a.sort_order ?? 0));
 
-  const closeSidebar = () => setIsSidebarOpen(false);
+  const closeSidebar = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  };
 
   // Initialize expanded state based on pathname
   useEffect(() => {

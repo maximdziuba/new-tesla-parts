@@ -1,14 +1,20 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { api } from '../services/api';
 import { Category } from '../types';
+import { useRouter } from 'next/navigation';
 
 interface HeroProps {
-  onSelectCategory: (category: string) => void;
+  onSelectCategory?: (category: string) => void;
 }
+
+const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
 
 const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -22,6 +28,14 @@ const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
     fetchCategories();
   }, []);
 
+  const handleSelect = (categoryName: string) => {
+    if (onSelectCategory) {
+      onSelectCategory(categoryName);
+    } else {
+      router.push(`/category/${slugify(categoryName)}`);
+    }
+  };
+
   return (
     <div className="mb-12">
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-slate-900 dark:text-white transition-colors">Оберіть модель вашого електромобіля</h1>
@@ -29,7 +43,7 @@ const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
         {categories.map((category) => (
           <div
             key={category.id}
-            onClick={() => onSelectCategory(category.name)}
+            onClick={() => handleSelect(category.name)}
             className="group relative h-64 md:h-96 rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 bg-white dark:bg-slate-900"
           >
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-all z-10" />
