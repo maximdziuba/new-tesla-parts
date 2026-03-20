@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ShoppingCart, Search, Menu, X, Send, ChevronDown, Sun, Moon, MessageSquare, Phone } from 'lucide-react';
+import { ShoppingCart, Search, Menu, X, ChevronDown, Sun, Moon, Phone } from 'lucide-react';
 import { Currency } from '../types';
 import ShopLogo from './ShopLogo';
 import Link from 'next/link';
 import { formatCurrency } from '../utils/currency';
 import { useApp } from '../context/AppContext';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTelegram, faWhatsapp, faViber } from '@fortawesome/free-brands-svg-icons';
 
 const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
 
@@ -119,6 +121,22 @@ const Header: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-4">
+            {isMounted && socialLinks.telegram && (
+                <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="hidden md:flex hover:text-blue-100 transition p-1.5 bg-white/10 rounded-full" title="Telegram">
+                    <FontAwesomeIcon icon={faTelegram} size="lg" className="text-white" />
+                </a>
+            )}
+            {isMounted && socialLinks.viber && (
+                <a href={socialLinks.viber} target="_blank" rel="noopener noreferrer" className="hidden md:flex hover:text-blue-100 transition p-1.5 bg-white/10 rounded-full" title="Viber">
+                    <FontAwesomeIcon icon={faViber} size="lg" className="text-white" />
+                </a>
+            )}
+            {isMounted && socialLinks.whatsapp && (
+                <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="hidden md:flex hover:text-blue-100 transition p-1.5 bg-white/10 rounded-full" title="WhatsApp">
+                    <FontAwesomeIcon icon={faWhatsapp} size="lg" className="text-white" />
+                </a>
+            )}
+            
             {isMounted && contactInfo.phone && (
                 <a href={`tel:${contactInfo.phone}`} className="hover:text-blue-100 transition p-1.5 bg-white/10 rounded-full" title={contactInfo.phone}>
                     <Phone size={16} className="text-white" />

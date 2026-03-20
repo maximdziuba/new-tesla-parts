@@ -6,6 +6,9 @@ import Footer from '../components/Footer';
 import CartDrawer from '../components/CartDrawer';
 import Sidebar from '../components/Sidebar';
 import { Suspense } from 'react';
+import { config } from '@fortawesome/fontawesome-svg-core';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+config.autoAddCss = false;
 
 export const metadata: Metadata = {
   title: 'Магазин запчастин',

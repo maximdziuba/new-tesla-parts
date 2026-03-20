@@ -8,6 +8,8 @@ export const SettingsPage: React.FC = () => {
     const [savingRate, setSavingRate] = useState(false);
     const [instagram, setInstagram] = useState('');
     const [telegram, setTelegram] = useState('');
+    const [viber, setViber] = useState('');
+    const [whatsapp, setWhatsapp] = useState('');
     const [savingSocial, setSavingSocial] = useState(false);
     const [botToken, setBotToken] = useState('');
     const [chatId, setChatId] = useState('');
@@ -42,6 +44,8 @@ export const SettingsPage: React.FC = () => {
             const data = await ApiService.getSocialLinks();
             setInstagram(data.instagram);
             setTelegram(data.telegram);
+            setViber(data.viber);
+            setWhatsapp(data.whatsapp);
         } catch (e) {
             console.error("Failed to load social links", e);
         }
@@ -101,7 +105,7 @@ export const SettingsPage: React.FC = () => {
         e.preventDefault();
         setSavingSocial(true);
         try {
-            await ApiService.updateSocialLinks({ instagram, telegram });
+            await ApiService.updateSocialLinks({ instagram, telegram, viber, whatsapp });
             alert('Посилання збережено!');
         } catch (e) {
             console.error("Failed to save social links", e);
@@ -218,6 +222,32 @@ export const SettingsPage: React.FC = () => {
                                 onChange={e => setTelegram(e.target.value)}
                                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
                                 placeholder="https://t.me/..."
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                                Viber Link
+                            </label>
+                            <input
+                                type="text"
+                                value={viber}
+                                onChange={e => setViber(e.target.value)}
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
+                                placeholder="viber://chat?number=..."
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                                WhatsApp Link
+                            </label>
+                            <input
+                                type="text"
+                                value={whatsapp}
+                                onChange={e => setWhatsapp(e.target.value)}
+                                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50 text-sm font-medium transition-all"
+                                placeholder="https://wa.me/..."
                             />
                         </div>
                     </div>
