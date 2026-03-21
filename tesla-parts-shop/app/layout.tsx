@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CartDrawer from '../components/CartDrawer';
 import Sidebar from '../components/Sidebar';
+import ScrollToTop from '../components/ScrollToTop';
 import { Suspense } from 'react';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -45,6 +46,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col font-sans text-slate-900 bg-[#f8fafc]">
         <AppProvider>
+          <ScrollToTop />
           <Suspense fallback={null}>
             <Header />
           </Suspense>
