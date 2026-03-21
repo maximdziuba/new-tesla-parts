@@ -18,6 +18,18 @@ const Sidebar: React.FC = () => {
 
   const closeSidebar = () => setIsSidebarOpen(false);
 
+  // Body scroll lock when sidebar is open
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.documentElement.classList.add('overflow-hidden');
+    } else {
+      document.documentElement.classList.remove('overflow-hidden');
+    }
+    return () => {
+      document.documentElement.classList.remove('overflow-hidden');
+    };
+  }, [isSidebarOpen]);
+
   // Initialize expanded state based on pathname
   useEffect(() => {
     const newExpanded: Record<number, boolean> = { ...expandedCategories };
@@ -51,9 +63,8 @@ const Sidebar: React.FC = () => {
 
       {/* Sidebar Container */}
       <aside className={`
-  fixed top-0 left-0 z-[66] lg:z-50
-  h-[100dvh] min-h-screen
-  lg:sticky lg:top-[96px] lg:h-[calc(100vh-96px)]
+  fixed lg:sticky top-0 left-0 z-[66] lg:z-50
+  h-[100dvh] min-h-screen lg:h-[calc(100vh-96px)] lg:top-[96px]
   bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700
   transform transition-all duration-300 ease-in-out
   ${isSidebarOpen
@@ -69,7 +80,7 @@ const Sidebar: React.FC = () => {
         </div>
 
         {/* Categories List */}
-        <div className="flex-grow overflow-y-auto py-6 px-4 lg:pt-8">
+        <div className="flex-grow overflow-y-auto py-6 px-4 lg:pt-8 h-full">
           <h2 className="text-xs font-semibold text-gray-400 dark:text-slate-400 uppercase tracking-wider mb-4 px-3">
             Категорії запчастин
           </h2>
