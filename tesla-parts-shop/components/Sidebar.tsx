@@ -51,8 +51,9 @@ const Sidebar: React.FC = () => {
 
       {/* Sidebar Container */}
       <aside className={`
-  fixed lg:sticky top-0 bottom-0 lg:bottom-auto left-0 z-[66] lg:z-50
-  h-[100dvh] lg:h-[calc(100vh-96px)] lg:top-[96px]
+  fixed top-0 left-0 z-[66] lg:z-50
+  h-[100dvh] min-h-screen
+  lg:sticky lg:top-[96px] lg:h-[calc(100vh-96px)]
   bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700
   transform transition-all duration-300 ease-in-out
   ${isSidebarOpen
