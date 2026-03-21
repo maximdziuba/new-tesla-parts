@@ -17,10 +17,6 @@ function SearchResults() {
   const router = useRouter();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [searchQuery]);
-
-  useEffect(() => {
     const fetchResults = async () => {
       if (!searchQuery) {
         setProducts([]);

@@ -1,64 +1,20 @@
-'use client';
-
 import React, { useState, useMemo, useEffect } from 'react';
-import { Product, Currency, Category, Subcategory } from '../types';
-import { ShoppingCart, ArrowLeft, Check, ChevronLeft, ChevronRight, Truck } from 'lucide-react';
+import { Product, Currency } from '../types';
+import { ShoppingCart, ArrowLeft, Check, ChevronLeft, ChevronRight, Truck, ShieldCheck } from 'lucide-react';
 import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD } from '../constants';
 import SeoHead from './SeoHead';
 import { formatCurrency } from '../utils/currency';
 import { api } from '../services/api';
-import { useApp } from '../context/AppContext';
-import { useRouter } from 'next/navigation';
 
 interface ProductPageProps {
     product: Product;
+    currency: Currency;
+    uahPerUsd: number;
+    onAddToCart: (product: Product) => void;
+    onBack: () => void;
 }
 
-const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
-
-const parseProductCategories = (value?: string | null) => {
-  if (!value) return [];
-  return value.split(',').map(item => item.trim()).filter(Boolean);
-};
-
-const getPrimaryCategory = (value?: string | null) => {
-  const categories = parseProductCategories(value);
-  return categories.length > 0 ? categories[0] : '';
-};
-
-const getProductSubcategoryIds = (product: Product): number[] => {
-  if (product.subcategory_ids && product.subcategory_ids.length > 0) {
-    return product.subcategory_ids;
-  }
-  return product.subcategory_id ? [product.subcategory_id] : [];
-};
-
-const categoryContainsSubcategory = (subs: Subcategory[] | undefined, targetId: number): boolean => {
-  if (!subs) return false;
-  for (const sub of subs) {
-    if (sub.id === targetId) {
-      return true;
-    }
-    if (sub.subcategories && categoryContainsSubcategory(sub.subcategories, targetId)) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const findCategorySlugForSubcategory = (categories: Category[], targetId: number): string | null => {
-  for (const category of categories) {
-    if (categoryContainsSubcategory(category.subcategories, targetId)) {
-      return slugify(category.name);
-    }
-  }
-  return null;
-};
-
-const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
-    const { currency, uahPerUsd, addToCart, categories } = useApp();
-    const router = useRouter();
-
+const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd, onAddToCart, onBack }) => {
     // Combine main image with additional images and remove duplicates
     const allImages = useMemo(
         () => Array.from(new Set([product.image, ...(product.images || [])].filter(Boolean))),
@@ -70,10 +26,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
     const effectiveRate = uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
 
     useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [product.id]);
-
-    useEffect(() => {
         const fetchDeliveryInfo = async () => {
             const page = await api.getPage('delivery');
             if (page && page.content) {
@@ -83,29 +35,23 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
         fetchDeliveryInfo();
     }, []);
 
+    const fallbackTitle = `${product.name}`;
+    const fallbackDescription = useMemo(() => {
+        const trimmed = product.meta_description?.trim();
+        if (trimmed) return trimmed;
+        const desc = product.description?.trim();
+        if (desc) {
+            const shortened = desc.length > 160 ? `${desc.slice(0, 157).trimEnd()}...` : desc;
+            return shortened;
+        }
+        return `Buy ${product.name} at Auto Parts Store`;
+    }, [product.meta_description, product.description, product.name]);
+    const seoImage = selectedImage || product.image;
+
     const handleAddToCart = () => {
-        addToCart(product);
+        onAddToCart(product);
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
-    };
-
-    const handleBack = () => {
-        const subcategoryIds = getProductSubcategoryIds(product);
-        if (subcategoryIds.length > 0) {
-          const targetSubId = subcategoryIds[0];
-          const categorySlug = findCategorySlugForSubcategory(categories, targetSubId);
-          if (categorySlug) {
-            router.push(`/category/${categorySlug}/sub/${targetSubId}`);
-            return;
-          }
-        }
-    
-        const primaryCategory = getPrimaryCategory(product.category);
-        if (primaryCategory) {
-          router.push(`/category/${slugify(primaryCategory)}`);
-        } else {
-          router.push('/');
-        }
     };
 
     const handlePrevImage = () => {
@@ -135,9 +81,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
             <SeoHead
                 title={product.meta_title || product.name}
                 description={product.meta_description}
-                fallbackTitle={product.name}
+                fallbackTitle={product.name} // Якщо немає meta_title, візьме назву
                 fallbackDescription={`Купити ${product.name} за ціною ${product.priceUAH} грн`}
                 image={product.image}
+
+                // ВАЖЛИВО: Передаємо дані для Schema
                 type="product"
                 price={product.priceUAH}
                 currency="UAH"
@@ -145,7 +93,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
                 deliveryInfo={deliveryInfo}
             />
             <button
-                onClick={handleBack}
+                onClick={onBack}
                 className="flex items-center text-gray-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 transition-colors group"
             >
                 <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />

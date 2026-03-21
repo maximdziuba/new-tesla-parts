@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProductList from '../components/ProductList';
 import SubcategoryCard from '../components/SubcategoryCard';
@@ -31,31 +31,64 @@ const sortSubcategoryTreeData = (subs?: Subcategory[]): Subcategory[] => {
     }));
 };
 
-interface CategoryViewProps {
-    slug: string;
-    subId: number | null;
-    initialCategory: Category;
-    initialProducts: Product[];
-}
-
-const CategoryViewComponent: React.FC<CategoryViewProps> = ({ slug, subId, initialCategory, initialProducts }) => {
+const CategoryViewComponent: React.FC = () => {
+  const params = useParams();
   const router = useRouter();
+  const { slug, subId: subIdParam } = params;
+  const subId = subIdParam ? Number(subIdParam) : null;
+
   const { categories, currency, uahPerUsd, addToCart, loading: appLoading } = useApp();
   
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [loadingProducts, setLoadingProducts] = useState(false);
-  const [detailedCategory, setDetailedCategory] = useState<Category>(initialCategory);
+  const currentCategory = useMemo(() => {
+    return categories.find(c => slugify(c.name) === slug);
+  }, [categories, slug]);
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [detailedCategory, setDetailedCategory] = useState<Category | null>(null);
   const [loadingCategory, setLoadingCategory] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug, subId]);
+    if (!currentCategory) return;
+    
+    const fetchDetails = async () => {
+      setLoadingCategory(true);
+      try {
+        const fullData = await api.getCategory(currentCategory.id);
+        const sorted = {
+            ...fullData,
+            subcategories: sortSubcategoryTreeData(fullData.subcategories)
+        };
+        setDetailedCategory(sorted);
+      } catch (e) {
+        console.error("Failed to fetch category details", e);
+      } finally {
+        setLoadingCategory(false);
+      }
+    };
+    fetchDetails();
+  }, [currentCategory]);
 
-  // Update data if props change (e.g. navigation)
   useEffect(() => {
-    setDetailedCategory(initialCategory);
-    setProducts(initialProducts);
-  }, [initialCategory, initialProducts]);
+    if (!slug) return;
+    
+    const fetchProducts = async () => {
+      setLoadingProducts(true);
+      try {
+        const filters: any = { category: slug };
+        if (subId) {
+          filters.subId = subId;
+        }
+        const data = await api.getProducts(filters);
+        setProducts(data);
+      } catch (e) {
+        console.error("Failed to fetch category products", e);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+    fetchProducts();
+  }, [slug, subId]);
 
   const findSubcategory = (subs: Subcategory[], targetId: number): Subcategory | null => {
     if (!subs) return null;
@@ -72,19 +105,52 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ slug, subId, initi
   };
 
   const currentSubcategory = subId && detailedCategory
-    ? findSubcategory(detailedCategory.subcategories || [], subId)
+    ? findSubcategory(detailedCategory.subcategories, subId)
     : null;
 
+  useEffect(() => {
+    if (!loadingCategory && subId && !currentSubcategory && detailedCategory && detailedCategory.subcategories && detailedCategory.subcategories.length > 0) {
+      router.replace(`/category/${slug}`);
+    }
+  }, [subId, currentSubcategory, router, slug, loadingCategory, detailedCategory]);
+
+  const getBackLink = (): string => {
+    if (!subId || !detailedCategory) return '/';
+    
+    const findParent = (subs: Subcategory[], target: number, parent: number | null = null): number | null => {
+      if (!subs) return null;
+      for (const sub of subs) {
+        if (sub.id === target) {
+          return parent;
+        }
+        if (sub.subcategories) {
+          const result = findParent(sub.subcategories, target, sub.id);
+          if (result !== null && result !== undefined) {
+            return result;
+          }
+        }
+      }
+      return null;
+    };
+    
+    const parentId = findParent(detailedCategory.subcategories, subId, null);
+    if (parentId) {
+      return `/category/${slug}/sub/${parentId}`;
+    } else {
+      return `/category/${slug}`;
+    }
+  };
+
   const getSelectedSubcategoryName = () => {
-    if (!subId || !detailedCategory) return initialCategory?.name || '';
-    const found = findSubcategory(detailedCategory.subcategories || [], subId);
-    return found?.name || detailedCategory?.name || '';
+    if (!subId || !detailedCategory) return currentCategory?.name || '';
+    const found = findSubcategory(detailedCategory.subcategories, subId);
+    return found?.name || currentCategory?.name || '';
   };
 
   const getBreadcrumbs = () => {
-    if (!detailedCategory) return [];
-    const crumbs = [{ name: detailedCategory.name, url: `/category/${slug}` }];
-    if (subId && detailedCategory.subcategories) {
+    if (!currentCategory) return [];
+    const crumbs = [{ name: currentCategory.name, url: `/category/${slug}` }];
+    if (subId && detailedCategory) {
       const findPath = (subs: Subcategory[], target: number, currentPath: Subcategory[] = []): Subcategory[] | null => {
         for (const sub of subs) {
           const newPath = [...currentPath, sub];
@@ -105,25 +171,42 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ slug, subId, initi
   };
 
   const subcategoriesToShow = useMemo(() => {
+    if (loadingCategory || !detailedCategory) return [];
+    
     const base = subId
       ? currentSubcategory?.subcategories || []
-      : detailedCategory.subcategories || [];
+      : detailedCategory.subcategories;
     return sortSubcategoryTreeData(base);
-  }, [subId, currentSubcategory, detailedCategory]);
+  }, [subId, currentSubcategory, detailedCategory, loadingCategory]);
+
+  if (appLoading || (!currentCategory && !loadingCategory)) {
+    if (!appLoading && !currentCategory) {
+        return <div>Категорію не знайдено</div>;
+    }
+    return (
+        <div className="flex justify-center py-20">
+          <div className="relative w-10 h-10">
+            <div className="absolute inset-0 border-4 border-blue-600/20 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-blue-600 border-t-transparent rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      );
+  }
 
   const pageHeading = getSelectedSubcategoryName();
   const fallbackTitle = `${pageHeading}`;
   const fallbackDescription = subId
-    ? `Запчастини підкатегорії ${pageHeading} в категорії ${detailedCategory?.name}.`
-    : `Категорія ${detailedCategory?.name}: підберіть запчастини для вашого авто.`;
+    ? `Запчастини підкатегорії ${pageHeading} в категорії ${currentCategory?.name}.`
+    : `Категорія ${currentCategory?.name}: підберіть запчастини для вашого авто.`;
 
+  const backLink = getBackLink();
   const loading = loadingProducts || loadingCategory;
 
   return (
     <div className="mt-8">
       <SeoHead
-        title={detailedCategory?.meta_title || undefined}
-        description={detailedCategory?.meta_description || undefined}
+        title={currentCategory?.meta_title || undefined}
+        description={currentCategory?.meta_description || undefined}
         fallbackTitle={fallbackTitle}
         fallbackDescription={fallbackDescription}
       />

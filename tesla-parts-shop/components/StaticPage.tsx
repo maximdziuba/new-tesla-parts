@@ -23,10 +23,6 @@ const StaticPage: React.FC<StaticPageProps> = ({ slug, onBack, seo }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [slug]);
-
-    useEffect(() => {
         const loadPage = async () => {
             setLoading(true);
             try {
