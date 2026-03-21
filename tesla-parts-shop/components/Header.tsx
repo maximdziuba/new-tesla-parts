@@ -126,7 +126,7 @@ const Header: React.FC = () => {
           {isMounted && (
             <a
               href={phoneHref}
-              className="md:hidden flex-1 min-w-0 text-center text-[11px] font-semibold whitespace-nowrap text-white/95 hover:text-white transition px-2"
+              className="md:hidden flex-1 min-w-0 text-center text-sm font-semibold whitespace-nowrap text-white/95 hover:text-white transition px-2"
               title={displayPhone}
             >
               <span className="block truncate">{displayPhone}</span>
@@ -136,7 +136,7 @@ const Header: React.FC = () => {
           {isMounted && (
             <a
               href={phoneHref}
-              className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-white/95 hover:text-white transition whitespace-nowrap"
+              className="hidden md:inline-flex items-center gap-2 text-base font-semibold text-white/95 hover:text-white transition whitespace-nowrap"
               title={displayPhone}
             >
               <span>{displayPhone}</span>
