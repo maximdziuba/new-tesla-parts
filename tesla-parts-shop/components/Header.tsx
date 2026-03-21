@@ -10,6 +10,7 @@ import { useApp } from '../context/AppContext';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
+const DEFAULT_HEADER_PHONE = '+380 98 919 6969';
 
 const Header: React.FC = () => {
   const {
@@ -80,11 +81,32 @@ const Header: React.FC = () => {
     return currency === Currency.UAH ? cartTotalUSD * rate : cartTotalUSD;
   })();
 
+  const displayPhone = contactInfo.phone || DEFAULT_HEADER_PHONE;
+  const phoneHref = `tel:${displayPhone.replace(/[^\d+]/g, '')}`;
+
+  const socialActions = [
+    {
+      href: socialLinks.telegram,
+      label: 'Telegram',
+      icon: <Send size={16} className="text-white" />,
+    },
+    {
+      href: socialLinks.viber,
+      label: 'Viber',
+      icon: <Phone size={16} className="text-white" />,
+    },
+    {
+      href: socialLinks.whatsapp,
+      label: 'WhatsApp',
+      icon: <MessageSquare size={16} className="text-white" />,
+    },
+  ].filter((action) => action.href);
+
   return (
     <header className="sticky top-0 z-[60] shadow-md transition-colors">
       {/* Top Row: Utilities & Info - BLUE (Hidden in mobile landscape to save space) */}
       <div className="bg-blue-600 text-white text-xs py-2 px-4 transition-colors max-md:landscape:hidden">
-        <div className="container mx-auto flex flex-row w-full justify-between items-center gap-2">
+        <div className="container mx-auto flex flex-row w-full justify-between items-center gap-2 md:gap-4">
           <nav className="hidden md:flex flex-wrap gap-4 md:gap-6 justify-center md:justify-start">
             {headerPages.filter(page => page.is_published).map((page) => (
               <Link 
@@ -117,13 +139,43 @@ const Header: React.FC = () => {
               </div>
             )}
           </div>
+
+          {isMounted && (
+            <a
+              href={phoneHref}
+              className="md:hidden flex-1 min-w-0 text-center text-[11px] font-semibold whitespace-nowrap text-white/95 hover:text-white transition px-2"
+              title={displayPhone}
+            >
+              <span className="block truncate">{displayPhone}</span>
+            </a>
+          )}
           
-          <div className="flex items-center gap-4">
-            {isMounted && contactInfo.phone && (
-                <a href={`tel:${contactInfo.phone}`} className="hover:text-blue-100 transition p-1.5 bg-white/10 rounded-full" title={contactInfo.phone}>
-                    <Phone size={16} className="text-white" />
-                </a>
+          <div className="flex items-center gap-2 md:gap-4">
+            {isMounted && (
+              <a
+                href={phoneHref}
+                className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-white/95 hover:text-white transition whitespace-nowrap"
+                title={displayPhone}
+              >
+                <span>{displayPhone}</span>
+              </a>
             )}
+
+            <div className="hidden md:flex items-center gap-2">
+              {socialActions.map((action) => (
+                <a
+                  key={action.label}
+                  href={action.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex p-1.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                  title={action.label}
+                  aria-label={action.label}
+                >
+                  {action.icon}
+                </a>
+              ))}
+            </div>
 
             <button 
               onClick={toggleTheme}

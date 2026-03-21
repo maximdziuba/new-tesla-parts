@@ -143,7 +143,7 @@ const NovaPostWidget: React.FC<NovaPostWidgetProps> = ({ onSelect }) => {
 
       {/* --- THE MODAL OVERLAY --- */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-0 md:p-4">
+        <div className="fixed inset-0 bg-black/60 z-[80] flex items-center justify-center p-0 md:p-4">
           <div className="bg-white w-full h-full md:w-[90%] md:h-[90%] md:rounded-lg overflow-hidden flex flex-col relative shadow-2xl">
             
             {/* Modal Header */}
