@@ -133,7 +133,8 @@ const Header: React.FC = () => {
             </a>
           )}
 
-          {isMounted && (
+          <div className="flex items-center gap-4">
+             {isMounted && (
             <a
               href={phoneHref}
               className="hidden md:inline-flex items-center gap-2 text-base font-semibold text-white/95 hover:text-white transition whitespace-nowrap"
@@ -143,7 +144,6 @@ const Header: React.FC = () => {
             </a>
           )}
 
-          <div className="flex items-center gap-4">
             {isMounted && socialLinks.telegram && (
               <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="hidden md:flex hover:text-blue-100 transition p-1.5 bg-white/10 rounded-full" title="Telegram">
                 <FontAwesomeIcon icon={faTelegram} size="lg" className="text-white" />
