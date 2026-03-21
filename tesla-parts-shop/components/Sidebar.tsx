@@ -18,18 +18,6 @@ const Sidebar: React.FC = () => {
 
   const closeSidebar = () => setIsSidebarOpen(false);
 
-  // Body scroll lock when sidebar is open
-  useEffect(() => {
-    if (isSidebarOpen) {
-      document.documentElement.classList.add('overflow-hidden');
-    } else {
-      document.documentElement.classList.remove('overflow-hidden');
-    }
-    return () => {
-      document.documentElement.classList.remove('overflow-hidden');
-    };
-  }, [isSidebarOpen]);
-
   // Initialize expanded state based on pathname
   useEffect(() => {
     const newExpanded: Record<number, boolean> = { ...expandedCategories };
