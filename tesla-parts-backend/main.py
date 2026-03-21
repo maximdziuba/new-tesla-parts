@@ -7,7 +7,7 @@ from database import create_db_and_tables, engine, get_session
 from routers import products, orders, categories, settings, pages, auth, feeds # Import auth and feeds routers
 from contextlib import asynccontextmanager
 import os
-from models import Product, Category, StaticPageSEO
+from models import Product, Category, Subcategory, StaticPageSEO
 from schemas import StaticPageSEORead, StaticPageSEOUpdate
 from dependencies import get_current_admin
 
@@ -75,7 +75,7 @@ origins = [
     "http://localhost:3001",
     "https://teslafix.com.ua",
     "https://www.teslafix.com.ua",
-    "https://admin.teslafix.com.ua",
+    "https://admin.teslafix.com.ua"
 ]
 
 # Add frontend URL from environment variable if set
@@ -118,21 +118,35 @@ def _slugify(value: str) -> str:
 
 @app.get("/sitemap.xml", response_class=Response)
 def get_sitemap():
-    base_url = os.getenv("FRONTEND_URL", "https://teslafix.com.ua")
+    base_url = os.getenv("FRONTEND_URL", "https://teslafix.com.ua").rstrip("/")
     with Session(engine) as session:
         products = session.exec(select(Product)).all()
+        # Load categories with subcategories
         categories = session.exec(select(Category)).all()
+        subcategories = session.exec(select(Subcategory)).all()
 
     xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
     xml_parts.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
-    xml_parts.append(f'<url><loc>{base_url}/</loc><changefreq>daily</changefreq></url>')
+    
+    # Home page
+    xml_parts.append(f'<url><loc>{base_url}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>')
 
+    # Categories
+    category_map = {c.id: _slugify(c.name) for c in categories}
     for category in categories:
-        slug = _slugify(category.name) if category.name else f"category/{category.id}"
-        xml_parts.append(f'<url><loc>{base_url}/{slug}</loc><changefreq>weekly</changefreq></url>')
+        slug = category_map.get(category.id)
+        if slug:
+            xml_parts.append(f'<url><loc>{base_url}/category/{slug}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>')
 
+    # Subcategories
+    for sub in subcategories:
+        cat_slug = category_map.get(sub.category_id)
+        if cat_slug:
+            xml_parts.append(f'<url><loc>{base_url}/category/{cat_slug}/sub/{sub.id}</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>')
+
+    # Products
     for product in products:
-        xml_parts.append(f'<url><loc>{base_url}/product/{product.id}</loc><changefreq>weekly</changefreq></url>')
+        xml_parts.append(f'<url><loc>{base_url}/product/{product.id}</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>')
 
     xml_parts.append("</urlset>")
 

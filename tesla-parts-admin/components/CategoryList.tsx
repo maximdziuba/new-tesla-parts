@@ -214,7 +214,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
     
         return (
             <div className="border-l border-gray-100 ml-4">
-                <div className={`flex items-center justify-between py-2 hover:bg-gray-50 rounded px-2 ${level > 0 ? 'ml-4' : ''}`}>
+                <div className={`group flex items-center justify-between py-2 hover:bg-gray-50 rounded px-2 ${level > 0 ? 'ml-4' : ''}`}>
                     <div 
                         className={`flex items-center gap-2 text-gray-700 flex-1 ${canExpand ? 'cursor-pointer' : ''}`}
                         onClick={() => canExpand && setIsExpanded(!isExpanded)}
@@ -319,7 +319,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                         )}
                     </div>
                     {!isEditing && (
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1">
                             <Link
                                 to={`/products/new?subcategory_id=${subcategory.id}&category_id=${categoryId}`}
                                 className="text-gray-400 hover:text-emerald-600 p-1.5 hover:bg-emerald-50 rounded-lg transition-colors"
@@ -555,7 +555,7 @@ const SubcategoryItem: React.FC<SubcategoryItemProps> = ({
                                                             </span>
                                                         </td>
                                                         <td className="px-4 py-2 text-right">
-                                                            <div className="flex justify-end gap-1 opacity-0 group-hover/row:opacity-100 transition-opacity">
+                                                            <div className="flex justify-end gap-1">
                                                                 <Link
                                                                     to={`/products/edit/${product.id}`}
                                                                     className="p-1 text-blue-500 hover:bg-blue-50 rounded-md transition-colors"
@@ -1175,7 +1175,7 @@ const CategoryList: React.FC = () => {
                                                                     )}
                                                                 </td>
                                                                 <td className="px-4 py-2 text-right">
-                                                                    <div className="flex justify-end gap-1 opacity-0 group-hover/p:opacity-100 transition-opacity">
+                                                                    <div className="flex justify-end gap-1">
                                                                         <Link
                                                                             to={`/products/edit/${product.id}`}
                                                                             className="p-1.5 text-blue-500 hover:bg-blue-100 rounded-lg transition-colors"

@@ -22,28 +22,26 @@ class SettingUpdate(BaseModel):
 def get_social_links(session: Session = Depends(get_session)):
     instagram_link = session.get(Settings, "instagram_link")
     telegram_link = session.get(Settings, "telegram_link")
+    viber_link = session.get(Settings, "viber_link")
+    whatsapp_link = session.get(Settings, "whatsapp_link")
     return SocialLinks(
         instagram=instagram_link.value if instagram_link else "",
-        telegram=telegram_link.value if telegram_link else ""
+        telegram=telegram_link.value if telegram_link else "",
+        viber=viber_link.value if viber_link else "",
+        whatsapp=whatsapp_link.value if whatsapp_link else ""
     )
 
 @router.post("/social-links", dependencies=[Depends(get_current_admin)])
 def update_social_links(links: SocialLinks, session: Session = Depends(get_session)):
-    instagram_link = session.get(Settings, "instagram_link")
-    if not instagram_link:
-        instagram_link = Settings(key="instagram_link", value=links.instagram or "")
-        session.add(instagram_link)
-    else:
-        instagram_link.value = links.instagram or ""
-        session.add(instagram_link)
-
-    telegram_link = session.get(Settings, "telegram_link")
-    if not telegram_link:
-        telegram_link = Settings(key="telegram_link", value=links.telegram or "")
-        session.add(telegram_link)
-    else:
-        telegram_link.value = links.telegram or ""
-        session.add(telegram_link)
+    for key, value in links.model_dump().items():
+        db_key = f"{key}_link"
+        setting = session.get(Settings, db_key)
+        if not setting:
+            setting = Settings(key=db_key, value=value or "")
+            session.add(setting)
+        else:
+            setting.value = value or ""
+            session.add(setting)
 
     session.commit()
     return {"message": "Social links updated successfully"}

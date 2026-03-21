@@ -4,7 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import ShopLogo from './ShopLogo';
 import { useApp } from '../context/AppContext';
-import { Send, MessageSquare, Phone } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTelegram, faWhatsapp, faViber } from '@fortawesome/free-brands-svg-icons';
 
 const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
 
@@ -64,17 +65,17 @@ const Footer: React.FC = () => {
           <div className="flex gap-3 mt-4">
             {isMounted && socialLinks.telegram && (
               <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 transition text-slate-600 dark:text-slate-400" title="Telegram">
-                <Send size={18} />
+                <FontAwesomeIcon icon={faTelegram} size="lg" />
               </a>
             )}
             {isMounted && socialLinks.whatsapp && (
               <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center hover:bg-green-500 hover:text-white dark:hover:bg-green-600 transition text-slate-600 dark:text-slate-400" title="WhatsApp">
-                <MessageSquare size={18} />
+                <FontAwesomeIcon icon={faWhatsapp} size="lg" />
               </a>
             )}
             {isMounted && socialLinks.viber && (
               <a href={socialLinks.viber} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center hover:bg-purple-500 hover:text-white dark:hover:bg-purple-600 transition text-slate-600 dark:text-slate-400" title="Viber">
-                <Phone size={18} />
+                <FontAwesomeIcon icon={faViber} size="lg" />
               </a>
             )}
           </div>
