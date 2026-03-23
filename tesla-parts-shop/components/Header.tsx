@@ -126,7 +126,7 @@ const Header: React.FC = () => {
           {isMounted && (
             <a
               href={phoneHref}
-              className="md:hidden flex-1 min-w-0 text-center text-[11px] font-semibold whitespace-nowrap text-white/95 hover:text-white transition px-2"
+              className="md:hidden ml-auto min-w-0 max-w-[8.5rem] text-right text-[11px] font-semibold whitespace-nowrap text-white/95 hover:text-white transition px-1"
               title={displayPhone}
             >
               <span className="block truncate">{displayPhone}</span>
