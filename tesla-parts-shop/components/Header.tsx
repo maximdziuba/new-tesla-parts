@@ -126,24 +126,28 @@ const Header: React.FC = () => {
           {isMounted && (
             <a
               href={phoneHref}
+<<<<<<< HEAD
               className="md:hidden ml-auto min-w-0 max-w-[8.5rem] text-right text-[11px] font-semibold whitespace-nowrap text-white/95 hover:text-white transition px-1"
+=======
+              className="md:hidden flex-1 min-w-0 text-center text-sm font-semibold whitespace-nowrap text-white/95 hover:text-white transition px-2"
+>>>>>>> origin/main
               title={displayPhone}
             >
               <span className="block truncate">{displayPhone}</span>
             </a>
           )}
 
-          {isMounted && (
+          <div className="flex items-center gap-4">
+             {isMounted && (
             <a
               href={phoneHref}
-              className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-white/95 hover:text-white transition whitespace-nowrap"
+              className="hidden md:inline-flex items-center gap-2 text-base font-semibold text-white/95 hover:text-white transition whitespace-nowrap"
               title={displayPhone}
             >
               <span>{displayPhone}</span>
             </a>
           )}
 
-          <div className="flex items-center gap-4">
             {isMounted && socialLinks.telegram && (
               <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="hidden md:flex hover:text-blue-100 transition p-1.5 bg-white/10 rounded-full" title="Telegram">
                 <FontAwesomeIcon icon={faTelegram} size="lg" className="text-white" />

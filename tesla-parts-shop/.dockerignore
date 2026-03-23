@@ -1,3 +1,5 @@
-node_modules
+tesla-parts-shop/node_modules
+tesla-parts-admin/node_modules
 dist
 .env
+tesla-parts-backend/static/images/
