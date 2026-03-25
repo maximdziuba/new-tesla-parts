@@ -21,7 +21,8 @@ const Sidebar: React.FC = () => {
     const newExpanded: Record<number, boolean> = {};
     categories.forEach(cat => {
       const categorySlug = slugify(cat.name);
-      if (pathname.startsWith(`/category/${categorySlug}`)) {
+      const categoryUrl = `/category/${categorySlug}`;
+      if (pathname === categoryUrl || pathname.startsWith(`${categoryUrl}/`)) {
         newExpanded[cat.id] = true;
       }
     });
@@ -54,7 +55,8 @@ const Sidebar: React.FC = () => {
         <nav className="space-y-1">
           {sortedCategories.map((category) => {
             const categorySlug = slugify(category.name);
-            const isActive = pathname.startsWith(`/category/${categorySlug}`);
+            const categoryUrl = `/category/${categorySlug}`;
+            const isActive = pathname === categoryUrl || pathname.startsWith(`${categoryUrl}/`);
             const isExpanded = !!expandedCategories[category.id];
             const hasSubcategories = !!category.subcategories && category.subcategories.length > 0;
 
