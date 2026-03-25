@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Product, Currency } from '../types';
-import { ShoppingCart, ArrowLeft, Check, ChevronLeft, ChevronRight, Truck, ShieldCheck } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Check, ChevronLeft, ChevronRight, Truck, X, ZoomIn } from 'lucide-react';
 import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD } from '../constants';
 import SeoHead from './SeoHead';
 import { formatCurrency } from '../utils/currency';
 import { api } from '../services/api';
+import ProductList from './ProductList';
 
 interface ProductPageProps {
     product: Product;
@@ -12,18 +13,55 @@ interface ProductPageProps {
     uahPerUsd: number;
     onAddToCart: (product: Product) => void;
     onBack: () => void;
+    onProductClick: (product: Product) => void;
 }
 
-const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd, onAddToCart, onBack }) => {
+const parseProductCategories = (value?: string | null) => {
+    if (!value) return [];
+    return value.split(',').map(item => item.trim()).filter(Boolean);
+};
+
+const getProductSubcategoryIds = (product: Product): number[] => {
+    if (product.subcategory_ids && product.subcategory_ids.length > 0) {
+        return product.subcategory_ids;
+    }
+    return product.subcategory_id ? [product.subcategory_id] : [];
+};
+
+const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd, onAddToCart, onBack, onProductClick }) => {
     // Combine main image with additional images and remove duplicates
     const allImages = useMemo(
         () => Array.from(new Set([product.image, ...(product.images || [])].filter(Boolean))),
         [product.image, product.images]
     );
     const [selectedImage, setSelectedImage] = useState(allImages[0]);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [added, setAdded] = useState(false);
     const [deliveryInfo, setDeliveryInfo] = useState<string | null>(null);
+    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
     const effectiveRate = uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
+
+    useEffect(() => {
+        setSelectedImage(allImages[0]);
+        setIsLightboxOpen(false);
+    }, [allImages]);
+
+    useEffect(() => {
+        if (!isLightboxOpen) return;
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsLightboxOpen(false);
+            } else if (event.key === 'ArrowLeft') {
+                handlePrevImage();
+            } else if (event.key === 'ArrowRight') {
+                handleNextImage();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isLightboxOpen, selectedImage, allImages]);
 
     useEffect(() => {
         const fetchDeliveryInfo = async () => {
@@ -34,6 +72,41 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
         };
         fetchDeliveryInfo();
     }, []);
+
+    useEffect(() => {
+        const fetchRelatedProducts = async () => {
+            const targetSubcategoryId = getProductSubcategoryIds(product)[0];
+            const primaryCategorySlug = parseProductCategories(product.category)[0]?.toLowerCase().replace(/\s+/g, '-');
+
+            try {
+                let nextProducts: Product[] = [];
+
+                if (targetSubcategoryId) {
+                    nextProducts = await api.getProducts({ subId: targetSubcategoryId, limit: 8 });
+                }
+
+                let filtered = nextProducts.filter(item => item.id !== product.id);
+
+                if (filtered.length < 4 && primaryCategorySlug) {
+                    const categoryProducts = await api.getProducts({ category: primaryCategorySlug, limit: 12 });
+                    const seenIds = new Set(filtered.map(item => item.id));
+                    for (const item of categoryProducts) {
+                        if (item.id === product.id || seenIds.has(item.id)) continue;
+                        filtered.push(item);
+                        seenIds.add(item.id);
+                        if (filtered.length >= 4) break;
+                    }
+                }
+
+                setRelatedProducts(filtered.slice(0, 4));
+            } catch (error) {
+                console.error('Failed to fetch related products', error);
+                setRelatedProducts([]);
+            }
+        };
+
+        fetchRelatedProducts();
+    }, [product]);
 
     const fallbackTitle = `${product.name}`;
     const fallbackDescription = useMemo(() => {
@@ -105,13 +178,21 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                     {/* Image Gallery */}
                     <div className="md:w-1/2 p-6 bg-gray-50 dark:bg-slate-900/50">
                         <div className="relative">
-                            <div className="aspect-square rounded-xl overflow-hidden bg-white dark:bg-slate-800 mb-4 shadow-sm border border-gray-100 dark:border-slate-700">
+                            <button
+                                type="button"
+                                onClick={() => setIsLightboxOpen(true)}
+                                className="group relative mb-4 block aspect-square w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition dark:border-slate-700 dark:bg-slate-800"
+                            >
                                 <img
                                     src={selectedImage}
                                     alt={product.name}
                                     className="w-full h-full object-contain"
                                 />
-                            </div>
+                                <span className="pointer-events-none absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
+                                    <ZoomIn size={14} />
+                                    Відкрити
+                                </span>
+                            </button>
                             {allImages.length > 1 && (
                                 <>
                                     <button
@@ -135,7 +216,10 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                                 {allImages.map((img, idx) => (
                                     <button
                                         key={idx}
-                                        onClick={() => setSelectedImage(img)}
+                                        onClick={() => {
+                                            setSelectedImage(img);
+                                            setIsLightboxOpen(true);
+                                        }}
                                         className={`w-20 h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${selectedImage === img ? 'border-blue-600' : 'border-transparent hover:border-gray-300 dark:hover:border-slate-600'
                                             }`}
                                     >
@@ -230,6 +314,68 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                     </div>
                 </div>
             </div>
+
+            {relatedProducts.length > 0 && (
+                <div className="mt-10">
+                    <ProductList
+                        title="Схожі запчастини"
+                        products={relatedProducts}
+                        currency={currency}
+                        uahPerUsd={uahPerUsd}
+                        onAddToCart={onAddToCart}
+                        onProductClick={onProductClick}
+                    />
+                </div>
+            )}
+
+            {isLightboxOpen && (
+                <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm" onClick={() => setIsLightboxOpen(false)}>
+                    <button
+                        type="button"
+                        onClick={() => setIsLightboxOpen(false)}
+                        className="absolute right-4 top-4 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
+                        aria-label="Закрити"
+                    >
+                        <X size={24} />
+                    </button>
+
+                    {allImages.length > 1 && (
+                        <button
+                            type="button"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                handlePrevImage();
+                            }}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
+                            aria-label="Попереднє фото"
+                        >
+                            <ChevronLeft size={28} />
+                        </button>
+                    )}
+
+                    <div className="flex max-h-[92vh] max-w-[92vw] items-center justify-center" onClick={(event) => event.stopPropagation()}>
+                        <img
+                            src={selectedImage}
+                            alt={product.name}
+                            className="max-h-[92vh] max-w-[92vw] rounded-lg object-contain shadow-2xl"
+                        />
+                    </div>
+
+                    {allImages.length > 1 && (
+                        <button
+                            type="button"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                handleNextImage();
+                            }}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
+                            aria-label="Наступне фото"
+                        >
+                            <ChevronRight size={28} />
+                        </button>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

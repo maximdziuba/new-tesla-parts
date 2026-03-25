@@ -121,6 +121,7 @@ export default function ProductDetailPage() {
       uahPerUsd={uahPerUsd}
       onAddToCart={addToCart}
       onBack={() => handleProductBack(product)}
+      onProductClick={(nextProduct) => router.push(`/product/${nextProduct.id}`)}
     />
   );
 }
