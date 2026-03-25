@@ -17,9 +17,8 @@ const Sidebar: React.FC = () => {
 
   const closeSidebar = () => setIsSidebarOpen(false);
 
-  // Initialize expanded state based on pathname
   useEffect(() => {
-    const newExpanded: Record<number, boolean> = { ...expandedCategories };
+    const newExpanded: Record<number, boolean> = {};
     categories.forEach(cat => {
       const categorySlug = slugify(cat.name);
       if (pathname.startsWith(`/category/${categorySlug}`)) {
@@ -32,10 +31,12 @@ const Sidebar: React.FC = () => {
   const toggleCategory = (e: React.MouseEvent, id: number) => {
     e.preventDefault();
     e.stopPropagation();
-    setExpandedCategories(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+    setExpandedCategories(prev => {
+      if (prev[id]) {
+        return {};
+      }
+      return { [id]: true };
+    });
   };
 
   const sidebarContent = (
@@ -46,7 +47,7 @@ const Sidebar: React.FC = () => {
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto py-6 px-4 lg:pt-8">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 lg:pt-8">
         <h2 className="mb-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-400">
           Категорії запчастин
         </h2>
@@ -55,19 +56,19 @@ const Sidebar: React.FC = () => {
             const categorySlug = slugify(category.name);
             const isActive = pathname.startsWith(`/category/${categorySlug}`);
             const isExpanded = !!expandedCategories[category.id];
-            const hasSubcategories = category.subcategories && category.subcategories.length > 0;
+            const hasSubcategories = !!category.subcategories && category.subcategories.length > 0;
 
             return (
               <div key={category.id} className="mb-2">
-                <div className="flex items-center group">
+                <div className="group flex items-center">
                   <Link
                     href={`/category/${categorySlug}`}
                     onClick={closeSidebar}
                     className={`
-                      flex-grow flex items-center px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200
+                      flex flex-grow items-center rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-200
                       ${isActive
                         ? 'bg-blue-600 text-white shadow-md'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700/50 hover:text-blue-600 dark:hover:text-blue-400'}
+                        : 'text-slate-700 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-200 dark:hover:bg-slate-700/50 dark:hover:text-blue-400'}
                     `}
                   >
                     <span>{category.name}</span>
@@ -76,10 +77,10 @@ const Sidebar: React.FC = () => {
                     <button
                       onClick={(e) => toggleCategory(e, category.id)}
                       className={`
-                        p-2 ml-1 rounded-md transition-colors
+                        ml-1 rounded-md p-2 transition-colors
                         ${isActive
-                          ? 'text-white/80 hover:text-white hover:bg-white/10'
-                          : 'text-gray-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-slate-700/50'}
+                          ? 'text-white/80 hover:bg-white/10 hover:text-white'
+                          : 'text-gray-400 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-500 dark:hover:bg-slate-700/50 dark:hover:text-blue-400'}
                       `}
                     >
                       {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
@@ -98,10 +99,10 @@ const Sidebar: React.FC = () => {
                           href={subUrl}
                           onClick={closeSidebar}
                           className={`
-                            block px-3 py-2 text-xs rounded-md transition-colors
+                            block rounded-md px-3 py-2 text-xs transition-colors
                             ${isSubActive
-                              ? 'text-blue-600 dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-900/20'
-                              : 'text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-slate-700/50'}
+                              ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-900/20 dark:text-blue-400'
+                              : 'text-slate-500 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-blue-400'}
                           `}
                         >
                           {sub.name}
