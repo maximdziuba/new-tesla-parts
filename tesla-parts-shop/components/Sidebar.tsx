@@ -65,7 +65,13 @@ const Sidebar: React.FC = () => {
                 <div className="group flex items-center">
                   <Link
                     href={`/category/${categorySlug}`}
-                    onClick={closeSidebar}
+                    onClick={(e) => {
+                      if (hasSubcategories) {
+                        toggleCategory(e, category.id);
+                      } else {
+                        closeSidebar();
+                      }
+                    }}
                     className={`
                       flex flex-grow items-center rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-200
                       ${isActive
