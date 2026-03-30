@@ -40,7 +40,8 @@ const CategoryViewComponent: React.FC = () => {
   const { categories, currency, uahPerUsd, addToCart, loading: appLoading } = useApp();
   
   const currentCategory = useMemo(() => {
-    return categories.find(c => slugify(c.name) === slug);
+    const decodedSlug = slug ? decodeURIComponent(slug as string) : '';
+    return categories.find(c => slugify(c.name) === decodedSlug);
   }, [categories, slug]);
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -75,7 +76,8 @@ const CategoryViewComponent: React.FC = () => {
     const fetchProducts = async () => {
       setLoadingProducts(true);
       try {
-        const filters: any = { category: slug };
+        const decodedSlug = decodeURIComponent(slug as string);
+        const filters: any = { category: decodedSlug };
         if (subId) {
           filters.subId = subId;
         }

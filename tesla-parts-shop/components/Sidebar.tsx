@@ -10,7 +10,8 @@ const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-
 
 const Sidebar: React.FC = () => {
   const { categories, isSidebarOpen, setIsSidebarOpen } = useApp();
-  const pathname = usePathname();
+  const rawPathname = usePathname();
+  const pathname = decodeURIComponent(rawPathname);
   const [expandedCategories, setExpandedCategories] = useState<Record<number, boolean>>({});
 
   const sortedCategories = [...categories].sort((a, b) => (b.sort_order ?? 0) - (a.sort_order ?? 0));
