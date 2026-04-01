@@ -66,9 +66,14 @@ const Sidebar: React.FC = () => {
                 <div className="group flex items-center">
                   <Link
                     href={`/category/${categorySlug}`}
-                    onClick={(e) => {
+                    onClick={() => {
                       if (hasSubcategories) {
-                        toggleCategory(e, category.id);
+                        setExpandedCategories(prev => {
+                          if (prev[category.id]) {
+                            return {};
+                          }
+                          return { [category.id]: true };
+                        });
                       } else {
                         closeSidebar();
                       }

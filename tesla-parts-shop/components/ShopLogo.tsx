@@ -24,7 +24,7 @@ const ShopLogo: React.FC<ShopLogoProps> = ({ compact = false }) => {
         {isMounted && (
           <img 
             src={theme === 'dark' ? "/tesla-fix_dark.png" : "/tesla-fix.png"} 
-            alt="TeslaFix Logo" 
+            alt="TeslaFix" 
             className="h-full w-auto object-contain transform scale-125"
           />
         )}
