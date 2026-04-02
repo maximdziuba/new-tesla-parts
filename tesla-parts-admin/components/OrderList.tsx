@@ -45,12 +45,13 @@ export const OrderList: React.FC = () => {
 
   const handleUpdateTtn = async (orderId: number) => {
     try {
+      const newStatus = editingTtnValue.trim() === '' ? 'new' : 'processed';
       await ApiService.updateOrderTtn(orderId, editingTtnValue);
-      await ApiService.updateOrderStatus(orderId, 'processed');
+      await ApiService.updateOrderStatus(orderId, newStatus);
 
       setOrders(prevOrders => prevOrders.map(order =>
         order.id === orderId 
-          ? { ...order, ttn: editingTtnValue, status: 'processed' } 
+          ? { ...order, ttn: editingTtnValue, status: newStatus } 
           : order
       ));
       setEditingTtnOrderId(null);
