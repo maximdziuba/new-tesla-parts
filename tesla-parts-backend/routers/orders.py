@@ -88,6 +88,15 @@ def update_order_status(order_id: int, status_data: UpdateStatusRequest, session
     session.refresh(order)
     return {"message": "Status updated successfully", "order_id": order.id, "status": order.status}
 
+@router.delete("/{order_id}", dependencies=[Depends(get_current_admin)])
+def delete_order(order_id: int, session: Session = Depends(get_session)):
+    order = session.get(Order, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    session.delete(order)
+    session.commit()
+    return {"message": "Order deleted successfully"}
+
 @router.get("/", response_model=List[OrderRead], dependencies=[Depends(get_current_admin)]) # Protect get_orders
 def get_orders(session: Session = Depends(get_session)):
     orders = session.exec(select(Order).options(selectinload(Order.items))).all()

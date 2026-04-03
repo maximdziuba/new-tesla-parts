@@ -320,6 +320,14 @@ export const ApiService = {
     if (!res.ok) throw new Error('Failed to update order status');
   },
 
+  deleteOrder: async (orderId: number): Promise<void> => {
+    const res = await _authenticatedFetch(`${API_URL}/orders/${orderId}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to delete order');
+  },
+
   getCategories: async (): Promise<Category[]> => {
     // 1. Fetch basic list to get IDs
     const res = await _authenticatedFetch(`${API_URL}/categories/`, { headers: getHeaders() });

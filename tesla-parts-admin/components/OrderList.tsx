@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ApiService } from '../services/api';
 import { Order } from '../types';
-import { Search, Truck, CreditCard, Pencil, Check, X } from 'lucide-react';
+import { Search, Truck, CreditCard, Pencil, Check, X, Trash2 } from 'lucide-react';
 
 export const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -45,7 +45,8 @@ export const OrderList: React.FC = () => {
 
   const handleUpdateTtn = async (orderId: number) => {
     try {
-      const newStatus = editingTtnValue.trim() === '' ? 'new' : 'processed';
+      const isRemoved = editingTtnValue.trim() === '';
+      const newStatus = isRemoved ? 'cancelled' : 'processed';
       await ApiService.updateOrderTtn(orderId, editingTtnValue);
       await ApiService.updateOrderStatus(orderId, newStatus);
 
@@ -62,12 +63,25 @@ export const OrderList: React.FC = () => {
     }
   };
 
+  const handleDeleteOrder = async (orderId: number) => {
+    if (!window.confirm("Ви впевнені, що хочете видалити це замовлення?")) return;
+    try {
+      await ApiService.deleteOrder(orderId);
+      setOrders(prev => prev.filter(o => o.id !== orderId));
+    } catch (e) {
+      console.error("Failed to delete order", e);
+      alert("Failed to delete order");
+    }
+  };
+
   const getStatusDisplay = (status: string) => {
     switch (status) {
       case 'new':
         return { text: 'Нове', className: 'bg-amber-100 text-amber-700' };
       case 'processed':
         return { text: 'Оброблено', className: 'bg-emerald-100 text-emerald-700' };
+      case 'cancelled':
+        return { text: 'Відмінено', className: 'bg-rose-100 text-rose-700' };
       default:
         return { text: status, className: 'bg-slate-100 text-slate-700' };
     }
@@ -172,8 +186,8 @@ export const OrderList: React.FC = () => {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between gap-2 min-w-[120px]">
-                        <span className="font-mono text-xs font-bold text-slate-700">{order.ttn || '---'}</span>
+                      <div className="flex items-center justify-end gap-2">
+                        <span className="font-mono text-xs font-bold text-slate-700 mr-auto">{order.ttn || '---'}</span>
                         <button
                           onClick={() => {
                             setEditingTtnOrderId(order.id);
@@ -183,6 +197,13 @@ export const OrderList: React.FC = () => {
                           title="Редагувати ТТН"
                         >
                           <Pencil size={14} />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteOrder(order.id)}
+                          className="text-gray-300 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-all"
+                          title="Видалити замовлення"
+                        >
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     )}
