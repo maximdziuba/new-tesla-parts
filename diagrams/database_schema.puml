@@ -1,0 +1,139 @@
+@startuml TeslaParts Database Schema
+
+' Configuration
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam class {
+    BackgroundColor white
+    ArrowColor #2b5797
+    BorderColor #2b5797
+}
+
+package "Entities" {
+
+    class Category {
+        + id : int [PK]
+        --
+        name : string
+        image : string
+        sort_order : int
+        meta_title : string
+        meta_description : string
+    }
+
+    class Subcategory {
+        + id : int [PK]
+        --
+        name : string
+        code : string
+        image : string
+        category_id : int [FK]
+        parent_id : int [FK]
+        sort_order : int
+    }
+
+    class Product {
+        + id : string [PK]
+        --
+        name : string
+        category : string (deprecated)
+        subcategory_id : int [FK]
+        priceUAH : float
+        priceUSD : float
+        image : string
+        description : text
+        inStock : boolean
+        sort_order : int
+        detail_number : string
+        cross_number : string
+        meta_title : string
+        meta_description : string
+        created_at : datetime
+    }
+
+    class ProductSubcategoryLink {
+        + product_id : string [PK, FK]
+        + subcategory_id : int [PK, FK]
+    }
+
+    class ProductImage {
+        + id : int [PK]
+        --
+        product_id : string [FK]
+        url : string
+    }
+
+    class Order {
+        + id : int [PK]
+        --
+        customer_first_name : string
+        customer_last_name : string
+        customer_phone : string
+        delivery_city : string
+        delivery_branch : string
+        payment_method : string
+        totalUSD : float
+        status : string
+        ttn : string
+        created_at : datetime
+    }
+
+    class OrderItem {
+        + id : int [PK]
+        --
+        order_id : int [FK]
+        product_id : string [FK]
+        quantity : int
+        price_at_purchase : float
+    }
+
+    class Settings {
+        + key : string [PK]
+        --
+        value : string
+    }
+
+    class Page {
+        + id : int [PK]
+        --
+        slug : string
+        title : string
+        content : text
+        is_published : boolean
+        location : string
+    }
+
+    class User {
+        + id : int [PK]
+        --
+        username : string
+        hashed_password : string
+        refresh_token : string
+    }
+
+    class StaticPageSEO {
+        + id : int [PK]
+        --
+        slug : string
+        meta_title : string
+        meta_description : string
+    }
+
+}
+
+' Relationships
+Category "1" -- "0..*" Subcategory 
+Subcategory "1" -- "0..*" Subcategory
+Subcategory "1" -- "0..*" Product 
+Product "1" -- "0..*" ProductImage 
+
+Product "1" -- "0..*" ProductSubcategoryLink
+Subcategory "1" -- "0..*" ProductSubcategoryLink
+ProductSubcategoryLink ..> Product 
+ProductSubcategoryLink ..> Subcategory
+
+Order "1" -- "1..*" OrderItem 
+Product "1" -- "0..*" OrderItem
+
+@enduml

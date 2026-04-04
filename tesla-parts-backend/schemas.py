@@ -90,6 +90,7 @@ class OrderCreate(BaseModel):
 
 class OrderItemRead(BaseModel):
     product_id: str
+    product_name: str | None = None
     quantity: int
     price_at_purchase: float
 

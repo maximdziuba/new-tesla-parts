@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ApiService } from '../services/api';
 import { Order } from '../types';
-import { Search, Truck, CreditCard, Pencil, Check, X, Trash2 } from 'lucide-react';
+import { Search, Truck, CreditCard, Pencil, Check, X, Trash2, Eye } from 'lucide-react';
 
 export const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -10,6 +10,7 @@ export const OrderList: React.FC = () => {
   const [editingTtnValue, setEditingTtnValue] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -127,6 +128,7 @@ export const OrderList: React.FC = () => {
                 <th className="px-6 py-5">Доставка</th>
                 <th className="px-6 py-5">Сума</th>
                 <th className="px-6 py-5">Оплата</th>
+                <th className="px-6 py-5">Товари</th>
                 <th className="px-6 py-5">Статус</th>
                 <th className="px-6 py-5">ТТН</th>
               </tr>
@@ -164,6 +166,16 @@ export const OrderList: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-5">
+                    <div className="space-y-1">
+                      {order.items?.map((item, idx) => (
+                        <div key={idx} className="text-[10px] font-bold text-slate-600 flex items-center gap-1">
+                          <span className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">{item.quantity}x</span>
+                          <span className="truncate max-w-[120px]" title={item.product_name || item.product_id}>{item.product_name || item.product_id}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </td>
+                  <td className="px-6 py-5">
                     <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${statusDisplay.className}`}>
                       {statusDisplay.text}
                     </span>
@@ -189,6 +201,13 @@ export const OrderList: React.FC = () => {
                       <div className="flex items-center justify-end gap-2">
                         <span className="font-mono text-xs font-bold text-slate-700 mr-auto">{order.ttn || '---'}</span>
                         <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 p-1.5 rounded-lg transition-all"
+                          title="Переглянути деталі"
+                        >
+                          <Eye size={14} />
+                        </button>
+                        <button
                           onClick={() => {
                             setEditingTtnOrderId(order.id);
                             setEditingTtnValue(order.ttn || '');
@@ -212,7 +231,7 @@ export const OrderList: React.FC = () => {
               )})}
               {filteredAndSortedOrders.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
                     Замовлень немає.
                   </td>
                 </tr>
@@ -221,6 +240,112 @@ export const OrderList: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Замовлення #{selectedOrder.id}</h2>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mt-1">
+                  {new Date(selectedOrder.created_at).toLocaleString()}
+                </p>
+              </div>
+              <button 
+                onClick={() => setSelectedOrder(null)}
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-8 overflow-y-auto space-y-8">
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-3">Клієнт</h3>
+                  <div className="space-y-1">
+                    <p className="font-bold text-slate-800">{selectedOrder.customer_first_name} {selectedOrder.customer_last_name}</p>
+                    <p className="text-sm text-slate-500 font-medium">{selectedOrder.customer_phone}</p>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-3">Доставка</h3>
+                  <div className="space-y-1 text-sm">
+                    <p className="font-bold text-slate-800">{selectedOrder.delivery_city}</p>
+                    <p className="text-slate-500 font-medium">{selectedOrder.delivery_branch}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-4">Товари</h3>
+                <div className="border border-gray-100 rounded-xl overflow-hidden bg-gray-50/30">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-gray-100/50 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                      <tr>
+                        <th className="px-4 py-3">Назва</th>
+                        <th className="px-4 py-3 text-center">К-сть</th>
+                        <th className="px-4 py-3 text-right">Ціна</th>
+                        <th className="px-4 py-3 text-right">Разом</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 font-medium text-slate-700">
+                      {selectedOrder.items.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-white transition-colors">
+                          <td className="px-4 py-4">
+                            <div className="font-bold text-slate-900">{item.product_name || "Товар видалено"}</div>
+                            <div className="text-[10px] text-gray-400 font-mono mt-0.5">{item.product_id}</div>
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-xs font-bold">{item.quantity}</span>
+                          </td>
+                          <td className="px-4 py-4 text-right font-bold">${item.price_at_purchase.toFixed(2)}</td>
+                          <td className="px-4 py-4 text-right font-black text-slate-900">${(item.price_at_purchase * item.quantity).toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot className="bg-blue-600 text-white font-black uppercase tracking-widest text-xs">
+                      <tr>
+                        <td colSpan={3} className="px-4 py-4 text-right">Всього:</td>
+                        <td className="px-4 py-4 text-right text-sm font-black">${selectedOrder.totalUSD.toFixed(2)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-8 pt-4">
+                <div>
+                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-3">Оплата</h3>
+                   <div className="flex items-center gap-2">
+                     <div className="bg-slate-100 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                       <CreditCard size={14} className="text-slate-500" />
+                       <span className="text-[10px] font-black uppercase tracking-wider text-slate-700">{selectedOrder.payment_method}</span>
+                     </div>
+                   </div>
+                </div>
+                {selectedOrder.ttn && (
+                   <div>
+                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-3">ТТН</h3>
+                     <p className="font-mono text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg w-fit">
+                       {selectedOrder.ttn}
+                     </p>
+                   </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end">
+              <button 
+                onClick={() => setSelectedOrder(null)}
+                className="px-6 py-2.5 bg-white border border-gray-200 text-slate-600 font-bold rounded-xl hover:bg-gray-100 transition-all shadow-sm active:scale-95"
+              >
+                Закрити
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

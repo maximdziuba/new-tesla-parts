@@ -99,7 +99,9 @@ def delete_order(order_id: int, session: Session = Depends(get_session)):
 
 @router.get("/", response_model=List[OrderRead], dependencies=[Depends(get_current_admin)]) # Protect get_orders
 def get_orders(session: Session = Depends(get_session)):
-    orders = session.exec(select(Order).options(selectinload(Order.items))).all()
+    orders = session.exec(select(Order).options(
+        selectinload(Order.items).selectinload(OrderItem.product)
+    )).all()
     rate = get_exchange_rate(session)
     
     orders_with_uah = []
@@ -123,6 +125,14 @@ def get_orders(session: Session = Depends(get_session)):
 
         order_read = OrderRead.model_validate(order, from_attributes=True)
         order_read.totalUAH = round(total_usd * rate, 2) if rate else 0.0
+        
+        # Manually populate product names from the related product model
+        for i, item in enumerate(order.items):
+            if item.product:
+                order_read.items[i].product_name = item.product.name
+            else:
+                order_read.items[i].product_name = "Product Deleted"
+
         orders_with_uah.append(order_read)
 
     if updated:
