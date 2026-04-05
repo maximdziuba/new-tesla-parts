@@ -123,9 +123,10 @@ package "Entities" {
 }
 
 ' Relationships
-Category "1" -- "0..*" Subcategory 
-Subcategory "1" -- "0..*" Subcategory
 Subcategory "1" -- "0..*" Product 
+Subcategory "1" -- "0..*" Subcategory
+Category "1" -- "0..*" Subcategory 
+
 Product "1" -- "0..*" ProductImage 
 
 Product "1" -- "0..*" ProductSubcategoryLink

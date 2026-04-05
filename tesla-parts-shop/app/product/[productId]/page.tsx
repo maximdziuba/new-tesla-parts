@@ -54,7 +54,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { currency, uahPerUsd, addToCart, categories } = useApp();
+  const { currency, uahPerUsd, addToCart, categories, hasInternalHistory } = useApp();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -74,6 +74,13 @@ export default function ProductDetailPage() {
   }, [productId]);
 
   const handleProductBack = (product: Product) => {
+    // If there is internal history, go back
+    if (hasInternalHistory) {
+      router.back();
+      return;
+    }
+
+    // Fallback logic for direct entries
     const subcategoryIds = getProductSubcategoryIds(product);
     if (subcategoryIds.length > 0) {
       const targetSubId = subcategoryIds[0];

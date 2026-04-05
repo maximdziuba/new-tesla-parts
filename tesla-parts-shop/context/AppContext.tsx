@@ -1,9 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { Product, Currency, CartItem, Category, StaticSeoRecord, Page } from '../types';
 import { api } from '../services/api';
 import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD } from '../constants';
+import { usePathname } from 'next/navigation';
 
 interface AppContextType {
   cart: CartItem[];
@@ -33,6 +34,7 @@ interface AppContextType {
   loading: boolean;
   cartTotalUSD: number;
   cartCount: number;
+  hasInternalHistory: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -116,6 +118,15 @@ const preloadImages = async (imageUrls: (string | undefined)[]) => {
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const pathname = usePathname();
+  const [historyCount, setHistoryCount] = useState(0);
+
+  useEffect(() => {
+    setHistoryCount(prev => prev + 1);
+  }, [pathname]);
+
+  const hasInternalHistory = historyCount > 1;
+
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -324,6 +335,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         loading,
         cartTotalUSD,
         cartCount,
+        hasInternalHistory,
       }}
     >
       {children}
