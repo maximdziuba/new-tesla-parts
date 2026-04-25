@@ -154,3 +154,9 @@ class CategoryListSchema(BaseModel):
 
 class CategoryDetailSchema(CategoryListSchema):
     subcategories: List[SubcategoryNoProducts] = []
+
+class FeedbackRead(BaseModel):
+    id: int
+    image_url: str
+    created_at: datetime
+    sort_order: int

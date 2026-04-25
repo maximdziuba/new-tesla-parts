@@ -633,4 +633,46 @@ export const ApiService = {
     if (!res.ok) throw new Error('Failed to update SEO record');
     return res.json();
   },
+
+  // Feedback API
+  getFeedback: async (): Promise<any[]> => {
+    const res = await _authenticatedFetch(`${API_URL}/feedback/`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch feedback');
+    return res.json();
+  },
+
+  createFeedback: async (file: File, sortOrder: number = 0): Promise<any> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('sort_order', sortOrder.toString());
+
+    const res = await _authenticatedFetch(`${API_URL}/feedback/`, {
+      method: 'POST',
+      headers: getHeaders(true),
+      body: formData,
+    });
+    if (!res.ok) throw new Error('Failed to upload feedback');
+    return res.json();
+  },
+
+  deleteFeedback: async (id: number): Promise<boolean> => {
+    const res = await _authenticatedFetch(`${API_URL}/feedback/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return res.ok;
+  },
+
+  updateFeedbackSort: async (id: number, sortOrder: number): Promise<any> => {
+    const formData = new FormData();
+    formData.append('sort_order', sortOrder.toString());
+
+    const res = await _authenticatedFetch(`${API_URL}/feedback/${id}/sort`, {
+      method: 'PUT',
+      headers: getHeaders(true),
+      body: formData,
+    });
+    if (!res.ok) throw new Error('Failed to update feedback sort order');
+    return res.json();
+  },
 };

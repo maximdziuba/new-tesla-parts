@@ -10,6 +10,7 @@ import {
   Car,
   Layers,
   FileText,
+  MessageSquare,
   Key,
   ChevronLeft,
   ChevronRight
@@ -54,6 +55,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       case '/categories': return 'Категорії';
       case '/settings': return 'Налаштування';
       case '/cms': return 'Контент';
+      case '/feedback': return 'Відгуки';
       default: return 'Адмін Панель';
     }
   };
@@ -118,6 +120,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               icon={FileText}
               label="Сторінки"
               active={location.pathname === '/cms'}
+              collapsed={collapsed}
+            />
+            <SidebarItem
+              to="/feedback"
+              icon={MessageSquare}
+              label="Відгуки"
+              active={location.pathname === '/feedback'}
               collapsed={collapsed}
             />
             <SidebarItem

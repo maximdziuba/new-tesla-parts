@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 from typing import List
 from database import create_db_and_tables, engine, get_session
-from routers import products, orders, categories, settings, pages, auth, feeds # Import auth and feeds routers
+from routers import products, orders, categories, settings, pages, auth, feeds, feedback # Import auth, feeds and feedback routers
 from contextlib import asynccontextmanager
 import os
 from models import Product, Category, Subcategory, StaticPageSEO
@@ -39,6 +39,10 @@ DEFAULT_STATIC_SEO = {
     "search": {
         "meta_title": "Пошук запчастин | TeslaFix",
         "meta_description": "Знайдіть необхідні запчастини для вашої Tesla у нашому каталозі."
+    },
+    "feedback": {
+        "meta_title": "Відгуки клієнтів | TeslaFix",
+        "meta_description": "Скріншоти відгуків наших задоволених клієнтів про запчастини та сервіс TeslaFix."
     },
 }
 
@@ -103,6 +107,7 @@ app.include_router(settings.router)
 app.include_router(pages.router)
 app.include_router(auth.router) # Include auth router
 app.include_router(feeds.router) # Include feeds router
+app.include_router(feedback.router) # Include feedback router
 
 @app.get("/")
 def read_root():

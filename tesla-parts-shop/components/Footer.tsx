@@ -49,6 +49,7 @@ const Footer: React.FC = () => {
           <h3 className="text-slate-900 dark:text-white font-bold mb-4">Клієнтам</h3>
           <ul className="space-y-2 text-sm">
             <li><Link href="/info/delivery" className="hover:text-blue-600 dark:hover:text-blue-400 transition block">Доставка та оплата</Link></li>
+            <li><Link href="/feedback" className="hover:text-blue-600 dark:hover:text-blue-400 transition block">Відгуки</Link></li>
             <li><Link href="/info/returns" className="hover:text-blue-600 dark:hover:text-blue-400 transition block">Повернення</Link></li>
             <li><Link href="/info/contacts" className="hover:text-blue-600 dark:hover:text-blue-400 transition block">Контакти</Link></li>
             <li><Link href="/info/privacy-policy" className="hover:text-blue-600 dark:hover:text-blue-400 transition block">Політика конфіденційності</Link></li>

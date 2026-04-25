@@ -9,6 +9,7 @@ import { Login } from './components/Login';
 import CategoryList from './components/CategoryList';
 import { SettingsPage } from './pages/SettingsPage';
 import { CMSPage } from './pages/CMSPage';
+import { FeedbackPage } from './pages/FeedbackPage';
 import { ResetPasswordPage } from './pages/ResetPassword'; // Import ResetPasswordPage
 import { useAuth } from './AuthContext'; // Import useAuth
 
@@ -46,6 +47,7 @@ const App: React.FC = () => {
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/settings/reset-password" element={<ResetPasswordPage />} />
                   <Route path="/cms" element={<CMSPage />} />
+                  <Route path="/feedback" element={<FeedbackPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Layout>

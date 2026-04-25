@@ -100,6 +100,9 @@ const Header: React.FC = () => {
                 {page.title}
               </Link>
             ))}
+            <Link href="/feedback" className="hover:text-blue-100 transition">
+              Відгуки
+            </Link>
           </nav>
 
           <div className="relative md:hidden" ref={pagesDropdownRef}>
@@ -119,6 +122,13 @@ const Header: React.FC = () => {
                     {page.title}
                   </Link>
                 ))}
+                <Link
+                  href="/feedback"
+                  onClick={() => setIsPagesDropdownOpen(false)}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
+                >
+                  Відгуки
+                </Link>
               </div>
             )}
           </div>
