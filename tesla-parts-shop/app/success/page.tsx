@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import Script from 'next/script';
 
 export default function SuccessPage() {
   useEffect(() => {
@@ -11,6 +12,13 @@ export default function SuccessPage() {
 
   return (
     <div className="flex flex-col items-center justify-center pt-20 pb-8 min-h-[80vh] animate-fade-in">
+      <Script id="google-conversion" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('event', 'conversion', {'send_to': 'AW-18028036676/CAmQCIa3taIcEMSEuJRD'});
+        `}
+      </Script>
       <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-6">
         <CheckCircle size={40} />
       </div>

@@ -9,6 +9,7 @@ import ScrollToTop from '../components/ScrollToTop';
 import { Suspense } from 'react';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import Script from 'next/script';
 config.autoAddCss = false;
 
 export const metadata: Metadata = {
@@ -45,6 +46,18 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col font-sans text-slate-900 bg-[#f8fafc]">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18028036676"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-18028036676');
+          `}
+        </Script>
         <AppProvider>
           <ScrollToTop />
           <Suspense fallback={null}>
