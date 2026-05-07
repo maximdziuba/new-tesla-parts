@@ -18,7 +18,7 @@ export default function Home() {
   useEffect(() => {
     const fetchPopular = async () => {
       try {
-        const data = await api.getProducts({ limit: 8 });
+        const data = await api.getProducts({ limit: 8, is_favourite: true });
         setProducts(data);
       } catch (e) {
         console.error("Failed to load popular products", e);
@@ -61,16 +61,18 @@ export default function Home() {
       <div className="w-full min-h-[280px] md:min-h-[400px] lg:min-h-[500px]">
          <Hero onSelectCategory={handleSelectCategory} />
       </div>
-      <div className="mt-8">
-        <ProductList
-          title="Популярні товари"
-          products={products}
-          currency={currency}
-          uahPerUsd={uahPerUsd}
-          onAddToCart={addToCart}
-          onProductClick={handleProductClick}
-        />
-      </div>
+      {products.length > 0 && (
+        <div className="mt-8">
+          <ProductList
+            title="Популярні товари"
+            products={products}
+            currency={currency}
+            uahPerUsd={uahPerUsd}
+            onAddToCart={addToCart}
+            onProductClick={handleProductClick}
+          />
+        </div>
+      )}
     </>
   );
 }

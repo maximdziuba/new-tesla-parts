@@ -31,6 +31,7 @@ def create_db_and_tables():
     _ensure_product_sort_order_column()
     _ensure_product_subcategory_id_column()
     _ensure_product_created_at_column()
+    _ensure_product_is_favourite_column()
     
     with Session(engine) as session:
         # Check if admin user exists, if not, create it
@@ -119,3 +120,26 @@ def _ensure_product_created_at_column():
                  with engine.connect() as conn2:
                      conn2.execute(text(f"UPDATE product SET created_at = '{current_time}' WHERE created_at IS NULL"))
                      conn2.commit()
+
+def _ensure_product_is_favourite_column():
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("product")]
+    if "is_favourite" not in columns:
+        print("Adding 'is_favourite' column to 'product' table...")
+        with engine.connect() as conn:
+            if is_sqlite():
+                conn.execute(text("ALTER TABLE product ADD COLUMN is_favourite INTEGER DEFAULT 0"))
+                # Create index manually for SQLite
+                try:
+                    conn.execute(text("CREATE INDEX ix_product_is_favourite ON product (is_favourite)"))
+                except Exception:
+                    pass
+            else:
+                conn.execute(text("ALTER TABLE product ADD COLUMN is_favourite BOOLEAN DEFAULT FALSE"))
+                # PostgreSQL usually handles index creation if defined in model, 
+                # but since we are adding column manually:
+                try:
+                    conn.execute(text("CREATE INDEX ix_product_is_favourite ON product (is_favourite)"))
+                except Exception:
+                    pass
+            conn.commit()

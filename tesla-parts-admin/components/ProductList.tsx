@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ApiService } from '../services/api';
 import { Product } from '../types';
-import { Search, Plus, Filter, Trash2, Pencil, ArrowUpDown } from 'lucide-react';
+import { Search, Plus, Filter, Trash2, Pencil, ArrowUpDown, Star } from 'lucide-react';
 
 import { Link } from 'react-router-dom';
 
@@ -83,6 +83,16 @@ export const ProductList: React.FC = () => {
       await ApiService.deleteProduct(id);
       setSelectedProducts(prev => prev.filter(pid => pid !== id));
       fetchProducts();
+    }
+  };
+
+  const handleToggleFavourite = async (id: string) => {
+    try {
+      await ApiService.toggleFavourite(id);
+      fetchProducts();
+    } catch (error) {
+      console.error('Failed to toggle favourite', error);
+      alert('Помилка при зміні статусу популярного товару');
     }
   };
 
@@ -271,6 +281,17 @@ export const ProductList: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-1">
+                      <button
+                        onClick={() => handleToggleFavourite(product.id)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          product.is_favourite 
+                            ? 'text-amber-500 hover:bg-amber-50' 
+                            : 'text-gray-400 hover:bg-gray-100 hover:text-amber-500'
+                        }`}
+                        title={product.is_favourite ? "Видалити з популярних" : "Додати в популярні"}
+                      >
+                        <Star size={16} className={product.is_favourite ? "fill-current" : ""} />
+                      </button>
                       <Link
                         to={`/products/edit/${product.id}`}
                         className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"

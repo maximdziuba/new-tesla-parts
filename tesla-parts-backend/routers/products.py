@@ -93,6 +93,7 @@ def read_products(
     category_slug: Optional[str] = None,
     subcategory_id: Optional[int] = None,
     search: Optional[str] = None,
+    is_favourite: Optional[bool] = None,
     limit: int = 100,
     offset: int = 0,
     session: Session = Depends(get_session)
@@ -101,6 +102,10 @@ def read_products(
         selectinload(Product.images),
         selectinload(Product.linked_subcategories),
     )
+
+    # 0. Filter by Favourite
+    if is_favourite is not None:
+        query = query.where(Product.is_favourite == is_favourite)
 
     # 1. Filter by Category Slug
     # We need to find the category name from the slug to support legacy 'Product.category' field
@@ -211,6 +216,7 @@ async def create_product(
     cross_number: Optional[str] = Form(None),
     meta_title: Optional[str] = Form(None),
     meta_description: Optional[str] = Form(None),
+    is_favourite: bool = Form(False),
     image: Optional[str] = Form(None),
     files: List[UploadFile] = File(None),
     session: Session = Depends(get_session)
@@ -273,6 +279,7 @@ async def create_product(
         cross_number=cross_number,
         meta_title=meta_title,
         meta_description=meta_description,
+        is_favourite=is_favourite,
         image=main_image
     )
     if priceUSD:
@@ -318,6 +325,7 @@ async def update_product(
     cross_number: Optional[str] = Form(None),
     meta_title: Optional[str] = Form(None),
     meta_description: Optional[str] = Form(None),
+    is_favourite: bool = Form(False),
     image: Optional[str] = Form(None),
     files: List[UploadFile] = File(None),
     kept_images: List[str] = Form(None),
@@ -339,6 +347,7 @@ async def update_product(
     product.cross_number = cross_number
     product.meta_title = meta_title
     product.meta_description = meta_description
+    product.is_favourite = is_favourite
     
     # Update main image if provided
     if image:
@@ -416,6 +425,23 @@ async def update_product(
         session.refresh(product)
 
     product.images = updated_images
+    return _build_product_response(product, rate)
+
+@router.patch("/{product_id}/favourite", response_model=ProductRead, dependencies=[Depends(get_current_admin)])
+async def toggle_favourite(
+    product_id: str,
+    session: Session = Depends(get_session)
+):
+    product = session.get(Product, product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    product.is_favourite = not product.is_favourite
+    session.add(product)
+    session.commit()
+    session.refresh(product)
+    
+    rate = get_exchange_rate(session)
     return _build_product_response(product, rate)
 
 @router.delete("/{product_id}", dependencies=[Depends(get_current_admin)])

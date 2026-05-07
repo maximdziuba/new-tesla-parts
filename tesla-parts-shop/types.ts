@@ -41,6 +41,7 @@ export interface Product {
   cross_number?: string;
   meta_title?: string | null;
   meta_description?: string | null;
+  is_favourite?: boolean;
 }
 
 export interface StaticSeoRecord {

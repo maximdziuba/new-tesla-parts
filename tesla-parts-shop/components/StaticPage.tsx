@@ -9,13 +9,36 @@ interface StaticPageProps {
     seo?: StaticSeoRecord | null;
 }
 
-// Map of slugs to Ukrainian titles for fallback
-const PAGE_TITLES: { [key: string]: string } = {
-    about: 'Про нас',
-    delivery: 'Доставка та оплата',
-    returns: 'Повернення',
-    faq: 'Часті питання',
-    contacts: 'Контакти'
+// Map of slugs to Ukrainian titles and content for fallback
+const PAGE_FALLBACKS: { [key: string]: { title: string; content: string } } = {
+    about: {
+        title: 'Про нас',
+        content: 'TeslaFix — ваш надійний постачальник запчастин для електромобілів Tesla. Ми працюємо, щоб ваш електрокар завжди був у ідеальному стані.'
+    },
+    delivery: {
+        title: 'Доставка та оплата',
+        content: 'Доставка здійснюється Новою Поштою по всій Україні. Оплата можлива при отриманні (накладений платіж) або на розрахунковий рахунок.'
+    },
+    returns: {
+        title: 'Повернення та обмін',
+        content: 'Ви можете повернути або обміняти товар протягом 14 днів з моменту покупки, якщо він не був у використанні та зберіг свій товарний вигляд.'
+    },
+    faq: {
+        title: 'Часті питання',
+        content: 'Чи є у вас гарантія? Так, на більшість запчастин діє гарантія від 1 до 6 місяців. Чи відправляєте ви в день замовлення? Так, якщо замовлення оформлено до 15:00.'
+    },
+    contacts: {
+        title: 'Контакти',
+        content: 'Ми знаходимося у Києві. Телефон для зв’язку: +38 (067) 000-00-00. Електронна пошта: info@teslafix.com.ua'
+    },
+    'privacy-policy': {
+        title: 'Політика конфіденційності',
+        content: 'Ваші персональні дані використовуються виключно для обробки замовлень та покращення якості сервісу. Ми гарантуємо конфіденційність.'
+    },
+    'terms-of-service': {
+        title: 'Умови використання',
+        content: 'Користуючись нашим сайтом, ви погоджуєтесь з правилами оформлення замовлень та надання послуг нашого магазину.'
+    }
 };
 
 const StaticPage: React.FC<StaticPageProps> = ({ slug, onBack, seo }) => {
@@ -31,11 +54,11 @@ const StaticPage: React.FC<StaticPageProps> = ({ slug, onBack, seo }) => {
                     setPage({ title: data.title, content: data.content });
                 } else {
                     // Fallback if page not found or not published
-                    setPage(null);
+                    setPage(PAGE_FALLBACKS[slug] || null);
                 }
             } catch (e) {
                 console.error('Failed to load page', e);
-                setPage(null);
+                setPage(PAGE_FALLBACKS[slug] || null);
             } finally {
                 setLoading(false);
             }
@@ -56,7 +79,7 @@ const StaticPage: React.FC<StaticPageProps> = ({ slug, onBack, seo }) => {
         );
     }
 
-    const fallbackTitle = `${page?.title || PAGE_TITLES[slug] || 'Магазин запчастин'}`;
+    const fallbackTitle = `${page?.title || PAGE_FALLBACKS[slug]?.title || 'Магазин запчастин'}`;
     const rawContent = page?.content ? page.content.replace(/<[^>]+>/g, ' ') : '';
     const trimmedContent = rawContent.trim();
     const fallbackDescription =
@@ -75,7 +98,7 @@ const StaticPage: React.FC<StaticPageProps> = ({ slug, onBack, seo }) => {
                 fallbackDescription={fallbackDescription}
             />
             <h1 className="text-3xl font-bold mb-6 text-slate-900 dark:text-white">
-                {page?.title || PAGE_TITLES[slug] || slug}
+                {page?.title || PAGE_FALLBACKS[slug]?.title || slug}
             </h1>
 
             {page ? (

@@ -2,6 +2,13 @@ import { City, Product } from './types';
 
 export const DEFAULT_EXCHANGE_RATE_UAH_PER_USD = 40; // fallback if backend setting missing
 
+export const DEFAULT_SETTINGS = {
+  contact_phone: '+38 (067) 000-00-00',
+  contact_email: 'info@teslafix.com.ua',
+  footer_text: '© 2025 TeslaFix. Всі права захищені.',
+  footer_description: 'Ваш надійний партнер у світі запчастин для Tesla. Ми пропонуємо широкий асортимент оригінальних та якісних аналогів для всіх моделей Tesla.',
+};
+
 export const MOCK_CITIES: City[] = [
   {
     id: 'kyiv',

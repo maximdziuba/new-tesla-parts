@@ -8,6 +8,7 @@ export interface ProductFilter {
   limit?: number;
   offset?: number;
   search?: string;
+  is_favourite?: boolean;
 }
 
 const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
@@ -20,6 +21,7 @@ export const api = {
         if (filters.limit) params.append('limit', filters.limit.toString());
         if (filters.offset) params.append('offset', filters.offset.toString());
         if (filters.search) params.append('search', filters.search);
+        if (filters.is_favourite !== undefined) params.append('is_favourite', filters.is_favourite.toString());
 
         const res = await fetch(`${API_URL}/products/?${params.toString()}`);
         if (!res.ok) throw new Error('Failed to fetch products');

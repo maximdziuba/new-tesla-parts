@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { Product, Currency, CartItem, Category, StaticSeoRecord, Page } from '../types';
 import { api } from '../services/api';
-import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD } from '../constants';
+import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD, DEFAULT_SETTINGS } from '../constants';
 import { usePathname } from 'next/navigation';
 
 interface AppContextType {
@@ -250,19 +250,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     const loadContactInfo = async () => {
-      const fetchSetting = async (key: string) => {
+      const fetchSetting = async (key: string, defaultValue: string) => {
         try {
           const value = await api.getSetting(key);
-          return value || '';
+          return value || defaultValue;
         } catch {
-          return '';
+          return defaultValue;
         }
       };
       const [email, phone, footerDescription, footerText] = await Promise.all([
-        fetchSetting('contact_email'),
-        fetchSetting('contact_phone'),
-        fetchSetting('footer_description'),
-        fetchSetting('footer_text'),
+        fetchSetting('contact_email', DEFAULT_SETTINGS.contact_email),
+        fetchSetting('contact_phone', DEFAULT_SETTINGS.contact_phone),
+        fetchSetting('footer_description', DEFAULT_SETTINGS.footer_description),
+        fetchSetting('footer_text', DEFAULT_SETTINGS.footer_text),
       ]);
       setContactInfo({
         email,
