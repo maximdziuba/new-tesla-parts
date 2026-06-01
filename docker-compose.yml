@@ -46,6 +46,8 @@ services:
       FRONTEND_URL: "https://teslafix.com.ua"
       BACKEND_URL: "https://api.teslafix.com.ua"
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-super-secret-jwt-key}
+      SMTP_EMAIL: ${SMTP_EMAIL:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     depends_on:
       - db
       
