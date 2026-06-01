@@ -1,6 +1,15 @@
 import { Product, OrderData, Category, StaticSeoRecord, Page, OrderRead, CartItem } from '../types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const getApiUrl = () => {
+    if (typeof window === 'undefined') {
+        // Server-side (SSR): Connect directly to backend container in Docker network
+        return 'http://backend:8000';
+    }
+    // Client-side (Browser): Connect to public API URL
+    return process.env.NEXT_PUBLIC_API_URL || 'https://api.teslafix.com.ua';
+};
+
+const API_URL = getApiUrl();
 
 export interface ProductFilter {
   category?: string;
