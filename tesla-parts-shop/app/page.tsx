@@ -22,6 +22,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const products = await api.getProducts({ limit: 8, is_favourite: true });
+  let products = [];
+  try {
+    products = await api.getProducts({ limit: 8, is_favourite: true });
+  } catch (e) {
+    console.error('Failed to load products on server:', e);
+  }
   return <HomeClient initialProducts={products} />;
 }
