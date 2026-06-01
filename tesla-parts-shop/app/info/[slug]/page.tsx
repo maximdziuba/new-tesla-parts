@@ -97,10 +97,10 @@ export default async function InfoPage({ params }: PageProps) {
 
   return (
     <StaticPageClient 
-      slug={params.slug}
+      slug={resolvedParams.slug}
       initialPage={pageData}
       initialSeo={seoRecord}
-      fallbackTitle={PAGE_FALLBACKS[params.slug]?.title || params.slug}
+      fallbackTitle={PAGE_FALLBACKS[resolvedParams.slug]?.title || resolvedParams.slug}
     />
   );
 }
