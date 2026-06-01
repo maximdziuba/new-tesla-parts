@@ -41,6 +41,7 @@ def create_db_and_tables():
     _ensure_customer_cart_data_column()
     _ensure_customer_discount_fields()
     _ensure_customer_email_hash_column()
+    _ensure_order_customer_id_column()
     _migrate_existing_customers()
     
     with Session(engine) as session:
@@ -239,3 +240,12 @@ def _migrate_existing_customers():
                     customer.phone = encrypt_value(customer.phone)
                 session.add(customer)
         session.commit()
+
+def _ensure_order_customer_id_column():
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("order")]
+    if "customer_id" not in columns:
+        print("Adding 'customer_id' column to 'order' table...")
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE \"order\" ADD COLUMN customer_id INTEGER"))
+            conn.commit()
