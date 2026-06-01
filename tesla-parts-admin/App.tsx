@@ -12,6 +12,9 @@ import { CMSPage } from './pages/CMSPage';
 import { FeedbackPage } from './pages/FeedbackPage';
 import { ResetPasswordPage } from './pages/ResetPassword'; // Import ResetPasswordPage
 import { useAuth } from './AuthContext'; // Import useAuth
+import { CustomerList } from './components/CustomerList';
+import { PromoCodeList } from './components/PromoCodeList';
+import { EmailCampaigns } from './components/EmailCampaigns';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -43,6 +46,9 @@ const App: React.FC = () => {
                   <Route path="/products/new" element={<ProductForm />} />
                   <Route path="/products/edit/:id" element={<ProductForm />} />
                   <Route path="/orders" element={<OrderList />} />
+                  <Route path="/customers" element={<CustomerList />} />
+                  <Route path="/promocodes" element={<PromoCodeList />} />
+                  <Route path="/email-campaigns" element={<EmailCampaigns />} />
                   <Route path="/categories" element={<CategoryList />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/settings/reset-password" element={<ResetPasswordPage />} />

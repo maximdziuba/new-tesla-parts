@@ -64,6 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
+    ApiService.logout().catch(err => console.error("Server logout failed:", err));
     setAccessToken(null);
     setRefreshToken(null);
     setShowSessionExpiredModal(false); // Ensure modal is hidden on explicit logout

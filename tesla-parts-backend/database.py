@@ -1,7 +1,12 @@
 from sqlmodel import SQLModel, create_engine, Session, select
 from sqlalchemy import text, inspect
 import os
-from models import Settings, User # Import Settings and User model
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+from models import Settings, User, Customer, Category, UserSession # Import Settings, User, Customer, Category and UserSession models
 from auth import get_password_hash # Import password hashing utility
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -28,10 +33,15 @@ def create_db_and_tables():
     _ensure_subcategory_sort_order_column()
     _ensure_product_cross_number_column()
     _ensure_category_seo_columns()
+    _ensure_category_slug_column() # Run Category slug migration
     _ensure_product_sort_order_column()
     _ensure_product_subcategory_id_column()
     _ensure_product_created_at_column()
     _ensure_product_is_favourite_column()
+    _ensure_customer_cart_data_column()
+    _ensure_customer_discount_fields()
+    _ensure_customer_email_hash_column()
+    _migrate_existing_customers()
     
     with Session(engine) as session:
         # Check if admin user exists, if not, create it
@@ -143,3 +153,89 @@ def _ensure_product_is_favourite_column():
                 except Exception:
                     pass
             conn.commit()
+
+def _ensure_customer_cart_data_column():
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("customer")]
+    if "cart_data" not in columns:
+        print("Adding 'cart_data' column to 'customer' table...")
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE customer ADD COLUMN cart_data TEXT"))
+            conn.commit()
+
+def _ensure_customer_discount_fields():
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("customer")]
+    with engine.connect() as conn:
+        if "discount_percent" not in columns:
+            conn.execute(text("ALTER TABLE customer ADD COLUMN discount_percent FLOAT DEFAULT 0.0"))
+        if "discount_type" not in columns:
+            conn.execute(text("ALTER TABLE customer ADD COLUMN discount_type VARCHAR DEFAULT 'percent'"))
+        if "discount_value" not in columns:
+            conn.execute(text("ALTER TABLE customer ADD COLUMN discount_value FLOAT DEFAULT 0.0"))
+        
+        # Legacy migration: copy discount_percent -> discount_value if legacy discount exists and discount_value is zero/null
+        try:
+            conn.execute(text("UPDATE customer SET discount_type = 'percent', discount_value = discount_percent WHERE discount_percent > 0 AND (discount_value IS NULL OR discount_value = 0.0)"))
+        except Exception as e:
+            print(f"Skipping discount legacy migration: {e}")
+        conn.commit()
+
+def _ensure_category_slug_column():
+    def _slugify(value: str) -> str:
+        return (
+            value.lower()
+            .strip()
+            .replace(" ", "-")
+            .replace("/", "-")
+        )
+
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("category")]
+    if "slug" not in columns:
+        print("Adding 'slug' column to 'category' table...")
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE category ADD COLUMN slug VARCHAR DEFAULT ''"))
+            conn.commit()
+            
+        # Update slugs for all existing categories
+        with Session(engine) as session:
+            categories = session.exec(select(Category)).all()
+            for category in categories:
+                category.slug = _slugify(category.name)
+                session.add(category)
+            session.commit()
+
+def _ensure_customer_email_hash_column():
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("customer")]
+    if "email_hash" not in columns:
+        print("Adding 'email_hash' column to 'customer' table...")
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE customer ADD COLUMN email_hash VARCHAR"))
+            conn.commit()
+            try:
+                conn.execute(text("CREATE UNIQUE INDEX ix_customer_email_hash ON customer (email_hash)"))
+                conn.commit()
+            except Exception as e:
+                print(f"Skipping index creation or index already exists: {e}")
+
+def _migrate_existing_customers():
+    from services.crypto import encrypt_value, deterministic_hash
+    with Session(engine) as session:
+        # We query all customers
+        customers = session.exec(select(Customer)).all()
+        for customer in customers:
+            # If email_hash is empty or None, it means the record is plain-text
+            if not customer.email_hash:
+                plain_email = customer.email
+                customer.email_hash = deterministic_hash(plain_email)
+                customer.email = encrypt_value(plain_email)
+                if customer.first_name:
+                    customer.first_name = encrypt_value(customer.first_name)
+                if customer.last_name:
+                    customer.last_name = encrypt_value(customer.last_name)
+                if customer.phone:
+                    customer.phone = encrypt_value(customer.phone)
+                session.add(customer)
+        session.commit()

@@ -3,11 +3,11 @@ from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 from database import get_session
-from models import Order, OrderItem
+from models import Order, OrderItem, Customer # Add Customer
 from schemas import OrderCreate, OrderRead
 from services.telegram import send_telegram_notification
 from services.pricing import get_exchange_rate
-from dependencies import get_current_admin # Import for authentication
+from dependencies import get_current_admin, get_current_customer, get_optional_customer # Add get_optional_customer
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -19,7 +19,12 @@ class UpdateStatusRequest(BaseModel):
     status: str
 
 @router.post("/")
-def create_order(order_data: OrderCreate, background_tasks: BackgroundTasks, session: Session = Depends(get_session)):
+def create_order(
+    order_data: OrderCreate, 
+    background_tasks: BackgroundTasks, 
+    session: Session = Depends(get_session),
+    customer: Optional[Customer] = Depends(get_optional_customer) # Add optional customer
+):
     rate = get_exchange_rate(session)
 
     def _item_price_usd(item):
@@ -33,7 +38,36 @@ def create_order(order_data: OrderCreate, background_tasks: BackgroundTasks, ses
     if total_usd is None or total_usd <= 0:
         total_usd = sum(_item_price_usd(item) * item.quantity for item in order_data.items)
 
+    # Apply promocode if present
+    if order_data.promocode:
+        from models import PromoCode
+        code_str = order_data.promocode.upper().strip()
+        promocode = session.exec(
+            select(PromoCode).where(PromoCode.code == code_str, PromoCode.is_active == True)
+        ).first()
+        if not promocode:
+            raise HTTPException(status_code=400, detail="Недійсний або неактивний промокод")
+            
+        if promocode.scope == "selected":
+            if not customer:
+                raise HTTPException(status_code=400, detail="Цей промокод тільки для зареєстрованих користувачів")
+            is_linked = any(c.id == customer.id for c in promocode.customers)
+            if not is_linked:
+                raise HTTPException(status_code=400, detail="Цей промокод недійсний для вашого акаунту")
+                
+        # Apply discount
+        if promocode.discount_type == "percent":
+            total_usd = total_usd * (1.0 - promocode.discount_value / 100.0)
+        elif promocode.discount_type == "usd":
+            total_usd = total_usd - promocode.discount_value
+        elif promocode.discount_type == "uah":
+            usd_discount = promocode.discount_value / rate if rate else promocode.discount_value
+            total_usd = total_usd - usd_discount
+            
+        total_usd = max(0.0, total_usd)
+
     order = Order(
+        customer_id=customer.id if customer else None, # Set customer_id
         customer_first_name=order_data.customer.firstName,
         customer_last_name=order_data.customer.lastName,
         customer_phone=order_data.customer.phone,
@@ -137,5 +171,29 @@ def get_orders(session: Session = Depends(get_session)):
 
     if updated:
         session.commit()
+        
+    return orders_with_uah
+
+@router.get("/my", response_model=List[OrderRead])
+def get_my_orders(customer: Customer = Depends(get_current_customer), session: Session = Depends(get_session)):
+    orders = session.exec(select(Order).where(Order.customer_id == customer.id).options(
+        selectinload(Order.items).selectinload(OrderItem.product)
+    )).all()
+    rate = get_exchange_rate(session)
+    
+    orders_with_uah = []
+    for order in orders:
+        total_usd = order.totalUSD or 0.0
+        order_read = OrderRead.model_validate(order, from_attributes=True)
+        order_read.totalUAH = round(total_usd * rate, 2) if rate else 0.0
+        
+        # Manually populate product names from the related product model
+        for i, item in enumerate(order.items):
+            if item.product:
+                order_read.items[i].product_name = item.product.name
+            else:
+                order_read.items[i].product_name = "Product Deleted"
+
+        orders_with_uah.append(order_read)
         
     return orders_with_uah

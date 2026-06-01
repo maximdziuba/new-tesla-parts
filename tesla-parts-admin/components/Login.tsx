@@ -35,9 +35,12 @@ export const Login: React.FC = () => {
                 </div>
                 <form onSubmit={handleLogin} className="space-y-5">
                     <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-1">Ім'я користувача</label>
+                        <label htmlFor="username" className="block text-sm font-bold text-slate-700 mb-1">Ім'я користувача</label>
                         <input
+                            id="username"
+                            name="username"
                             type="text"
+                            autoComplete="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-gray-50"
@@ -46,10 +49,13 @@ export const Login: React.FC = () => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-1">Пароль</label>
+                        <label htmlFor="password" className="block text-sm font-bold text-slate-700 mb-1">Пароль</label>
                         <div className="relative">
                             <input
+                                id="password"
+                                name="password"
                                 type={showPassword ? 'text' : 'password'}
+                                autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-gray-50"

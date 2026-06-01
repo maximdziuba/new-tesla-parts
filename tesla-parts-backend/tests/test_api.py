@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from main import app
-from models import Product, Order, OrderItem, Settings
+from models import Product, Order, OrderItem, Settings, User
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 from database import get_session
@@ -17,7 +17,11 @@ def get_session_override():
     with Session(engine) as session:
         yield session
 
-app.dependency_overrides[get_session] = get_session_override
+@pytest.fixture(autouse=True)
+def setup_overrides():
+    app.dependency_overrides[get_session] = get_session_override
+    yield
+    app.dependency_overrides.pop(get_session, None)
 
 client = TestClient(app)
 
@@ -28,46 +32,62 @@ def session_fixture():
         yield session
     SQLModel.metadata.drop_all(engine)
 
+@pytest.fixture
+def admin_headers(session: Session):
+    from auth import get_password_hash
+    admin_user = User(
+        username="admin",
+        hashed_password=get_password_hash("admin123")
+    )
+    session.add(admin_user)
+    session.commit()
+    
+    response = client.post("/auth/token", data={
+        "username": "admin",
+        "password": "admin123"
+    })
+    assert response.status_code == 200
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
 def test_read_main():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "Tesla Parts API is running"}
+    assert response.json() == {"message": "TeslaFix API is running"}
 
-def test_create_product(session: Session):
+def test_create_product(session: Session, admin_headers):
     product_data = {
+        "id": "test-product-id",
         "name": "Test Product",
         "category": "Test",
-        "priceUAH": 400.0,
-        "priceUSD": 10.0,
+        "priceUAH": "400.0",
+        "priceUSD": "10.0",
         "image": "http://example.com/image.png",
         "description": "Test Description",
-        "inStock": True,
+        "inStock": "true",
         "cross_number": "",
-        "detail_number": "123",
-        "subcategory_ids": [],
+        "detail_number": "123"
     }
-    headers = {"x-admin-secret": "secret", "Content-Type": "application/json"}
-    response = client.post("/products/", json=product_data, headers=headers)
+    response = client.post("/products/", data=product_data, headers=admin_headers)
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Test Product"
 
-def test_create_order(session: Session):
+def test_create_order(session: Session, admin_headers):
     # First create a product
     product_data = {
+        "id": "test-product-id-2",
         "name": "Test Product",
         "category": "Test",
-        "priceUAH": 100.0,
-        "priceUSD": 0.0,
+        "priceUAH": "100.0",
+        "priceUSD": "0.0",
         "image": "http://example.com/image.png",
         "description": "Test Description",
-        "inStock": True,
+        "inStock": "true",
         "cross_number": "",
-        "detail_number": "123",
-        "subcategory_ids": [],
+        "detail_number": "123"
     }
-    headers = {"x-admin-secret": "secret", "Content-Type": "application/json"}
-    response = client.post("/products/", json=product_data, headers=headers)
+    response = client.post("/products/", data=product_data, headers=admin_headers)
     product_id = response.json()["id"]
 
     order_data = {
@@ -114,14 +134,13 @@ def test_get_social_links(session: Session):
     assert data["instagram"] == "https://instagram.com/test"
     assert data["telegram"] == "https://t.me/test"
 
-def test_update_social_links(session: Session):
+def test_update_social_links(session: Session, admin_headers):
     # Test without auth
     response = client.post("/settings/social-links", json={"instagram": "new_insta", "telegram": "new_tele"})
     assert response.status_code == 401
 
     # Test with auth
-    headers = {"x-admin-secret": "secret"}
-    response = client.post("/settings/social-links", json={"instagram": "new_insta", "telegram": "new_tele"}, headers=headers)
+    response = client.post("/settings/social-links", json={"instagram": "new_insta", "telegram": "new_tele"}, headers=admin_headers)
     assert response.status_code == 200
     assert response.json() == {"message": "Social links updated successfully"}
 

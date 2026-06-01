@@ -71,3 +71,16 @@ export interface DashboardStats {
   pendingOrders: number;
   lowStockItems: number;
 }
+
+export interface Customer {
+  id: number;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  is_verified: boolean;
+  created_at: string;
+  discount_percent: number;
+  discount_type: 'percent' | 'usd' | 'uah';
+  discount_value: number;
+}

@@ -19,6 +19,14 @@ from services.image_uploader import image_uploader
 from services.pricing import get_exchange_rate, compute_price_fields
 from dependencies import get_current_admin # Import get_current_admin
 
+def _slugify(value: str) -> str:
+    return (
+        value.lower()
+        .strip()
+        .replace(" ", "-")
+        .replace("/", "-")
+    )
+
 router = APIRouter(prefix="/categories", tags=["categories"])
 
 
@@ -424,6 +432,7 @@ async def create_category(
 
     db_category = Category(
         name=name,
+        slug=_slugify(name),
         image=image_url,
         sort_order=sort_order,
         meta_title=meta_title or None,
@@ -491,6 +500,7 @@ async def update_category(
         raise HTTPException(status_code=404, detail="Category not found")
     
     category.name = name
+    category.slug = _slugify(name)
     if sort_order is not None:
         category.sort_order = sort_order
     if meta_title is not None:

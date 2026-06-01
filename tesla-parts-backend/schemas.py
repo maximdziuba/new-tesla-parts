@@ -88,6 +88,7 @@ class OrderCreate(BaseModel):
     delivery: Delivery
     paymentMethod: str
     ttn: str | None = None # Added TTN field
+    promocode: str | None = None # Added promocode field
 
 class OrderItemRead(BaseModel):
     product_id: str
@@ -161,3 +162,31 @@ class FeedbackRead(BaseModel):
     image_url: str
     created_at: datetime
     sort_order: int
+
+class CustomerRegister(BaseModel):
+    email: str
+
+class CustomerVerify(BaseModel):
+    token: str
+    password: str
+    confirm_password: str
+
+class CustomerLogin(BaseModel):
+    email: str
+    password: str
+
+class CustomerRead(BaseModel):
+    id: int
+    email: str
+    first_name: str | None = None
+    last_name: str | None = None
+    phone: str | None = None
+    is_verified: bool
+    created_at: datetime
+    discount_percent: float = 0.0
+    discount_type: str = "percent"
+    discount_value: float = 0.0
+
+class CustomerUpdateDiscount(BaseModel):
+    discount_type: str
+    discount_value: float

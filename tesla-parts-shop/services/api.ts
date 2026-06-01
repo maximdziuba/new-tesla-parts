@@ -1,4 +1,4 @@
-import { Product, OrderData, Category, StaticSeoRecord, Page } from '../types';
+import { Product, OrderData, Category, StaticSeoRecord, Page, OrderRead, CartItem } from '../types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
@@ -12,6 +12,15 @@ export interface ProductFilter {
 }
 
 const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
+
+const handleAuthResponse = (res: Response) => {
+    if (res.status === 401 || res.status === 403) {
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('customerToken');
+            window.dispatchEvent(new Event('customer-logged-out'));
+        }
+    }
+};
 
 export const api = {
     getProducts: async (filters: ProductFilter = {}): Promise<Product[]> => {
@@ -61,13 +70,21 @@ export const api = {
             paymentMethod: orderData.paymentMethod
         };
 
+        const token = localStorage.getItem('customerToken');
+        const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const res = await fetch(`${API_URL}/orders/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers,
             body: JSON.stringify(payload),
         });
+
+        handleAuthResponse(res);
 
         if (!res.ok) throw new Error('Failed to create order');
         return res.json();
@@ -119,6 +136,141 @@ export const api = {
     getFeedback: async (): Promise<any[]> => {
         const res = await fetch(`${API_URL}/feedback/`);
         if (!res.ok) throw new Error('Failed to fetch feedback');
+        return res.json();
+    },
+
+    registerCustomer: async (email: string) => {
+        const res = await fetch(`${API_URL}/customers/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Failed to register');
+        }
+        return res.json();
+    },
+
+    verifyCustomer: async (data: any) => {
+        const res = await fetch(`${API_URL}/customers/verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Failed to verify');
+        }
+        return res.json();
+    },
+
+    loginCustomer: async (data: any) => {
+        const res = await fetch(`${API_URL}/customers/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Failed to login');
+        }
+        return res.json();
+    },
+
+    getMe: async () => {
+        const token = localStorage.getItem('customerToken');
+        if (!token) throw new Error('Not authenticated');
+        const res = await fetch(`${API_URL}/customers/me`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+        handleAuthResponse(res);
+        if (!res.ok) throw new Error('Failed to fetch user info');
+        return res.json();
+    },
+
+    getMyOrders: async (): Promise<OrderRead[]> => {
+        const token = localStorage.getItem('customerToken');
+        if (!token) throw new Error('Not authenticated');
+        const res = await fetch(`${API_URL}/orders/my`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+        handleAuthResponse(res);
+        if (!res.ok) throw new Error('Failed to fetch orders');
+        return res.json();
+    },
+
+    getCart: async (): Promise<CartItem[]> => {
+        const token = localStorage.getItem('customerToken');
+        if (!token) return [];
+        const res = await fetch(`${API_URL}/customers/cart`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+        handleAuthResponse(res);
+        if (!res.ok) throw new Error('Failed to fetch cart');
+        return res.json();
+    },
+
+    saveCart: async (cartItems: CartItem[]): Promise<any> => {
+        const token = localStorage.getItem('customerToken');
+        if (!token) return null;
+        const res = await fetch(`${API_URL}/customers/cart`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(cartItems),
+        });
+        handleAuthResponse(res);
+        if (!res.ok) throw new Error('Failed to save cart');
+        return res.json();
+    },
+
+    updateProfile: async (data: { first_name: string; last_name: string; phone: string }): Promise<any> => {
+        const token = localStorage.getItem('customerToken');
+        if (!token) throw new Error('Not authenticated');
+        const res = await fetch(`${API_URL}/customers/profile`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data),
+        });
+        handleAuthResponse(res);
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || 'Failed to update profile');
+        }
+        return res.json();
+    },
+
+    validatePromoCode: async (code: string): Promise<{
+        code: string;
+        discount_type: 'percent' | 'usd' | 'uah';
+        discount_value: number;
+        valid: boolean;
+    }> => {
+        const token = localStorage.getItem('customerToken');
+        const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        const res = await fetch(`${API_URL}/promocodes/validate`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ code }),
+        });
+        
+        handleAuthResponse(res);
+        
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || 'Недійсний промокод');
+        }
         return res.json();
     }
 };
