@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ShoppingCart, Search, Menu, X, ChevronDown, Sun, Moon, Phone, MessageSquare, Send } from 'lucide-react';
+import { ShoppingCart, Search, Menu, X, ChevronDown, Sun, Moon, Phone, MessageSquare, Send, User, LogOut, ShoppingBag, LogIn, UserPlus } from 'lucide-react';
 import { Currency } from '../types';
 import ShopLogo from './ShopLogo';
 import Link from 'next/link';
@@ -29,6 +29,8 @@ const Header: React.FC = () => {
     socialLinks,
     contactInfo,
     headerPages,
+    isCustomerLoggedIn,
+    logoutCustomer,
   } = useApp();
 
   const router = useRouter();
@@ -38,15 +40,21 @@ const Header: React.FC = () => {
 
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isPagesDropdownOpen, setIsPagesDropdownOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   const pagesDropdownRef = useRef<HTMLDivElement>(null);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
     const handleClickOutside = (event: MouseEvent) => {
       if (pagesDropdownRef.current && !pagesDropdownRef.current.contains(event.target as Node)) {
         setIsPagesDropdownOpen(false);
+      }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -71,6 +79,13 @@ const Header: React.FC = () => {
     if (value.trim()) {
       router.push(`/search?q=${encodeURIComponent(value)}`);
     }
+  };
+
+  const handleLogout = () => {
+    logoutCustomer();
+    setShowLogoutConfirm(false);
+    setIsProfileDropdownOpen(false);
+    router.push('/');
   };
 
   const formatPrice = (amount: number) => {
@@ -250,6 +265,74 @@ const Header: React.FC = () => {
               </div>
             </div>
 
+            {/* Profile Button / Dropdown */}
+            {isMounted && (
+              <div className="relative" ref={profileDropdownRef}>
+                <button 
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="text-slate-900 dark:text-white hover:text-blue-600 transition flex items-center animate-in fade-in"
+                  title={isCustomerLoggedIn ? "Профіль" : "Увійти / Реєстрація"}
+                >
+                  <User size={24} />
+                </button>
+                
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md overflow-hidden z-[70] border border-gray-100 dark:border-slate-700 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {isCustomerLoggedIn ? (
+                      <>
+                        <Link 
+                          href="/profile" 
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition"
+                        >
+                          <User size={18} className="text-blue-600" />
+                          <span>Мій профіль</span>
+                        </Link>
+                        <Link 
+                          href="/profile?tab=orders" 
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition"
+                        >
+                          <ShoppingBag size={18} className="text-blue-600" />
+                          <span>Мої замовлення</span>
+                        </Link>
+                        <div className="border-t border-gray-100 dark:border-slate-700"></div>
+                        <button 
+                          onClick={() => {
+                            setShowLogoutConfirm(true);
+                            setIsProfileDropdownOpen(false);
+                          }}
+                          className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition cursor-pointer"
+                        >
+                          <LogOut size={18} />
+                          <span>Вийти</span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link 
+                          href="/login" 
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition font-medium"
+                        >
+                          <LogIn size={18} className="text-blue-600" />
+                          <span>Увійти</span>
+                        </Link>
+                        <Link 
+                          href="/register" 
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition font-medium"
+                        >
+                          <UserPlus size={18} className="text-blue-600" />
+                          <span>Реєстрація</span>
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             <Link
               href="/checkout"
               className="hidden sm:block bg-blue-600 hover:bg-blue-800 text-white px-5 py-2 rounded-md font-bold transition text-sm shadow-md whitespace-nowrap"
@@ -293,6 +376,36 @@ const Header: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-sm w-full overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-6 text-center">
+              <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
+                <LogOut className="text-red-600" size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Вийти з акаунта?</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-6">Ви впевнені, що хочете вийти зі свого акаунта?</p>
+              
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="flex-1 px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 font-bold rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 transition"
+                >
+                  Скасувати
+                </button>
+                <button 
+                  onClick={handleLogout}
+                  className="flex-1 px-4 py-2.5 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition shadow-md shadow-red-200 dark:shadow-none"
+                >
+                  Вийти
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

@@ -35,6 +35,9 @@ interface AppContextType {
   cartTotalUSD: number;
   cartCount: number;
   hasInternalHistory: boolean;
+  isCustomerLoggedIn: boolean;
+  loginCustomer: (token: string) => Promise<void>;
+  logoutCustomer: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -149,17 +152,83 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [staticSeo, setStaticSeo] = useState<Record<string, StaticSeoRecord>>({});
   const [loading, setLoading] = useState(true);
+  const [isCustomerLoggedIn, setIsCustomerLoggedIn] = useState(false);
 
-  // Load cart from local storage on mount
+  // Load initial state on mount
   useEffect(() => {
-    setCart(getInitialCart());
-    setTheme(getInitialTheme());
+    const initApp = async () => {
+      setCart(getInitialCart());
+      setTheme(getInitialTheme());
+      
+      const token = localStorage.getItem('customerToken');
+      if (token) {
+        setIsCustomerLoggedIn(true);
+        try {
+          const serverCart = await api.getCart();
+          setCart(serverCart);
+        } catch (err) {
+          console.error("Failed to fetch initial cart from server", err);
+        }
+      }
 
-    // Close sidebar on mobile initially
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-      setIsSidebarOpen(false);
-    }
+      // Close sidebar on mobile initially
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+      }
+    };
+    initApp();
   }, []);
+
+  useEffect(() => {
+    const handleLogoutEvent = () => {
+      setIsCustomerLoggedIn(false);
+      setCart([]);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(CART_STORAGE_KEY);
+      }
+    };
+    window.addEventListener('customer-logged-out', handleLogoutEvent);
+    return () => {
+      window.removeEventListener('customer-logged-out', handleLogoutEvent);
+    };
+  }, []);
+
+  const loginCustomer = async (token: string) => {
+    localStorage.setItem('customerToken', token);
+    setIsCustomerLoggedIn(true);
+    
+    try {
+      const serverCart = await api.getCart();
+      const guestCart = cart;
+      
+      if (guestCart.length > 0) {
+        // Merge guest cart with server cart
+        const merged = [...serverCart];
+        guestCart.forEach((guestItem) => {
+          const existingIdx = merged.findIndex((i) => i.id === guestItem.id);
+          if (existingIdx > -1) {
+            merged[existingIdx].quantity = merged[existingIdx].quantity + guestItem.quantity;
+          } else {
+            merged.push(guestItem);
+          }
+        });
+        
+        setCart(merged);
+        await api.saveCart(merged);
+      } else {
+        setCart(serverCart);
+      }
+    } catch (err) {
+      console.error("Failed to merge cart on login", err);
+    }
+  };
+
+  const logoutCustomer = () => {
+    localStorage.removeItem('customerToken');
+    setIsCustomerLoggedIn(false);
+    setCart([]);
+    localStorage.removeItem(CART_STORAGE_KEY);
+  };
 
   // Theme application and system listener
   useEffect(() => {
@@ -197,6 +266,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     }
   }, [cart]);
+
+  // Sync cart to server on changes if logged in (debounced to avoid race conditions)
+  useEffect(() => {
+    if (!isCustomerLoggedIn) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await api.saveCart(cart);
+      } catch (err) {
+        console.error("Failed to sync cart to server", err);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [cart, isCustomerLoggedIn]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -336,6 +420,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cartTotalUSD,
         cartCount,
         hasInternalHistory,
+        isCustomerLoggedIn,
+        loginCustomer,
+        logoutCustomer,
       }}
     >
       {children}

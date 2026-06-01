@@ -53,7 +53,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, currency, uahPerUsd
           >
             <div className="relative w-full pb-[100%] bg-gray-100 dark:bg-slate-900">
               <img
-                src={product.image}
+                src={product.image || undefined}
                 alt={product.name}
                 className="absolute inset-0 w-full h-full object-cover xl:group-hover:scale-102 transition-transform duration-300"
               />

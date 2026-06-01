@@ -1,4 +1,4 @@
-import { Product, Order, Category, Subcategory } from '../types';
+import { Product, Order, Category, Subcategory, Customer } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
@@ -71,25 +71,53 @@ const isTokenExpired = (token: string | null): boolean => {
 //   return response;
 // }
 
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = (token: string) => {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
 // Generic authenticated fetch wrapper with refresh token logic
 async function _authenticatedFetch(url: string, options: RequestInit = {}, isMultipart: boolean = false): Promise<Response> {
-  const accessToken = localStorage.getItem('accessToken');
+  let accessToken = localStorage.getItem('accessToken');
   const refreshToken = localStorage.getItem('refreshToken');
 
   if (isTokenExpired(accessToken) && refreshToken) {
-        try {
-      const refreshResponse = await ApiService.refreshToken(refreshToken);
-      localStorage.setItem('accessToken', refreshResponse.access_token);
-      localStorage.setItem('refreshToken', refreshResponse.refresh_token);
-    } catch (refreshError) {
-      console.error("Token refresh failed:", refreshError);
-      onUnauthorized(); // Refresh failed, log out
-      throw new Error("Unauthorized: Token refresh failed.");
+    if (!isRefreshing) {
+      isRefreshing = true;
+      try {
+        const refreshResponse = await ApiService.refreshToken(refreshToken);
+        localStorage.setItem('accessToken', refreshResponse.access_token);
+        localStorage.setItem('refreshToken', refreshResponse.refresh_token);
+        isRefreshing = false;
+        onRefreshed(refreshResponse.access_token);
+        accessToken = refreshResponse.access_token;
+      } catch (refreshError) {
+        isRefreshing = false;
+        console.error("Token refresh failed:", refreshError);
+        onUnauthorized(); // Refresh failed, log out
+        throw new Error("Unauthorized: Token refresh failed.");
+      }
+    } else {
+      // Wait for the active refresh to complete
+      await new Promise<void>((resolve) => {
+        subscribeTokenRefresh((newToken) => {
+          accessToken = newToken;
+          resolve();
+        });
+      });
     }
   }
 
   let headers = getHeaders(isMultipart); // Pass isMultipart to getHeaders
   options.headers = { ...headers, ...options.headers };
+  options.credentials = 'include';
 
   if (options.body instanceof FormData) {
     // Якщо ми бачимо, що body - це FormData, ми МУСИМО видалити Content-Type.
@@ -104,7 +132,7 @@ async function _authenticatedFetch(url: string, options: RequestInit = {}, isMul
     if (options.headers instanceof Headers) {
         options.headers.delete('Content-Type');
     }
-}
+  }
 
   let response = await fetch(url, options);
 
@@ -115,7 +143,6 @@ async function _authenticatedFetch(url: string, options: RequestInit = {}, isMul
 
   return response;
 }
-
 
 export const ApiService = {
   login: async (username: string, password: string): Promise<{ access_token: string; refresh_token: string }> => {
@@ -129,6 +156,7 @@ export const ApiService = {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: formData.toString(),
+      credentials: 'include',
     });
     if (!res.ok) {
       const errorData = await res.json();
@@ -144,12 +172,24 @@ export const ApiService = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ refresh_token: token }),
+      credentials: 'include',
     });
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.detail || 'Failed to refresh token');
     }
     return res.json();
+  },
+
+  logout: async (): Promise<void> => {
+    try {
+      await fetch(`${API_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (e) {
+      console.error('Failed to log out on server:', e);
+    }
   },
 
   resetPassword: async (oldPassword: string, newPassword: string): Promise<{ message: string }> => {
@@ -682,6 +722,125 @@ export const ApiService = {
       body: formData,
     });
     if (!res.ok) throw new Error('Failed to update feedback sort order');
+    return res.json();
+  },
+
+  getCustomers: async (): Promise<Customer[]> => {
+    const res = await _authenticatedFetch(`${API_URL}/customers/`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch customers');
+    return res.json();
+  },
+
+  getCustomerOrders: async (customerId: number): Promise<Order[]> => {
+    const res = await _authenticatedFetch(`${API_URL}/customers/${customerId}/orders`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch customer orders');
+    return res.json();
+  },
+
+  updateCustomerDiscount: async (customerId: number, discountType: string, discountValue: number): Promise<any> => {
+    const res = await _authenticatedFetch(`${API_URL}/customers/${customerId}/discount`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify({ discount_type: discountType, discount_value: discountValue }),
+    });
+    if (!res.ok) throw new Error('Failed to update customer discount');
+    return res.json();
+  },
+
+  // Promo Codes APIs
+  getPromoCodes: async (): Promise<any[]> => {
+    const res = await _authenticatedFetch(`${API_URL}/promocodes/`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch promo codes');
+    return res.json();
+  },
+
+  createPromoCode: async (data: any): Promise<any> => {
+    const res = await _authenticatedFetch(`${API_URL}/promocodes/`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Failed to create promo code');
+    }
+    return res.json();
+  },
+
+  updatePromoCode: async (id: number, data: any): Promise<any> => {
+    const res = await _authenticatedFetch(`${API_URL}/promocodes/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Failed to update promo code');
+    }
+    return res.json();
+  },
+
+  deletePromoCode: async (id: number): Promise<any> => {
+    const res = await _authenticatedFetch(`${API_URL}/promocodes/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to delete promo code');
+    return res.json();
+  },
+
+  // Email Campaigns APIs
+  getEmailLists: async (): Promise<any[]> => {
+    const res = await _authenticatedFetch(`${API_URL}/email-campaigns/lists`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch email lists');
+    return res.json();
+  },
+
+  createEmailList: async (data: any): Promise<any> => {
+    const res = await _authenticatedFetch(`${API_URL}/email-campaigns/lists`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Failed to create email list');
+    }
+    return res.json();
+  },
+
+  deleteEmailList: async (id: number): Promise<any> => {
+    const res = await _authenticatedFetch(`${API_URL}/email-campaigns/lists/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to delete email list');
+    return res.json();
+  },
+
+  sendCampaignToList: async (listId: number, data: { subject: string; body: string }): Promise<any> => {
+    const res = await _authenticatedFetch(`${API_URL}/email-campaigns/lists/${listId}/send`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Failed to send campaign to list');
+    }
+    return res.json();
+  },
+
+  sendDirectCampaign: async (data: { subject: string; body: string; customer_ids?: number[]; emails?: string[] }): Promise<any> => {
+    const res = await _authenticatedFetch(`${API_URL}/email-campaigns/send-direct`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Failed to send direct campaign');
+    }
     return res.json();
   },
 };

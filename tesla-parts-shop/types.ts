@@ -95,3 +95,24 @@ export interface Page {
   is_published: boolean;
   location: string;
 }
+
+export interface OrderRead {
+  id: number;
+  status: string;
+  totalUSD: number;
+  totalUAH: number;
+  customer_first_name: string;
+  customer_last_name: string;
+  customer_phone: string;
+  delivery_city: string;
+  delivery_branch: string;
+  payment_method: string;
+  ttn?: string;
+  created_at: string;
+  items: {
+    product_id: string;
+    product_name?: string;
+    quantity: number;
+    price_at_purchase: number;
+  }[];
+}

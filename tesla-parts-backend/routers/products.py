@@ -29,6 +29,12 @@ def _slugify(value: str) -> str:
     return re.sub(r'\s+', '-', value)
 
 
+def _split_categories(value: Optional[str]) -> List[str]:
+    if not value:
+        return []
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 def _collect_subcategory_ids(product: Product) -> List[int]:
     ids: List[int] = []
     if product.subcategory_id:
@@ -110,12 +116,9 @@ def read_products(
     # 1. Filter by Category Slug
     # We need to find the category name from the slug to support legacy 'Product.category' field
     if category_slug:
-        # Fetch all categories to match slug (since we don't have slug column)
-        all_categories = session.exec(select(Category)).all()
-        target_category = next(
-            (c for c in all_categories if _slugify(c.name) == category_slug), 
-            None
-        )
+        target_category = session.exec(
+            select(Category).where(Category.slug == category_slug)
+        ).first()
         
         if target_category:
             # Filter by legacy category name field

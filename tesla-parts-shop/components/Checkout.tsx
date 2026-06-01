@@ -6,6 +6,8 @@ import NovaPostWidget from '../components/NovaPostWidget'; // Ensure this path i
 import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD } from '../constants';
 import { formatCurrency } from '../utils/currency';
 import Link from 'next/link';
+import { useApp } from '../context/AppContext';
+import { useRouter } from 'next/navigation';
 
 interface CheckoutProps {
   cartItems: CartItem[];
@@ -16,12 +18,52 @@ interface CheckoutProps {
 }
 
 const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onSuccess, totalUSD }) => {
+  const { isCustomerLoggedIn } = useApp();
+  const router = useRouter();
+  
   // --- Form State ---
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.IBAN);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [discountType, setDiscountType] = useState<'percent' | 'usd' | 'uah'>('percent');
+  const [discountValue, setDiscountValue] = useState(0);
+
+  // --- Promo Code State ---
+  const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
+  const [promoCodeSuccess, setPromoCodeSuccess] = useState<string | null>(null);
+  const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
+
+  // --- Guest Registration Offer Modal ---
+  const [showOfferModal, setShowOfferModal] = useState(false);
+
+  useEffect(() => {
+    if (isCustomerLoggedIn) {
+      const fetchUserInfo = async () => {
+        try {
+          const user = await api.getMe();
+          if (user.first_name) setFirstName(user.first_name);
+          if (user.last_name) setLastName(user.last_name);
+          if (user.phone) {
+             const formatted = formatPhoneNumber(user.phone);
+             setPhone(formatted);
+          }
+          if (user.discount_type) {
+            setDiscountType(user.discount_type);
+          }
+          const val = user.discount_value !== undefined ? user.discount_value : user.discount_percent;
+          if (val) {
+            setDiscountValue(val);
+          }
+        } catch (err) {
+          console.error("Failed to fetch user info for checkout", err);
+        }
+      };
+      fetchUserInfo();
+    }
+  }, [isCustomerLoggedIn]);
   
   // --- Delivery State (Simplified) ---
   // We no longer need arrays for cities/warehouses. We just store the final result.
@@ -108,9 +150,20 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
 
     setProcessing(true);
 
+    const effectiveRate = uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
+    let discountAmountUSD = 0;
+    if (discountType === 'percent') {
+      discountAmountUSD = totalUSD * (discountValue / 100);
+    } else if (discountType === 'usd') {
+      discountAmountUSD = discountValue;
+    } else if (discountType === 'uah') {
+      discountAmountUSD = discountValue / effectiveRate;
+    }
+    const finalTotalUSD = Math.max(0, totalUSD - discountAmountUSD);
+
     const order: OrderData = {
       items: cartItems,
-      totalUSD: Number(totalUSD.toFixed(2)),
+      totalUSD: Number(finalTotalUSD.toFixed(2)),
       customer: { firstName, lastName, phone },
       delivery: { 
         city: deliveryData.city, 
@@ -124,7 +177,11 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
 
     try {
       await api.createOrder(order);
-      onSuccess();
+      if (!isCustomerLoggedIn) {
+        setShowOfferModal(true);
+      } else {
+        onSuccess();
+      }
     } catch (err) {
       console.error("Order failed", err);
       alert("Виникла помилка при оформленні. Спробуйте ще раз.");
@@ -146,7 +203,22 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
     return formatAmount(amount);
   };
   const totalUAH = totalUSD * effectiveRate;
+  
+  let discountAmountUSD = 0;
+  if (discountType === 'percent') {
+    discountAmountUSD = totalUSD * (discountValue / 100);
+  } else if (discountType === 'usd') {
+    discountAmountUSD = discountValue;
+  } else if (discountType === 'uah') {
+    discountAmountUSD = discountValue / effectiveRate;
+  }
+
+  const finalTotalUSD = Math.max(0, totalUSD - discountAmountUSD);
+  const finalTotalUAH = finalTotalUSD * effectiveRate;
+  
   const totalDisplayAmount = currency === Currency.UAH ? totalUAH : totalUSD;
+  const finalTotalDisplayAmount = currency === Currency.UAH ? finalTotalUAH : finalTotalUSD;
+  const discountDisplayAmount = currency === Currency.UAH ? (discountAmountUSD * effectiveRate) : discountAmountUSD;
 
   if (cartItems.length === 0) {
     return <div className="p-8 text-center text-gray-500">Кошик порожній</div>;
@@ -272,18 +344,109 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
               ))}
             </div>
 
+            {/* Promo Code Input */}
+            <div className="mb-4 pt-4 border-t border-gray-100 dark:border-slate-700">
+              <label className="block text-xs font-semibold text-gray-500 dark:text-slate-400 mb-1 uppercase tracking-wider">
+                Промокод
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Введіть промокод"
+                  value={promoCodeInput}
+                  onChange={(e) => setPromoCodeInput(e.target.value)}
+                  disabled={!!appliedPromoCode}
+                  className="flex-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded px-3 py-1.5 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 uppercase font-mono"
+                />
+                {appliedPromoCode ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAppliedPromoCode(null);
+                      setPromoCodeInput('');
+                      setPromoCodeSuccess(null);
+                      if (isCustomerLoggedIn) {
+                        const restoreInfo = async () => {
+                          try {
+                            const user = await api.getMe();
+                            if (user.discount_type) {
+                              setDiscountType(user.discount_type);
+                            } else {
+                              setDiscountType('percent');
+                            }
+                            const val = user.discount_value !== undefined ? user.discount_value : user.discount_percent;
+                            setDiscountValue(val || 0);
+                          } catch {
+                            setDiscountType('percent');
+                            setDiscountValue(0);
+                          }
+                        };
+                        restoreInfo();
+                      } else {
+                        setDiscountType('percent');
+                        setDiscountValue(0);
+                      }
+                    }}
+                    className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-semibold transition animate-in fade-in duration-250"
+                  >
+                    Скасувати
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!promoCodeInput.trim()) return;
+                      try {
+                        const res = await api.validatePromoCode(promoCodeInput);
+                        setDiscountType(res.discount_type);
+                        setDiscountValue(res.discount_value);
+                        setAppliedPromoCode(res.code);
+                        setPromoCodeSuccess(`Промокод ${res.code} застосовано!`);
+                        setPromoCodeError(null);
+                      } catch (err: any) {
+                        setPromoCodeError(err.message || 'Недійсний промокод');
+                        setPromoCodeSuccess(null);
+                      }
+                    }}
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition"
+                  >
+                    Застосувати
+                  </button>
+                )}
+              </div>
+              {promoCodeError && (
+                <p className="text-xs text-red-500 dark:text-red-400 mt-1 font-medium">{promoCodeError}</p>
+              )}
+              {promoCodeSuccess && (
+                <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-medium">{promoCodeSuccess}</p>
+              )}
+            </div>
+
             <div className="border-t border-gray-100 dark:border-slate-700 pt-4 space-y-2 mb-6">
               <div className="flex justify-between text-gray-600 dark:text-slate-400">
                 <span>Сума товарів</span>
                 <span>{formatAmount(totalDisplayAmount)}</span>
               </div>
+              {discountValue > 0 && (
+                <div className="flex justify-between text-blue-600 dark:text-blue-400 font-semibold animate-in fade-in duration-200">
+                  <span>
+                    {(() => {
+                      const prefix = appliedPromoCode ? `Промокод (${appliedPromoCode})` : 'Персональна знижка';
+                      if (discountType === 'percent') return `${prefix} (${discountValue}%)`;
+                      if (discountType === 'usd') return `${prefix} ($${discountValue})`;
+                      return `${prefix} (${discountValue} грн)`;
+                    })()}
+                  </span>
+                  <span>-{formatAmount(discountDisplayAmount)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-gray-600 dark:text-slate-400">
                 <span>Доставка</span>
                 <span className="text-xs">(за тарифами перевізника)</span>
               </div>
               <div className="flex justify-between text-xl font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-100 dark:border-slate-700 mt-2">
                 <span>Разом</span>
-                <span>{formatAmount(totalDisplayAmount)}</span>
+                <span>{formatAmount(finalTotalDisplayAmount)}</span>
               </div>
             </div>
 
@@ -305,6 +468,44 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
           </div>
         </div>
       </div>
+
+      {/* Guest Registration Offer Modal */}
+      {showOfferModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 dark:border-slate-700 animate-in fade-in zoom-in duration-200">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 text-center">
+              🎉 Замовлення оформлено!
+            </h3>
+            <p className="text-gray-600 dark:text-slate-300 text-sm leading-relaxed mb-6 text-center">
+              Дякуємо! Ваше замовлення успішно прийнято. 
+              <br />
+              <span className="block mt-2 font-medium text-blue-600 dark:text-blue-400">
+                Бажаєте отримувати персональні знижки та сповіщення про акції?
+              </span>
+              Створіть особистий кабінет! Зареєстровані користувачі завжди отримують персональні знижки на наступні покупки та оперативні повідомлення про нові пропозиції.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  onSuccess();
+                  router.push('/register');
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                Створити акаунт
+              </button>
+              <button
+                onClick={() => {
+                  onSuccess();
+                }}
+                className="w-full bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-white font-medium py-2.5 rounded-lg transition-colors"
+              >
+                Ні, дякую (продовжити без акаунта)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

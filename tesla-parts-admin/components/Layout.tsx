@@ -13,7 +13,10 @@ import {
   MessageSquare,
   Key,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Users,
+  Ticket,
+  Mail
 } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 
@@ -52,10 +55,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       case '/': return 'Дашборд';
       case '/products': return 'Товари';
       case '/orders': return 'Замовлення';
+      case '/customers': return 'Клієнти';
       case '/categories': return 'Категорії';
       case '/settings': return 'Налаштування';
       case '/cms': return 'Контент';
       case '/feedback': return 'Відгуки';
+      case '/promocodes': return 'Промокоди';
+      case '/email-campaigns': return 'Маркетингові розсилки';
       default: return 'Адмін Панель';
     }
   };
@@ -64,7 +70,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex h-screen bg-[#f8fafc] overflow-hidden text-slate-900">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 transform transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+         className={`fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 transform transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           } ${collapsed ? 'lg:w-20' : 'lg:w-64'} w-64 flex flex-col transition-colors shadow-2xl lg:shadow-none`}
       >
         <div className={`flex items-center border-b border-gray-100 transition-all duration-300 ${collapsed ? 'justify-center p-4' : 'gap-3 p-6'}`}>
@@ -98,6 +104,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             collapsed={collapsed}
           />
           <SidebarItem
+            to="/customers"
+            icon={Users}
+            label="Клієнти"
+            active={location.pathname === '/customers' || location.pathname.startsWith('/customers/')}
+            collapsed={collapsed}
+          />
+          <SidebarItem
             to="/categories"
             icon={Layers}
             label="Категорії"
@@ -111,6 +124,27 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             active={location.pathname === '/products' || location.pathname.startsWith('/products/')}
             collapsed={collapsed}
           />
+          
+          <div className="pt-4">
+            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 px-4">
+              Маркетинг
+            </div>
+            <SidebarItem
+              to="/promocodes"
+              icon={Ticket}
+              label="Промокоди"
+              active={location.pathname === '/promocodes'}
+              collapsed={collapsed}
+            />
+            <SidebarItem
+              to="/email-campaigns"
+              icon={Mail}
+              label="Розсилки"
+              active={location.pathname === '/email-campaigns'}
+              collapsed={collapsed}
+            />
+          </div>
+
           <div className="pt-4">
             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 px-4">
               Сайт та контент

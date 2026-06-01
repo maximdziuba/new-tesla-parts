@@ -1,22 +1,104 @@
-'use client';
-
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import StaticPage from '../../../components/StaticPage';
-import { useApp } from '../../../context/AppContext';
+import { api } from '../../../services/api';
+import StaticPageClient from '../../../components/StaticPageClient';
+import { Metadata } from 'next';
 
-export default function InfoPage() {
-  const { slug } = useParams();
-  const { staticSeo } = useApp();
-  const router = useRouter();
+export const revalidate = 60; // Revalidate every minute
 
-  if (!slug) return null;
+interface PageProps {
+  params: {
+    slug: string;
+  };
+}
+
+const PAGE_FALLBACKS: { [key: string]: { title: string; content: string } } = {
+    about: {
+        title: 'Про нас',
+        content: 'TeslaFix — ваш надійний постачальник запчастин для електромобілів Tesla. Ми працюємо, щоб ваш електрокар завжди був у ідеальному стані.'
+    },
+    delivery: {
+        title: 'Доставка та оплата',
+        content: 'Доставка здійснюється Новою Поштою по всій Україні. Оплата можлива при отриманні (накладений платіж) або на розрахунковий рахунок.'
+    },
+    returns: {
+        title: 'Повернення та обмін',
+        content: 'Ви можете повернути або обміняти товар протягом 14 днів з моменту покупки, якщо він не був у використанні та зберіг свій товарний вигляд.'
+    },
+    faq: {
+        title: 'Часті питання',
+        content: 'Чи є у вас гарантія? Так, на більшість запчастин діє гарантія від 1 до 6 місяців. Чи відправляєте ви в день замовлення? Так, якщо замовлення оформлено до 15:00.'
+    },
+    contacts: {
+        title: 'Контакти',
+        content: 'Ми знаходимося у Києві. Телефон для зв’язку: +38 (067) 000-00-00. Електронна пошта: info@teslafix.com.ua'
+    },
+    'privacy-policy': {
+        title: 'Політика конфіденційності',
+        content: 'Ваші персональні дані використовуються виключно для обробки замовлень та покращення якості сервісу. Ми гарантуємо конфіденційність.'
+    },
+    'terms-of-service': {
+        title: 'Умови використання',
+        content: 'Користуючись нашим сайтом, ви погоджуєтесь з правилами оформлення замовлень та надання послуг нашого магазину.'
+    }
+};
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  try {
+    const seo = await api.getStaticSeo();
+    const seoRecord = seo.find(s => s.slug === params.slug);
+    
+    let pageData = null;
+    try {
+      pageData = await api.getPage(params.slug);
+    } catch (_) {}
+    
+    const pageTitle = pageData?.title || PAGE_FALLBACKS[params.slug]?.title || params.slug;
+    const rawContent = pageData?.content ? pageData.content.replace(/<[^>]+>/g, ' ') : '';
+    const fallbackDescription = rawContent.trim().slice(0, 157).trimEnd() || `Дізнайтеся більше про ${pageTitle} на нашому сайті.`;
+
+    return {
+      title: seoRecord?.meta_title || `${pageTitle} | TeslaFix`,
+      description: seoRecord?.meta_description || fallbackDescription,
+    };
+  } catch (e) {
+    console.error('Failed to generate info page metadata:', e);
+    return {
+      title: 'Інформаційна сторінка | TeslaFix',
+      description: 'Інформація про магазин запчастин для електромобілів Tesla.',
+    };
+  }
+}
+
+export default async function InfoPage({ params }: PageProps) {
+  let pageData = null;
+  let seoRecord = null;
+  
+  try {
+    const data = await api.getPage(params.slug);
+    if (data && data.is_published) {
+      pageData = { title: data.title, content: data.content };
+    }
+  } catch (e) {
+    console.error('Failed to load page data on server:', e);
+  }
+
+  if (!pageData) {
+    pageData = PAGE_FALLBACKS[params.slug] || null;
+  }
+
+  try {
+    const seo = await api.getStaticSeo();
+    seoRecord = seo.find(s => s.slug === params.slug) || null;
+  } catch (e) {
+    console.error('Failed to load seo details on server:', e);
+  }
 
   return (
-    <StaticPage 
-      slug={slug as string} 
-      onBack={() => router.push('/')} 
-      seo={staticSeo[slug as string]} 
+    <StaticPageClient 
+      slug={params.slug}
+      initialPage={pageData}
+      initialSeo={seoRecord}
+      fallbackTitle={PAGE_FALLBACKS[params.slug]?.title || params.slug}
     />
   );
 }

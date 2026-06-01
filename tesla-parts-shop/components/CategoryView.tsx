@@ -31,7 +31,12 @@ const sortSubcategoryTreeData = (subs?: Subcategory[]): Subcategory[] => {
     }));
 };
 
-const CategoryViewComponent: React.FC = () => {
+interface CategoryViewProps {
+  initialCategory?: Category | null;
+  initialProducts?: Product[];
+}
+
+const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, initialProducts }) => {
   const params = useParams();
   const router = useRouter();
   const { slug, subId: subIdParam } = params;
@@ -44,13 +49,19 @@ const CategoryViewComponent: React.FC = () => {
     return categories.find(c => slugify(c.name) === decodedSlug);
   }, [categories, slug]);
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
-  const [detailedCategory, setDetailedCategory] = useState<Category | null>(null);
+  const [products, setProducts] = useState<Product[]>(initialProducts || []);
+  const [loadingProducts, setLoadingProducts] = useState(!initialProducts);
+  const [detailedCategory, setDetailedCategory] = useState<Category | null>(initialCategory || null);
   const [loadingCategory, setLoadingCategory] = useState(false);
+  const [hasInitializedProducts, setHasInitializedProducts] = useState(!!initialProducts);
+  const [hasInitializedCategory, setHasInitializedCategory] = useState(!!initialCategory);
 
   useEffect(() => {
     if (!currentCategory) return;
+    if (hasInitializedCategory) {
+      setHasInitializedCategory(false);
+      return;
+    }
     
     const fetchDetails = async () => {
       setLoadingCategory(true);
@@ -72,6 +83,10 @@ const CategoryViewComponent: React.FC = () => {
 
   useEffect(() => {
     if (!slug) return;
+    if (hasInitializedProducts) {
+      setHasInitializedProducts(false);
+      return;
+    }
     
     const fetchProducts = async () => {
       setLoadingProducts(true);
