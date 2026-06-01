@@ -5,18 +5,19 @@ import { Metadata } from 'next';
 export const revalidate = 60; // Revalidate every minute
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
     subId: string;
-  };
+  }>;
 }
 
 const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
+    const resolvedParams = await params;
     const categories = await api.getCategories();
-    const decodedSlug = decodeURIComponent(params.slug);
+    const decodedSlug = decodeURIComponent(resolvedParams.slug);
     const currentCategory = categories.find(c => slugify(c.name) === decodedSlug);
     if (currentCategory) {
       return {
@@ -38,15 +39,16 @@ export default async function SubcategoryPage({ params }: PageProps) {
   let initialProducts = [];
 
   try {
+    const resolvedParams = await params;
     const categories = await api.getCategories();
-    const decodedSlug = decodeURIComponent(params.slug);
+    const decodedSlug = decodeURIComponent(resolvedParams.slug);
     const currentCategory = categories.find(c => slugify(c.name) === decodedSlug);
     
     if (currentCategory) {
       initialCategory = await api.getCategory(currentCategory.id);
       initialProducts = await api.getProducts({ 
         category: decodedSlug,
-        subId: Number(params.subId)
+        subId: Number(resolvedParams.subId)
       });
     }
   } catch (e) {

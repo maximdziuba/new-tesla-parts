@@ -7,14 +7,15 @@ import { Metadata } from 'next';
 export const revalidate = 60; // Revalidate every minute
 
 interface PageProps {
-  params: {
+  params: Promise<{
     productId: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
-    const product = await api.getProduct(params.productId);
+    const resolvedParams = await params;
+    const product = await api.getProduct(resolvedParams.productId);
     return {
       title: product.meta_title || `${product.name} | Tesla Parts UA`,
       description: product.meta_description || product.description || `Придбати ${product.name} для Tesla з доставкою по Україні.`,
@@ -36,7 +37,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ProductDetailPage({ params }: PageProps) {
   let product = null;
   try {
-    product = await api.getProduct(params.productId);
+    const resolvedParams = await params;
+    product = await api.getProduct(resolvedParams.productId);
   } catch (e) {
     console.error('Failed to load product details on server:', e);
   }

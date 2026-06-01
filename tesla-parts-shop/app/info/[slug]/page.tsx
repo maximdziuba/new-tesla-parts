@@ -6,9 +6,9 @@ import { Metadata } from 'next';
 export const revalidate = 60; // Revalidate every minute
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 const PAGE_FALLBACKS: { [key: string]: { title: string; content: string } } = {
@@ -21,7 +21,7 @@ const PAGE_FALLBACKS: { [key: string]: { title: string; content: string } } = {
         content: 'Доставка здійснюється Новою Поштою по всій Україні. Оплата можлива при отриманні (накладений платіж) або на розрахунковий рахунок.'
     },
     returns: {
-        title: 'Повернення та обмін',
+        title: 'Повернення та гарантія',
         content: 'Ви можете повернути або обміняти товар протягом 14 днів з моменту покупки, якщо він не був у використанні та зберіг свій товарний вигляд.'
     },
     faq: {
@@ -44,15 +44,16 @@ const PAGE_FALLBACKS: { [key: string]: { title: string; content: string } } = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
+    const resolvedParams = await params;
     const seo = await api.getStaticSeo();
-    const seoRecord = seo.find(s => s.slug === params.slug);
+    const seoRecord = seo.find(s => s.slug === resolvedParams.slug);
     
     let pageData = null;
     try {
-      pageData = await api.getPage(params.slug);
+      pageData = await api.getPage(resolvedParams.slug);
     } catch (_) {}
     
-    const pageTitle = pageData?.title || PAGE_FALLBACKS[params.slug]?.title || params.slug;
+    const pageTitle = pageData?.title || PAGE_FALLBACKS[resolvedParams.slug]?.title || resolvedParams.slug;
     const rawContent = pageData?.content ? pageData.content.replace(/<[^>]+>/g, ' ') : '';
     const fallbackDescription = rawContent.trim().slice(0, 157).trimEnd() || `Дізнайтеся більше про ${pageTitle} на нашому сайті.`;
 
@@ -72,9 +73,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function InfoPage({ params }: PageProps) {
   let pageData = null;
   let seoRecord = null;
+  const resolvedParams = await params;
   
   try {
-    const data = await api.getPage(params.slug);
+    const data = await api.getPage(resolvedParams.slug);
     if (data && data.is_published) {
       pageData = { title: data.title, content: data.content };
     }
@@ -83,12 +85,12 @@ export default async function InfoPage({ params }: PageProps) {
   }
 
   if (!pageData) {
-    pageData = PAGE_FALLBACKS[params.slug] || null;
+    pageData = PAGE_FALLBACKS[resolvedParams.slug] || null;
   }
 
   try {
     const seo = await api.getStaticSeo();
-    seoRecord = seo.find(s => s.slug === params.slug) || null;
+    seoRecord = seo.find(s => s.slug === resolvedParams.slug) || null;
   } catch (e) {
     console.error('Failed to load seo details on server:', e);
   }
