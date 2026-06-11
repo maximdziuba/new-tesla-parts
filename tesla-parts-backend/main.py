@@ -78,24 +78,32 @@ app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # CORS Configuration
-# Add your production frontend URLs here
 origins = [
     "http://localhost:3000",
     "http://localhost:3001",
-    "https://teslafix.com.ua",
-    "https://www.teslafix.com.ua",
-    "https://admin.teslafix.com.ua"
+    "http://localhost:3002",
 ]
 
-# Add frontend URL from environment variable if set
-frontend_url_env = os.getenv("FRONTEND_URL")
-if frontend_url_env:
-    for url in frontend_url_env.split(","):
-        url = url.strip()
-        if url:
-            origins.append(url)
-            # Also add with trailing slash
-            origins.append(url.rstrip("/"))
+frontend_url_env = os.getenv("FRONTEND_URL", "https://teslafix.com.ua")
+for url in frontend_url_env.split(","):
+    url = url.strip().rstrip("/")
+    if url:
+        origins.append(url)
+        # Parse base domain to add www. and admin. subdomains dynamically
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        scheme = parsed.scheme
+        netloc = parsed.netloc
+        if scheme and netloc:
+            if netloc.startswith("www."):
+                base_domain = netloc[4:]
+            else:
+                base_domain = netloc
+            origins.append(f"{scheme}://www.{base_domain}")
+            origins.append(f"{scheme}://admin.{base_domain}")
+
+# Remove duplicates
+origins = list(set(origins))
 
 app.add_middleware(
     CORSMiddleware,

@@ -59,7 +59,7 @@ def get_setting(key: str, session: Session = Depends(get_session)):
         # Return defaults if not found
         if key == "exchange_rate":
             return {"key": key, "value": "40.0"}
-        raise HTTPException(status_code=404, detail="Setting not found")
+        return {"key": key, "value": ""}
     return setting
 
 @router.post("/{key}", dependencies=[Depends(get_current_admin)])
