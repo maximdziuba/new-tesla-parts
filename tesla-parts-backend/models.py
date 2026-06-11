@@ -165,6 +165,8 @@ class Customer(SQLModel, table=True):
     is_verified: bool = Field(default=False)
     verification_token: Optional[str] = None
     token_expires_at: Optional[datetime] = None
+    reset_token_hash: Optional[str] = None
+    reset_token_expires_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=get_kyiv_time)
     cart_data: Optional[str] = None
     discount_percent: float = Field(default=0.0)

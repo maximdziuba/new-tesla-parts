@@ -6,6 +6,7 @@ import SeoHead from './SeoHead';
 import { formatCurrency } from '../utils/currency';
 import { api } from '../services/api';
 import ProductList from './ProductList';
+import { useApp } from '../context/AppContext';
 
 interface ProductPageProps {
     product: Product;
@@ -29,6 +30,43 @@ const getProductSubcategoryIds = (product: Product): number[] => {
 };
 
 const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd, onAddToCart, onBack, onProductClick }) => {
+    const { customer } = useApp();
+    const effectiveRate = uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
+
+    const priceUSD = useMemo(() => {
+        return product.priceUSD && product.priceUSD > 0
+            ? product.priceUSD
+            : (product.priceUAH && product.priceUAH > 0 && effectiveRate > 0
+                ? product.priceUAH / effectiveRate
+                : 0);
+    }, [product, effectiveRate]);
+
+    const originalAmount = useMemo(() => {
+        return currency === Currency.USD ? priceUSD : priceUSD * effectiveRate;
+    }, [priceUSD, currency, effectiveRate]);
+
+    const discountedAmount = useMemo(() => {
+        if (!customer || !customer.discount_value || customer.discount_value <= 0) {
+            return null;
+        }
+        if (customer.discount_type === 'percent') {
+            return originalAmount * (1 - customer.discount_value / 100);
+        }
+        if (customer.discount_type === 'usd') {
+            const discountInSelectedCurrency = currency === Currency.USD 
+                ? customer.discount_value 
+                : customer.discount_value * effectiveRate;
+            return Math.max(0, originalAmount - discountInSelectedCurrency);
+        }
+        if (customer.discount_type === 'uah') {
+            const discountInSelectedCurrency = currency === Currency.UAH 
+                ? customer.discount_value 
+                : customer.discount_value / effectiveRate;
+            return Math.max(0, originalAmount - discountInSelectedCurrency);
+        }
+        return null;
+    }, [customer, originalAmount, currency, effectiveRate]);
+
     // Combine main image with additional images and remove duplicates
     const allImages = useMemo(
         () => Array.from(new Set([product.image, ...(product.images || [])].filter(Boolean))),
@@ -39,7 +77,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
     const [added, setAdded] = useState(false);
     const [deliveryInfo, setDeliveryInfo] = useState<string | null>(null);
     const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-    const effectiveRate = uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
 
     useEffect(() => {
         setSelectedImage(allImages[0]);
@@ -263,9 +300,25 @@ const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd,
                             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 transition-colors">{product.name}</h1>
 
                             <div className="mb-8">
-                                <div className="text-3xl font-bold text-slate-900 dark:text-white">
-                                    {getDisplayPrice()}
-                                </div>
+                                {discountedAmount !== null ? (
+                                    <div className="flex items-baseline flex-wrap gap-2">
+                                        <span className="text-xl text-gray-400 dark:text-slate-500 line-through">
+                                            {formatCurrency(originalAmount, currency)}
+                                        </span>
+                                        <span className="text-3xl font-bold text-red-600 dark:text-red-500">
+                                            {formatCurrency(discountedAmount, currency)}
+                                        </span>
+                                        <span className="text-xs font-semibold uppercase tracking-wider px-2 py-1 bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400 rounded">
+                                            {customer?.discount_type === 'percent' 
+                                                ? `-${customer.discount_value}%` 
+                                                : `Знижка -${formatCurrency(currency === Currency.USD && customer?.discount_type === 'uah' ? customer.discount_value / effectiveRate : currency === Currency.UAH && customer?.discount_type === 'usd' ? customer.discount_value * effectiveRate : customer?.discount_value || 0, currency)}`}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="text-3xl font-bold text-slate-900 dark:text-white">
+                                        {formatCurrency(originalAmount, currency)}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-slate-300 mb-8">

@@ -349,14 +349,14 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
               <label className="block text-xs font-semibold text-gray-500 dark:text-slate-400 mb-1 uppercase tracking-wider">
                 Промокод
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   placeholder="Введіть промокод"
                   value={promoCodeInput}
                   onChange={(e) => setPromoCodeInput(e.target.value)}
                   disabled={!!appliedPromoCode}
-                  className="flex-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded px-3 py-1.5 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 uppercase font-mono"
+                  className="flex-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 uppercase font-mono w-full"
                 />
                 {appliedPromoCode ? (
                   <button
@@ -387,7 +387,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
                         setDiscountValue(0);
                       }
                     }}
-                    className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-semibold transition animate-in fade-in duration-250"
+                    className="w-full sm:w-auto px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-semibold transition animate-in fade-in duration-250 cursor-pointer text-center"
                   >
                     Скасувати
                   </button>
@@ -408,7 +408,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
                         setPromoCodeSuccess(null);
                       }
                     }}
-                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition"
+                    className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition cursor-pointer text-center"
                   >
                     Застосувати
                   </button>

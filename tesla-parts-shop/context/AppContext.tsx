@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
-import { Product, Currency, CartItem, Category, StaticSeoRecord, Page } from '../types';
+import { Product, Currency, CartItem, Category, StaticSeoRecord, Page, Customer } from '../types';
 import { api } from '../services/api';
 import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD, DEFAULT_SETTINGS } from '../constants';
 import { usePathname } from 'next/navigation';
@@ -36,6 +36,7 @@ interface AppContextType {
   cartCount: number;
   hasInternalHistory: boolean;
   isCustomerLoggedIn: boolean;
+  customer: Customer | null;
   loginCustomer: (token: string) => Promise<void>;
   logoutCustomer: () => void;
 }
@@ -153,6 +154,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [staticSeo, setStaticSeo] = useState<Record<string, StaticSeoRecord>>({});
   const [loading, setLoading] = useState(true);
   const [isCustomerLoggedIn, setIsCustomerLoggedIn] = useState(false);
+  const [customer, setCustomer] = useState<Customer | null>(null);
 
   // Load initial state on mount
   useEffect(() => {
@@ -164,10 +166,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (token) {
         setIsCustomerLoggedIn(true);
         try {
-          const serverCart = await api.getCart();
+          const [serverCart, customerData] = await Promise.all([
+            api.getCart(),
+            api.getMe()
+          ]);
           setCart(serverCart);
+          setCustomer(customerData);
         } catch (err) {
-          console.error("Failed to fetch initial cart from server", err);
+          console.error("Failed to fetch initial customer or cart from server", err);
         }
       }
 
@@ -182,6 +188,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const handleLogoutEvent = () => {
       setIsCustomerLoggedIn(false);
+      setCustomer(null);
       setCart([]);
       if (typeof window !== 'undefined') {
         localStorage.removeItem(CART_STORAGE_KEY);
@@ -198,7 +205,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsCustomerLoggedIn(true);
     
     try {
-      const serverCart = await api.getCart();
+      const [serverCart, customerData] = await Promise.all([
+        api.getCart(),
+        api.getMe()
+      ]);
+      setCustomer(customerData);
       const guestCart = cart;
       
       if (guestCart.length > 0) {
@@ -226,6 +237,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const logoutCustomer = () => {
     localStorage.removeItem('customerToken');
     setIsCustomerLoggedIn(false);
+    setCustomer(null);
     setCart([]);
     localStorage.removeItem(CART_STORAGE_KEY);
   };
@@ -421,6 +433,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cartCount,
         hasInternalHistory,
         isCustomerLoggedIn,
+        customer,
         loginCustomer,
         logoutCustomer,
       }}

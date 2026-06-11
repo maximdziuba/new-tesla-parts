@@ -166,7 +166,15 @@ class FeedbackRead(BaseModel):
 class CustomerRegister(BaseModel):
     email: str
 
+class CustomerForgotPassword(BaseModel):
+    email: str
+
 class CustomerVerify(BaseModel):
+    token: str
+    password: str
+    confirm_password: str
+
+class CustomerResetPassword(BaseModel):
     token: str
     password: str
     confirm_password: str

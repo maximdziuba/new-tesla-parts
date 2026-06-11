@@ -161,6 +161,32 @@ export const api = {
         return res.json();
     },
 
+    forgotPassword: async (email: string) => {
+        const res = await fetch(`${API_URL}/customers/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Failed to request password reset');
+        }
+        return res.json();
+    },
+
+    resetPassword: async (data: any) => {
+        const res = await fetch(`${API_URL}/customers/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Failed to reset password');
+        }
+        return res.json();
+    },
+
     verifyCustomer: async (data: any) => {
         const res = await fetch(`${API_URL}/customers/verify`, {
             method: 'POST',

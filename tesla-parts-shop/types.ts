@@ -116,3 +116,16 @@ export interface OrderRead {
     price_at_purchase: number;
   }[];
 }
+
+export interface Customer {
+  id: number;
+  email: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  phone?: string | null;
+  is_verified: boolean;
+  created_at: string;
+  discount_percent: number;
+  discount_type: string;
+  discount_value: number;
+}

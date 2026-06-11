@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import secrets
 from database import get_session
 from models import Customer, Order, OrderItem
-from schemas import CustomerRegister, CustomerVerify, CustomerLogin, CustomerRead, CartItem, CustomerUpdateDiscount, OrderRead
+from schemas import CustomerRegister, CustomerVerify, CustomerLogin, CustomerRead, CartItem, CustomerUpdateDiscount, OrderRead, CustomerForgotPassword, CustomerResetPassword
 from auth import get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from services.email import email_service
 from typing import List
@@ -78,6 +78,62 @@ async def verify_customer(data: CustomerVerify, session: Session = Depends(get_s
     session.commit()
     
     return {"message": "Акаунт успішно підтверджено. Тепер ви можете увійти"}
+
+@router.post("/forgot-password")
+async def forgot_password(data: CustomerForgotPassword, session: Session = Depends(get_session)):
+    import hashlib
+    from services.crypto import deterministic_hash, decrypt_value
+    
+    email_h = deterministic_hash(data.email)
+    customer = session.exec(select(Customer).where(Customer.email_hash == email_h)).first()
+    if not customer:
+        customer = session.exec(select(Customer).where(Customer.email == data.email)).first()
+        
+    if customer and customer.is_verified:
+        # Generate raw token
+        token = secrets.token_urlsafe(32)
+        # Store securely: hash it
+        customer.reset_token_hash = hashlib.sha256(token.encode()).hexdigest()
+        customer.reset_token_expires_at = datetime.utcnow() + timedelta(minutes=15)
+        
+        session.add(customer)
+        session.commit()
+        
+        # Send reset email
+        plain_email = decrypt_value(customer.email)
+        email_service.send_password_reset_email(plain_email, token)
+        
+    # Always return success message for security to prevent user enumeration
+    return {"message": "Якщо пошта існує в системі, посилання для відновлення паролю надіслано на вашу пошту"}
+
+@router.post("/reset-password")
+async def reset_password(data: CustomerResetPassword, session: Session = Depends(get_session)):
+    import hashlib
+    if data.password != data.confirm_password:
+        raise HTTPException(status_code=400, detail="Паролі не співпадають")
+        
+    # Secure hash of token
+    token_hash = hashlib.sha256(data.token.encode()).hexdigest()
+    
+    # Retrieve customer with reset token
+    customer = session.exec(
+        select(Customer).where(Customer.reset_token_hash == token_hash)
+    ).first()
+    
+    if not customer:
+        raise HTTPException(status_code=400, detail="Недійсний токен відновлення паролю")
+        
+    if not customer.reset_token_expires_at or customer.reset_token_expires_at < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Недійсний або прострочений токен")
+        
+    customer.hashed_password = get_password_hash(data.password)
+    customer.reset_token_hash = None
+    customer.reset_token_expires_at = None
+    
+    session.add(customer)
+    session.commit()
+    
+    return {"message": "Пароль успішно оновлено. Тепер ви можете увійти"}
 
 @router.post("/login")
 async def login_customer(

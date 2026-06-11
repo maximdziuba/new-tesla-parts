@@ -53,6 +53,49 @@ class EmailService:
             print(f"Failed to send email: {e}")
             return False
 
+    def send_password_reset_email(self, to_email: str, token: str):
+        if not self.smtp_email or not self.smtp_password:
+            print("SMTP credentials not set. Skipping password reset email.")
+            # For development purposes, print the link to console
+            print(f"PASSWORD RESET LINK: {self.frontend_url}/reset-password?token={token}")
+            return False
+
+        reset_link = f"{self.frontend_url}/reset-password?token={token}"
+        
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Відновлення паролю - TeslaFix"
+        message["From"] = f"TeslaFix <{self.smtp_email}>"
+        message["To"] = to_email
+
+        html = f"""
+        <html>
+        <body>
+            <h2>Відновлення паролю на TeslaFix</h2>
+            <p>Ви отримали цей лист, тому що зробили запит на відновлення паролю для вашого акаунта.</p>
+            <p>Будь ласка, перейдіть за посиланням нижче, щоб встановити новий пароль:</p>
+            <p><a href="{reset_link}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Відновити пароль</a></p>
+            <p>Якщо кнопка не працює, скопіюйте та вставте це посилання у ваш браузер:</p>
+            <p>{reset_link}</p>
+            <p>Це посилання дійсне протягом 15 хвилин.</p>
+            <p>Якщо ви не робили цього запиту, просто проігноруйте цей лист.</p>
+        </body>
+        </html>
+        """
+        
+        part = MIMEText(html, "html")
+        message.attach(part)
+
+        try:
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls()
+                server.login(self.smtp_email, self.smtp_password)
+                server.sendmail(self.smtp_email, to_email, message.as_string())
+            print(f"Password reset email sent to {to_email}")
+            return True
+        except Exception as e:
+            print(f"Failed to send password reset email: {e}")
+            return False
+
     def send_custom_email(self, to_email: str, subject: str, body: str) -> bool:
         if not self.smtp_email or not self.smtp_password:
             print("SMTP credentials not set. Skipping custom email.")

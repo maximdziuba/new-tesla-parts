@@ -41,6 +41,7 @@ def create_db_and_tables():
     _ensure_customer_cart_data_column()
     _ensure_customer_discount_fields()
     _ensure_customer_email_hash_column()
+    _ensure_customer_reset_token_columns()
     _ensure_order_customer_id_column()
     _migrate_existing_customers()
     
@@ -249,3 +250,18 @@ def _ensure_order_customer_id_column():
         with engine.connect() as conn:
             conn.execute(text("ALTER TABLE \"order\" ADD COLUMN customer_id INTEGER"))
             conn.commit()
+
+def _ensure_customer_reset_token_columns():
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("customer")]
+    with engine.connect() as conn:
+        if "reset_token_hash" not in columns:
+            print("Adding 'reset_token_hash' column to 'customer' table...")
+            conn.execute(text("ALTER TABLE customer ADD COLUMN reset_token_hash VARCHAR"))
+        if "reset_token_expires_at" not in columns:
+            print("Adding 'reset_token_expires_at' column to 'customer' table...")
+            if is_sqlite():
+                conn.execute(text("ALTER TABLE customer ADD COLUMN reset_token_expires_at DATETIME"))
+            else:
+                conn.execute(text("ALTER TABLE customer ADD COLUMN reset_token_expires_at TIMESTAMP WITH TIME ZONE"))
+        conn.commit()
