@@ -26,7 +26,21 @@ def is_sqlite():
     return engine.url.drivername == "sqlite"
 
 def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+    import time
+    from sqlalchemy.exc import OperationalError
+    
+    # Retry database connection on startup to handle Docker DNS/container startup delays
+    retries = 6
+    for i in range(retries):
+        try:
+            SQLModel.metadata.create_all(engine)
+            break
+        except OperationalError as e:
+            if i == retries - 1:
+                print("Failed to connect to database after several retries. Exiting.")
+                raise e
+            print(f"Database connection failed (DNS/network delay), retrying in 2 seconds... ({e})")
+            time.sleep(2)
     
     # Run manual migrations for existing tables
     _ensure_category_sort_order_column()
