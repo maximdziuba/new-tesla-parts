@@ -123,7 +123,12 @@ async def reset_password(data: CustomerResetPassword, session: Session = Depends
     if not customer:
         raise HTTPException(status_code=400, detail="Недійсний токен відновлення паролю")
         
-    if not customer.reset_token_expires_at or customer.reset_token_expires_at < datetime.utcnow():
+    # Handle timezone-aware/naive comparison for Postgres/SQLite compatibility
+    expiry = customer.reset_token_expires_at
+    if expiry and expiry.tzinfo is not None:
+        expiry = expiry.replace(tzinfo=None)
+        
+    if not expiry or expiry < datetime.utcnow():
         raise HTTPException(status_code=400, detail="Недійсний або прострочений токен")
         
     customer.hashed_password = get_password_hash(data.password)
