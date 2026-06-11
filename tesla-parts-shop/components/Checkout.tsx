@@ -39,6 +39,11 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
   // --- Guest Registration Offer Modal ---
   const [showOfferModal, setShowOfferModal] = useState(false);
 
+  // --- Save Default Address Modal State ---
+  const [showSaveAddressModal, setShowSaveAddressModal] = useState(false);
+  const [currentDefaultAddress, setCurrentDefaultAddress] = useState('');
+  const [pendingOrder, setPendingOrder] = useState<OrderData | null>(null);
+
   useEffect(() => {
     if (isCustomerLoggedIn) {
       const fetchUserInfo = async () => {
@@ -56,6 +61,30 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
           const val = user.discount_value !== undefined ? user.discount_value : user.discount_percent;
           if (val) {
             setDiscountValue(val);
+          }
+          if (user.default_address) {
+            setCurrentDefaultAddress(user.default_address);
+            try {
+              const parsed = JSON.parse(user.default_address);
+              if (parsed && parsed.city && parsed.branch) {
+                setDeliveryData({
+                  city: parsed.city,
+                  branch: parsed.branch,
+                  address: parsed.address || '',
+                  ref: parsed.ref || ''
+                });
+              }
+            } catch (e) {
+              const parts = user.default_address.split(', ');
+              const city = parts[0] || '';
+              const branch = parts.slice(1).join(', ') || '';
+              setDeliveryData({
+                city,
+                branch,
+                address: '',
+                ref: ''
+              });
+            }
           }
         } catch (err) {
           console.error("Failed to fetch user info for checkout", err);
@@ -135,6 +164,51 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
     validatePhone(formatted);
   };
 
+  const executeOrderCreation = async (order: OrderData) => {
+    setProcessing(true);
+    try {
+      await api.createOrder(order);
+      if (!isCustomerLoggedIn) {
+        setShowOfferModal(true);
+      } else {
+        onSuccess();
+      }
+    } catch (err) {
+      console.error("Order failed", err);
+      alert("Виникла помилка при оформленні. Спробуйте ще раз.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleSaveDefaultAddress = async (save: boolean) => {
+    setShowSaveAddressModal(false);
+    if (save && pendingOrder && deliveryData) {
+      setProcessing(true);
+      try {
+        const addressJson = JSON.stringify({
+          city: deliveryData.city,
+          branch: deliveryData.branch,
+          address: deliveryData.address,
+          ref: deliveryData.ref
+        });
+        await api.updateProfile({
+          first_name: firstName,
+          last_name: lastName,
+          phone: phone.replace(/\s/g, ''),
+          default_address: addressJson
+        });
+        setCurrentDefaultAddress(addressJson);
+      } catch (err) {
+        console.error("Failed to save default address", err);
+      }
+    }
+    if (pendingOrder) {
+      await executeOrderCreation(pendingOrder);
+      setPendingOrder(null);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -175,18 +249,22 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
       // deliveryRef: deliveryData.ref 
     };
 
-    try {
-      await api.createOrder(order);
-      if (!isCustomerLoggedIn) {
-        setShowOfferModal(true);
-      } else {
-        onSuccess();
-      }
-    } catch (err) {
-      console.error("Order failed", err);
-      alert("Виникла помилка при оформленні. Спробуйте ще раз.");
-    } finally {
+    const selectedAddressString = JSON.stringify({
+      city: deliveryData.city,
+      branch: deliveryData.branch,
+      address: deliveryData.address,
+      ref: deliveryData.ref
+    });
+
+    const isDifferent = currentDefaultAddress !== selectedAddressString && 
+                        currentDefaultAddress !== `${deliveryData.city}, ${deliveryData.branch}`;
+
+    if (isCustomerLoggedIn && isDifferent) {
+      setPendingOrder(order);
       setProcessing(false);
+      setShowSaveAddressModal(true);
+    } else {
+      await executeOrderCreation(order);
     }
   };
 
@@ -501,6 +579,40 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
                 className="w-full bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-white font-medium py-2.5 rounded-lg transition-colors"
               >
                 Ні, дякую (продовжити без акаунта)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Address Modal */}
+      {showSaveAddressModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 dark:border-slate-700 animate-in fade-in zoom-in duration-200">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 text-center">
+              📍 Зберегти адресу за замовчуванням?
+            </h3>
+            <p className="text-gray-600 dark:text-slate-300 text-sm leading-relaxed mb-6 text-center">
+              Ви обрали нову адресу доставки:
+              <span className="block font-semibold mt-2 text-slate-800 dark:text-white">
+                {deliveryData?.city}, {deliveryData?.branch}
+              </span>
+              <span className="block mt-2">
+                Бажаєте зберегти її як адресу за замовчуванням у вашому профілі?
+              </span>
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => handleSaveDefaultAddress(false)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-white font-medium py-3 rounded-xl transition-colors cursor-pointer"
+              >
+                Ні
+              </button>
+              <button
+                onClick={() => handleSaveDefaultAddress(true)}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors cursor-pointer"
+              >
+                Так, зберегти
               </button>
             </div>
           </div>

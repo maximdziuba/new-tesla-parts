@@ -189,6 +189,7 @@ class CustomerRead(BaseModel):
     first_name: str | None = None
     last_name: str | None = None
     phone: str | None = None
+    default_address: str | None = None
     is_verified: bool
     created_at: datetime
     discount_percent: float = 0.0

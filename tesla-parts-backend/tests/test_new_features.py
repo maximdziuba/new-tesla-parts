@@ -102,22 +102,26 @@ def test_customer_register_and_profile_setup(session: Session, customer_headers)
     assert me_res.json()["email"] == "customer@example.com"
     assert me_res.json()["first_name"] is None
     
-    # Update profile name and phone (which get encrypted in DB)
+    # Update profile name, phone, and default address (which get encrypted in DB)
     profile_data = {
         "first_name": "Elon",
         "last_name": "Musk",
-        "phone": "+123456789"
+        "phone": "+123456789",
+        "default_address": "Kyiv, Khreshchatyk str 1"
     }
     update_res = client.put("/customers/profile", json=profile_data, headers=customer_headers)
     assert update_res.status_code == 200
     assert update_res.json()["first_name"] == "Elon"
     assert update_res.json()["phone"] == "+123456789"
+    assert update_res.json()["default_address"] == "Kyiv, Khreshchatyk str 1"
     
     # Check database directly is encrypted
     session.refresh(cust)
     assert cust.first_name != "Elon"
+    assert cust.default_address != "Kyiv, Khreshchatyk str 1"
     assert decrypt_value(cust.first_name) == "Elon"
     assert decrypt_value(cust.phone) == "+123456789"
+    assert decrypt_value(cust.default_address) == "Kyiv, Khreshchatyk str 1"
 
 # --- Admin View Decrypted Customer PII ---
 def test_admin_view_decrypted_customers(session: Session, admin_headers):

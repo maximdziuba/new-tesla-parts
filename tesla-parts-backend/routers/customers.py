@@ -233,6 +233,7 @@ async def get_customers(session: Session = Depends(get_session)):
         customer.first_name = decrypt_value(customer.first_name)
         customer.last_name = decrypt_value(customer.last_name)
         customer.phone = decrypt_value(customer.phone)
+        customer.default_address = decrypt_value(customer.default_address)
     return customers
 
 @router.get("/{customer_id}/orders", response_model=List[OrderRead], dependencies=[Depends(get_current_admin)])
@@ -303,6 +304,7 @@ class CustomerProfileUpdate(BaseModel):
     first_name: str
     last_name: str
     phone: str
+    default_address: str | None = None
 
 @router.put("/profile", response_model=CustomerRead)
 async def update_profile(
@@ -314,6 +316,7 @@ async def update_profile(
     customer.first_name = encrypt_value(data.first_name)
     customer.last_name = encrypt_value(data.last_name)
     customer.phone = encrypt_value(data.phone)
+    customer.default_address = encrypt_value(data.default_address)
     session.add(customer)
     session.commit()
     session.refresh(customer)
@@ -322,4 +325,5 @@ async def update_profile(
     customer.first_name = decrypt_value(customer.first_name)
     customer.last_name = decrypt_value(customer.last_name)
     customer.phone = decrypt_value(customer.phone)
+    customer.default_address = decrypt_value(customer.default_address)
     return customer

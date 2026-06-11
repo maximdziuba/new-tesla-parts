@@ -92,6 +92,7 @@ async def get_current_customer(
     customer.first_name = decrypt_value(customer.first_name)
     customer.last_name = decrypt_value(customer.last_name)
     customer.phone = decrypt_value(customer.phone)
+    customer.default_address = decrypt_value(customer.default_address)
     return customer
 
 async def get_optional_customer(
@@ -121,4 +122,5 @@ async def get_optional_customer(
         customer.first_name = decrypt_value(customer.first_name)
         customer.last_name = decrypt_value(customer.last_name)
         customer.phone = decrypt_value(customer.phone)
+        customer.default_address = decrypt_value(customer.default_address)
     return customer

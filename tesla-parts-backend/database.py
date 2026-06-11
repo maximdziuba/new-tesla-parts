@@ -57,6 +57,7 @@ def create_db_and_tables():
     _ensure_customer_email_hash_column()
     _ensure_customer_reset_token_columns()
     _ensure_order_customer_id_column()
+    _ensure_customer_default_address_column()
     _migrate_existing_customers()
     
     with Session(engine) as session:
@@ -279,3 +280,12 @@ def _ensure_customer_reset_token_columns():
             else:
                 conn.execute(text("ALTER TABLE customer ADD COLUMN reset_token_expires_at TIMESTAMP WITH TIME ZONE"))
         conn.commit()
+
+def _ensure_customer_default_address_column():
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("customer")]
+    if "default_address" not in columns:
+        print("Adding 'default_address' column to 'customer' table...")
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE customer ADD COLUMN default_address VARCHAR"))
+            conn.commit()

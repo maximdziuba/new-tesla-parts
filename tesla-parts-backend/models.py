@@ -167,6 +167,7 @@ class Customer(SQLModel, table=True):
     token_expires_at: Optional[datetime] = None
     reset_token_hash: Optional[str] = None
     reset_token_expires_at: Optional[datetime] = None
+    default_address: Optional[str] = None
     created_at: datetime = Field(default_factory=get_kyiv_time)
     cart_data: Optional[str] = None
     discount_percent: float = Field(default=0.0)

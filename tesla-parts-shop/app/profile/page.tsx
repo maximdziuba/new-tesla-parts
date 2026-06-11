@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
-import { User, LogOut, Mail, Calendar, ShoppingBag, Package, Phone, ChevronRight, Percent } from 'lucide-react';
+import { User, LogOut, Mail, Calendar, ShoppingBag, Package, Phone, ChevronRight, Percent, MapPin, Edit } from 'lucide-react';
 import { api } from '@/services/api';
 import { OrderRead, Currency } from '@/types';
 import { formatCurrency } from '@/utils/currency';
@@ -18,6 +18,15 @@ function ProfileContent() {
   const [customerInfo, setCustomerInfo] = useState<any>(null);
   const [orders, setOrders] = useState<OrderRead[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Profile Edit State
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editAddress, setEditAddress] = useState('');
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     setMounted(true);
@@ -37,6 +46,10 @@ function ProfileContent() {
           ]);
           setCustomerInfo(info);
           setOrders(ordersData);
+          setEditFirstName(info.first_name || '');
+          setEditLastName(info.last_name || '');
+          setEditPhone(info.phone || '');
+          setEditAddress(info.default_address || '');
         } catch (err) {
           console.error('Failed to load profile data', err);
         } finally {
@@ -46,6 +59,43 @@ function ProfileContent() {
       loadData();
     }
   }, [mounted, isCustomerLoggedIn]);
+
+  const formatAddress = (addrString: string) => {
+    if (!addrString) return 'Не вказано';
+    if (addrString.startsWith('{') && addrString.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(addrString);
+        const parts = [];
+        if (parsed.city) parts.push(parsed.city);
+        if (parsed.branch) parts.push(parsed.branch);
+        if (parts.length > 0) return parts.join(', ');
+      } catch (e) {
+        // Fallback
+      }
+    }
+    return addrString;
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg('');
+    setSaveLoading(true);
+    try {
+      const updated = await api.updateProfile({
+        first_name: editFirstName,
+        last_name: editLastName,
+        phone: editPhone,
+        default_address: editAddress
+      });
+      setCustomerInfo(updated);
+      setIsEditing(false);
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.message || 'Не вдалося зберегти дані');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
 
   if (!mounted || !isCustomerLoggedIn) {
     return null;
@@ -98,72 +148,189 @@ function ProfileContent() {
             </div>
           ) : tab === 'info' ? (
             <div className="bg-white dark:bg-slate-800 shadow rounded-xl overflow-hidden border border-slate-100 dark:border-slate-700 animate-in fade-in slide-in-from-bottom-4 duration-300">
-              <div className="px-6 py-8 md:p-8 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                    <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
-                      <Mail className="text-blue-600 dark:text-blue-400" size={24} />
+              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                <h3 className="font-bold text-slate-800 dark:text-white">Особиста інформація</h3>
+                {!isEditing && (
+                  <button
+                    onClick={() => {
+                      setEditFirstName(customerInfo?.first_name || '');
+                      setEditLastName(customerInfo?.last_name || '');
+                      setEditPhone(customerInfo?.phone || '');
+                      setEditAddress(formatAddress(customerInfo?.default_address));
+                      setIsEditing(true);
+                    }}
+                    className="flex items-center gap-1.5 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition"
+                  >
+                    <Edit size={16} />
+                    Редагувати
+                  </button>
+                )}
+              </div>
+              
+              {isEditing ? (
+                <form onSubmit={handleSaveProfile} className="px-6 py-8 md:p-8 space-y-6">
+                  {errorMsg && (
+                    <div className="p-4 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-semibold border border-red-100 dark:border-red-900/30">
+                      {errorMsg}
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Email</p>
-                      <p className="text-slate-900 dark:text-white font-semibold truncate text-lg">{customerInfo?.email || 'Не вказано'}</p>
+                  )}
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* First Name Input */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <User size={14} className="text-slate-400" />
+                        Ім'я
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={editFirstName}
+                        onChange={(e) => setEditFirstName(e.target.value)}
+                        className="rounded-xl block w-full px-4 py-3 border border-gray-300 dark:border-slate-700 text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all"
+                      />
+                    </div>
+
+                    {/* Last Name Input */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <User size={14} className="text-slate-400" />
+                        Прізвище
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={editLastName}
+                        onChange={(e) => setEditLastName(e.target.value)}
+                        className="rounded-xl block w-full px-4 py-3 border border-gray-300 dark:border-slate-700 text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all"
+                      />
+                    </div>
+
+                    {/* Phone Input */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <Phone size={14} className="text-slate-400" />
+                        Телефон
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={editPhone}
+                        onChange={(e) => setEditPhone(e.target.value)}
+                        className="rounded-xl block w-full px-4 py-3 border border-gray-300 dark:border-slate-700 text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all"
+                      />
+                    </div>
+
+                    {/* Address Input */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <MapPin size={14} className="text-slate-400" />
+                        Адреса за замовчуванням
+                      </label>
+                      <input
+                        type="text"
+                        value={editAddress}
+                        onChange={(e) => setEditAddress(e.target.value)}
+                        placeholder="Наприклад: Київ, Відділення №1"
+                        className="rounded-xl block w-full px-4 py-3 border border-gray-300 dark:border-slate-700 text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all"
+                      />
                     </div>
                   </div>
-
-                  <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                    <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
-                      <Calendar className="text-blue-600 dark:text-blue-400" size={24} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Дата реєстрації</p>
-                      <p className="text-slate-900 dark:text-white font-semibold text-lg">
-                        {customerInfo?.created_at ? new Date(customerInfo.created_at).toLocaleDateString('uk-UA') : '-'}
-                      </p>
-                    </div>
+                  
+                  <div className="flex justify-end gap-4 border-t border-slate-100 dark:border-slate-700 pt-6">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(false)}
+                      className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-colors text-sm"
+                    >
+                      Скасувати
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={saveLoading}
+                      className="px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors disabled:opacity-50 text-sm"
+                    >
+                      {saveLoading ? 'Збереження...' : 'Зберегти'}
+                    </button>
                   </div>
-
-                  <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                    <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
-                      <User className="text-blue-600 dark:text-blue-400" size={24} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Ім'я та Прізвище</p>
-                      <p className="text-slate-900 dark:text-white font-semibold text-lg">
-                        {customerInfo?.first_name || customerInfo?.last_name ? `${customerInfo.first_name || ''} ${customerInfo.last_name || ''}`.trim() : 'Не вказано'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                    <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
-                      <Phone className="text-blue-600 dark:text-blue-400" size={24} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Телефон</p>
-                      <p className="text-slate-900 dark:text-white font-semibold text-lg">{customerInfo?.phone || 'Не вказано'}</p>
-                    </div>
-                  </div>
-
-                  {((customerInfo?.discount_value !== undefined ? customerInfo.discount_value : customerInfo?.discount_percent) > 0) && (
-                    <div className="flex items-start gap-4 p-5 bg-blue-50/50 dark:bg-blue-950/20 rounded-xl border border-blue-100/50 dark:border-blue-900/30 animate-in zoom-in duration-200">
-                      <div className="bg-blue-600 text-white p-3 rounded-lg shadow-md shadow-blue-200 dark:shadow-none">
-                        <Percent size={24} />
+                </form>
+              ) : (
+                <div className="px-6 py-8 md:p-8 space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                      <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
+                        <Mail className="text-blue-600 dark:text-blue-400" size={24} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs text-blue-600 dark:text-blue-400 uppercase font-extrabold tracking-wider mb-1">Персональна знижка</p>
-                        <p className="text-blue-950 dark:text-blue-100 font-extrabold text-2xl">
-                          {(() => {
-                            const val = customerInfo.discount_value !== undefined ? customerInfo.discount_value : customerInfo.discount_percent;
-                            const dtype = customerInfo.discount_type || 'percent';
-                            if (dtype === 'percent') return `${val}%`;
-                            if (dtype === 'usd') return `$${val}`;
-                            return `${val} грн`;
-                          })()}
+                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Email</p>
+                        <p className="text-slate-900 dark:text-white font-semibold truncate text-lg">{customerInfo?.email || 'Не вказано'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                      <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
+                        <Calendar className="text-blue-600 dark:text-blue-400" size={24} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Дата реєстрації</p>
+                        <p className="text-slate-900 dark:text-white font-semibold text-lg">
+                          {customerInfo?.created_at ? new Date(customerInfo.created_at).toLocaleDateString('uk-UA') : '-'}
                         </p>
                       </div>
                     </div>
-                  )}
-                </div>
+
+                    <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                      <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
+                        <User className="text-blue-600 dark:text-blue-400" size={24} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Ім'я та Прізвище</p>
+                        <p className="text-slate-900 dark:text-white font-semibold text-lg">
+                          {customerInfo?.first_name || customerInfo?.last_name ? `${customerInfo.first_name || ''} ${customerInfo.last_name || ''}`.trim() : 'Не вказано'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                      <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
+                        <Phone className="text-blue-600 dark:text-blue-400" size={24} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Телефон</p>
+                        <p className="text-slate-900 dark:text-white font-semibold text-lg">{customerInfo?.phone || 'Не вказано'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 p-5 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                      <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
+                        <MapPin className="text-blue-600 dark:text-blue-400" size={24} />
+                      </div>
+                      <div className="min-w-0 flex-grow">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Адреса за замовчуванням</p>
+                        <p className="text-slate-900 dark:text-white font-semibold text-lg">{formatAddress(customerInfo?.default_address)}</p>
+                      </div>
+                    </div>
+
+                    {((customerInfo?.discount_value !== undefined ? customerInfo.discount_value : customerInfo?.discount_percent) > 0) && (
+                      <div className="flex items-start gap-4 p-5 bg-blue-50/50 dark:bg-blue-950/20 rounded-xl border border-blue-100/50 dark:border-blue-900/30 animate-in zoom-in duration-200">
+                        <div className="bg-blue-600 text-white p-3 rounded-lg shadow-md shadow-blue-200 dark:shadow-none">
+                          <Percent size={24} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs text-blue-600 dark:text-blue-400 uppercase font-extrabold tracking-wider mb-1">Персональна знижка</p>
+                          <p className="text-blue-950 dark:text-blue-100 font-extrabold text-2xl">
+                            {(() => {
+                              const val = customerInfo.discount_value !== undefined ? customerInfo.discount_value : customerInfo.discount_percent;
+                              const dtype = customerInfo.discount_type || 'percent';
+                              if (dtype === 'percent') return `${val}%`;
+                              if (dtype === 'usd') return `$${val}`;
+                              return `${val} грн`;
+                            })()}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                 <div className="flex flex-col md:flex-row gap-4 items-center justify-between border-t border-slate-100 dark:border-slate-700 pt-8">
                   <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
@@ -178,8 +345,9 @@ function ProfileContent() {
                   </button>
                 </div>
               </div>
-            </div>
-          ) : (
+            )}
+          </div>
+        ) : (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
               {orders.length === 0 ? (
                 <div className="bg-white dark:bg-slate-800 shadow rounded-xl p-16 text-center border border-slate-100 dark:border-slate-700">

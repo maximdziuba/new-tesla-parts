@@ -262,7 +262,7 @@ export const api = {
         return res.json();
     },
 
-    updateProfile: async (data: { first_name: string; last_name: string; phone: string }): Promise<any> => {
+    updateProfile: async (data: { first_name: string; last_name: string; phone: string; default_address?: string }): Promise<any> => {
         const token = localStorage.getItem('customerToken');
         if (!token) throw new Error('Not authenticated');
         const res = await fetch(`${API_URL}/customers/profile`, {
