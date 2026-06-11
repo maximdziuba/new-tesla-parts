@@ -216,7 +216,7 @@ const Header: React.FC = () => {
           <div className="flex items-center gap-2 lg:gap-4 lg:w-64">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 -ml-2 text-slate-900 dark:text-white hover:text-blue-600 transition flex items-center justify-center"
+              className="lg:hidden p-2 -ml-2 text-slate-900 dark:text-white hover:text-blue-600 transition flex items-center justify-center"
               aria-label={isMounted ? (isSidebarOpen ? "Закрити меню" : "Відкрити меню") : "Меню"}
             >
               {isMounted ? (isSidebarOpen ? <X size={28} /> : <Menu size={28} />) : <Menu size={28} />}
