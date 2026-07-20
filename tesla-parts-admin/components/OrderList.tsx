@@ -137,7 +137,7 @@ export const OrderList: React.FC = () => {
               {filteredAndSortedOrders.map((order) => {
                 const statusDisplay = getStatusDisplay(order.status);
                 return (
-                <tr key={order.id} className="hover:bg-blue-50/30 transition-colors group">
+                <tr key={order.id} className="hover:bg-blue-50/30 transition-colors group cursor-pointer" onClick={() => setSelectedOrder(order)}>
                   <td className="px-6 py-5">
                     <div className="font-bold text-slate-900">#{order.id}</div>
                     <div className="text-[10px] font-bold text-gray-400 mt-0.5 uppercase">{new Date(order.created_at).toLocaleDateString()}</div>
@@ -187,13 +187,14 @@ export const OrderList: React.FC = () => {
                           type="text"
                           value={editingTtnValue}
                           onChange={(e) => setEditingTtnValue(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
                           className="w-full border border-blue-200 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none transition-all"
                           autoFocus
                         />
-                        <button onClick={() => handleUpdateTtn(order.id)} className="text-emerald-600 hover:bg-emerald-50 p-1.5 rounded-lg transition-colors">
+                        <button onClick={(e) => { e.stopPropagation(); handleUpdateTtn(order.id); }} className="text-emerald-600 hover:bg-emerald-50 p-1.5 rounded-lg transition-colors">
                           <Check size={16} />
                         </button>
-                        <button onClick={() => setEditingTtnOrderId(null)} className="text-gray-400 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
+                        <button onClick={(e) => { e.stopPropagation(); setEditingTtnOrderId(null); }} className="text-gray-400 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
                           <X size={16} />
                         </button>
                       </div>
@@ -201,14 +202,18 @@ export const OrderList: React.FC = () => {
                       <div className="flex items-center justify-end gap-2">
                         <span className="font-mono text-xs font-bold text-slate-700 mr-auto">{order.ttn || '---'}</span>
                         <button
-                          onClick={() => setSelectedOrder(order)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedOrder(order);
+                          }}
                           className="text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 p-1.5 rounded-lg transition-all"
                           title="Переглянути деталі"
                         >
                           <Eye size={14} />
                         </button>
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setEditingTtnOrderId(order.id);
                             setEditingTtnValue(order.ttn || '');
                           }}
@@ -218,7 +223,10 @@ export const OrderList: React.FC = () => {
                           <Pencil size={14} />
                         </button>
                         <button 
-                          onClick={() => handleDeleteOrder(order.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteOrder(order.id);
+                          }}
                           className="text-gray-300 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-all"
                           title="Видалити замовлення"
                         >
