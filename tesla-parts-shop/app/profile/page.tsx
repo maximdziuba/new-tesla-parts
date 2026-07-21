@@ -7,6 +7,7 @@ import { User, LogOut, Mail, Calendar, ShoppingBag, Package, Phone, ChevronRight
 import { api } from '@/services/api';
 import { OrderRead, Currency } from '@/types';
 import { formatCurrency } from '@/utils/currency';
+import NovaPostWidget from '@/components/NovaPostWidget';
 
 function ProfileContent() {
   const { isCustomerLoggedIn, logoutCustomer, currency } = useApp();
@@ -225,14 +226,25 @@ function ProfileContent() {
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <MapPin size={14} className="text-slate-400" />
-                        Адреса за замовчуванням
+                        Адреса за замовчуванням (відділення Нової пошти)
                       </label>
-                      <input
-                        type="text"
-                        value={editAddress}
-                        onChange={(e) => setEditAddress(e.target.value)}
-                        placeholder="Наприклад: Київ, Відділення №1"
-                        className="rounded-xl block w-full px-4 py-3 border border-gray-300 dark:border-slate-700 text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all"
+                      <div className="mb-2">
+                        {editAddress && (
+                          <div className="text-sm text-slate-600 dark:text-slate-400 mb-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <strong>Поточна адреса:</strong> {formatAddress(editAddress)}
+                          </div>
+                        )}
+                      </div>
+                      <NovaPostWidget
+                        onSelect={(data) => {
+                          const addressString = JSON.stringify({
+                            city: data.city,
+                            branch: data.description,
+                            ref: data.ref,
+                            fullAddress: data.address
+                          });
+                          setEditAddress(addressString);
+                        }}
                       />
                     </div>
                   </div>
