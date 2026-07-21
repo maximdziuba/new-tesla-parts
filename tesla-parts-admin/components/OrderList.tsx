@@ -317,7 +317,7 @@ export const OrderList: React.FC = () => {
                               )}
                               <div>
                                 {item.product_name ? (
-                                  <a href={`${import.meta.env.VITE_SHOP_URL || 'http://localhost:3000'}/product/${item.product_id}`} target="_blank" rel="noreferrer" className="font-bold text-blue-600 hover:text-blue-800 hover:underline transition-colors block">
+                                  <a href={`https://teslafix.com.ua/product/${item.product_id}`} target="_blank" rel="noreferrer" className="font-bold text-blue-600 hover:text-blue-800 hover:underline transition-colors block">
                                     {item.product_name}
                                   </a>
                                 ) : (
