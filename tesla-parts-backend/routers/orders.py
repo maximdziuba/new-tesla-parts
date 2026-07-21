@@ -75,7 +75,8 @@ def create_order(
         delivery_branch=order_data.delivery.branch,
         payment_method=order_data.paymentMethod,
         totalUSD=round(total_usd, 2),
-        ttn=order_data.ttn # Add TTN here
+        ttn=order_data.ttn, # Add TTN here
+        comment=order_data.comment
     )
     session.add(order)
     session.commit()
@@ -164,8 +165,10 @@ def get_orders(session: Session = Depends(get_session)):
         for i, item in enumerate(order.items):
             if item.product:
                 order_read.items[i].product_name = item.product.name
+                order_read.items[i].product_image = item.product.image
             else:
                 order_read.items[i].product_name = "Product Deleted"
+                order_read.items[i].product_image = None
 
         orders_with_uah.append(order_read)
 

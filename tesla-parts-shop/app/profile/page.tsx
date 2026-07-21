@@ -8,6 +8,7 @@ import { api } from '@/services/api';
 import { OrderRead, Currency } from '@/types';
 import { formatCurrency } from '@/utils/currency';
 import NovaPostWidget from '@/components/NovaPostWidget';
+import Link from 'next/link';
 
 function ProfileContent() {
   const { isCustomerLoggedIn, logoutCustomer, currency } = useApp();
@@ -406,12 +407,14 @@ function ProfileContent() {
                         <h5 className="text-xs uppercase font-bold tracking-widest text-slate-400 dark:text-slate-500 mb-4">Склад замовлення</h5>
                         <div className="space-y-4">
                           {order.items.map((item, idx) => (
-                            <div key={idx} className="flex justify-between items-center text-sm md:text-base">
-                              <div className="flex items-center gap-3">
-                                <span className="bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold text-xs">{item.quantity}x</span>
-                                <span className="text-slate-800 dark:text-slate-200 font-medium truncate max-w-[180px] md:max-w-md">{item.product_name}</span>
+                            <div key={idx} className="flex justify-between items-start text-sm md:text-base gap-4">
+                              <div className="flex items-start gap-3">
+                                <span className="bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold text-xs mt-0.5 flex-shrink-0">{item.quantity}x</span>
+                                <Link href={`/product/${item.product_id}`} className="text-slate-800 dark:text-slate-200 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                  {item.product_name}
+                                </Link>
                               </div>
-                              <span className="text-slate-900 dark:text-slate-100 font-bold whitespace-nowrap">
+                              <span className="text-slate-900 dark:text-slate-100 font-bold whitespace-nowrap flex-shrink-0 mt-0.5">
                                 {formatCurrency(currency === Currency.UAH ? (item.price_at_purchase * (order.totalUAH / (order.totalUSD || 1))) : item.price_at_purchase, currency)}
                               </span>
                             </div>

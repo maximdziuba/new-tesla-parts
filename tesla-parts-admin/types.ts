@@ -45,6 +45,7 @@ export interface Product {
 export interface OrderItem {
   product_id: string;
   product_name?: string;
+  product_image?: string | null;
   quantity: number;
   price_at_purchase: number;
 }
@@ -62,6 +63,7 @@ export interface Order {
   created_at: string;
   status: string;
   ttn?: string; // Added TTN field
+  comment?: string;
   items: OrderItem[];
 }
 

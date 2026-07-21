@@ -89,10 +89,12 @@ class OrderCreate(BaseModel):
     paymentMethod: str
     ttn: str | None = None # Added TTN field
     promocode: str | None = None # Added promocode field
+    comment: str | None = None
 
 class OrderItemRead(BaseModel):
     product_id: str
     product_name: str | None = None
+    product_image: str | None = None
     quantity: int
     price_at_purchase: float
 
@@ -108,6 +110,7 @@ class OrderRead(BaseModel):
     delivery_branch: str
     payment_method: str
     ttn: str | None = None # Added TTN field
+    comment: str | None = None
     created_at: datetime
     items: List[OrderItemRead]
 

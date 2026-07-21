@@ -25,6 +25,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
+  const [comment, setComment] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.IBAN);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [discountType, setDiscountType] = useState<'percent' | 'usd' | 'uah'>('percent');
@@ -244,6 +245,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
         branch: `${deliveryData.branch} (${deliveryData.address})` // Save full info
       },
       paymentMethod,
+      comment: comment.trim() || undefined,
       createdAt: new Date().toISOString(),
       // Optional: You can add deliveryRef to your OrderData type if you want to store the UUID
       // deliveryRef: deliveryData.ref 
@@ -398,6 +400,23 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, currency, uahPerUsd, onS
                     </div>
                   </div>
                 </label>
+              </div>
+            </section>
+
+            {/* 4. Comment */}
+            <section className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 transition-colors">
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 dark:text-white">
+                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-sm font-bold text-gray-600 dark:text-slate-300">4</div>
+                Коментар до замовлення
+              </h2>
+              <div>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Наприклад: прохання зателефонувати перед відправкою..."
+                  rows={3}
+                  className="w-full border dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-md p-3 focus:ring-2 focus:ring-blue-600 outline-none transition-colors resize-none"
+                />
               </div>
             </section>
           </form>

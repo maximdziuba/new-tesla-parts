@@ -58,6 +58,7 @@ def create_db_and_tables():
     _ensure_customer_reset_token_columns()
     _ensure_order_customer_id_column()
     _ensure_customer_default_address_column()
+    _ensure_order_comment_column()
     _migrate_existing_customers()
     
     with Session(engine) as session:
@@ -264,6 +265,15 @@ def _ensure_order_customer_id_column():
         print("Adding 'customer_id' column to 'order' table...")
         with engine.connect() as conn:
             conn.execute(text("ALTER TABLE \"order\" ADD COLUMN customer_id INTEGER"))
+            conn.commit()
+
+def _ensure_order_comment_column():
+    inspector = inspect(engine)
+    columns = [c["name"] for c in inspector.get_columns("order")]
+    if "comment" not in columns:
+        print("Adding 'comment' column to 'order' table...")
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE \"order\" ADD COLUMN comment TEXT"))
             conn.commit()
 
 def _ensure_customer_reset_token_columns():

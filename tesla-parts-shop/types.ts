@@ -84,6 +84,7 @@ export interface OrderData {
     branch: string;
   };
   paymentMethod: PaymentMethod;
+  comment?: string;
   createdAt: string;
 }
 
@@ -108,10 +109,12 @@ export interface OrderRead {
   delivery_branch: string;
   payment_method: string;
   ttn?: string;
+  comment?: string;
   created_at: string;
   items: {
     product_id: string;
     product_name?: string;
+    product_image?: string | null;
     quantity: number;
     price_at_purchase: number;
   }[];

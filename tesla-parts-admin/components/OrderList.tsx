@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ApiService } from '../services/api';
 import { Order } from '../types';
-import { Search, Truck, CreditCard, Pencil, Check, X, Trash2, Eye } from 'lucide-react';
+import { Search, Truck, CreditCard, Pencil, Check, X, Trash2, Eye, MessageSquare } from 'lucide-react';
 
 export const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -128,6 +128,7 @@ export const OrderList: React.FC = () => {
                 <th className="px-6 py-5">Доставка</th>
                 <th className="px-6 py-5">Сума</th>
                 <th className="px-6 py-5">Оплата</th>
+                <th className="px-6 py-5">Коментар</th>
                 <th className="px-6 py-5">Товари</th>
                 <th className="px-6 py-5">Статус</th>
                 <th className="px-6 py-5">ТТН</th>
@@ -164,6 +165,13 @@ export const OrderList: React.FC = () => {
                       <CreditCard size={10} />
                       {order.payment_method}
                     </div>
+                  </td>
+                  <td className="px-6 py-5">
+                    {order.comment ? (
+                      <MessageSquare size={16} className="text-blue-500" title="Є коментар" />
+                    ) : (
+                      <span className="text-gray-300">-</span>
+                    )}
                   </td>
                   <td className="px-6 py-5">
                     <div className="space-y-1">
@@ -301,8 +309,17 @@ export const OrderList: React.FC = () => {
                       {selectedOrder.items.map((item, idx) => (
                         <tr key={idx} className="hover:bg-white transition-colors">
                           <td className="px-4 py-4">
-                            <div className="font-bold text-slate-900">{item.product_name || "Товар видалено"}</div>
-                            <div className="text-[10px] text-gray-400 font-mono mt-0.5">{item.product_id}</div>
+                            <div className="flex items-center gap-3">
+                              {item.product_image ? (
+                                <img src={item.product_image} alt={item.product_name} className="w-10 h-10 object-cover rounded-md border border-gray-100" />
+                              ) : (
+                                <div className="w-10 h-10 bg-gray-100 rounded-md border border-gray-200"></div>
+                              )}
+                              <div>
+                                <div className="font-bold text-slate-900">{item.product_name || "Товар видалено"}</div>
+                                <div className="text-[10px] text-gray-400 font-mono mt-0.5">{item.product_id}</div>
+                              </div>
+                            </div>
                           </td>
                           <td className="px-4 py-4 text-center">
                             <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-xs font-bold">{item.quantity}</span>
@@ -341,6 +358,15 @@ export const OrderList: React.FC = () => {
                    </div>
                 )}
               </div>
+
+              {selectedOrder.comment && (
+                <div className="pt-4 border-t border-gray-100">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-3">Коментар до замовлення</h3>
+                  <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                    <p className="text-sm text-slate-800 whitespace-pre-wrap">{selectedOrder.comment}</p>
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end">
