@@ -309,15 +309,21 @@ export const OrderList: React.FC = () => {
                       {selectedOrder.items.map((item, idx) => (
                         <tr key={idx} className="hover:bg-white transition-colors">
                           <td className="px-4 py-4">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                               {item.product_image ? (
-                                <img src={item.product_image} alt={item.product_name} className="w-10 h-10 object-cover rounded-md border border-gray-100" />
+                                <img src={item.product_image} alt={item.product_name} className="w-16 h-16 object-cover rounded-lg border border-gray-200 shadow-sm" />
                               ) : (
-                                <div className="w-10 h-10 bg-gray-100 rounded-md border border-gray-200"></div>
+                                <div className="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 text-xs">Немає фото</div>
                               )}
                               <div>
-                                <div className="font-bold text-slate-900">{item.product_name || "Товар видалено"}</div>
-                                <div className="text-[10px] text-gray-400 font-mono mt-0.5">{item.product_id}</div>
+                                {item.product_name ? (
+                                  <a href={`#/products/edit/${item.product_id}`} target="_blank" rel="noreferrer" className="font-bold text-blue-600 hover:text-blue-800 hover:underline transition-colors block">
+                                    {item.product_name}
+                                  </a>
+                                ) : (
+                                  <div className="font-bold text-slate-900">Товар видалено</div>
+                                )}
+                                <div className="text-[10px] text-gray-400 font-mono mt-1">{item.product_id}</div>
                               </div>
                             </div>
                           </td>
