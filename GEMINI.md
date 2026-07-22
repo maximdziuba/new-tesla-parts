@@ -1,0 +1,1 @@
+After every change made in tesla-parts-shop or in tesla-parts-admin always run `npm run format` and `npm run lint` . If some lint errors are present automatically fix them to keep the code clean.

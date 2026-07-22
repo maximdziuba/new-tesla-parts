@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Response, Depends, HTTPException
+from fastapi.openapi.utils import get_openapi
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
@@ -9,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from database import create_db_and_tables, engine, get_session
-from routers import products, orders, categories, settings, pages, auth, feeds, feedback, customers, promocodes, email_campaigns
+from routers import products, orders, categories, settings, pages, auth, feeds, feedback, customers, promocodes, email_campaigns, partner, apikeys
 from contextlib import asynccontextmanager
 import os
 from models import Product, Category, Subcategory, StaticPageSEO, Feedback
@@ -124,6 +125,48 @@ app.include_router(feedback.router)
 app.include_router(customers.router) # Include customers router
 app.include_router(promocodes.router) # Include promocodes router
 app.include_router(email_campaigns.router) # Include email_campaigns router
+app.include_router(partner.router)
+app.include_router(apikeys.router)
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+        
+    openapi_schema = get_openapi(
+        title="TeslaFix Partner API",
+        version="1.0.0",
+        description="API для доступу до каталогу запчастин для сторонніх СТО.",
+        routes=app.routes,
+    )
+    
+    # Фільтруємо ендпоінти: залишаємо тільки Partner API
+    filtered_paths = {}
+    for path, path_item in openapi_schema.get("paths", {}).items():
+        if path.startswith("/api/partner"):
+            filtered_paths[path] = path_item
+            
+    openapi_schema["paths"] = filtered_paths
+    
+    # Фільтруємо схеми: залишаємо тільки ті, що використовуються в Partner API
+    allowed_schemas = {"PaginatedPartnerResponse", "PartnerProductRead", "HTTPValidationError", "ValidationError"}
+    if "components" in openapi_schema and "schemas" in openapi_schema["components"]:
+        schemas = openapi_schema["components"]["schemas"]
+        filtered_schemas = {k: v for k, v in schemas.items() if k in allowed_schemas}
+        openapi_schema["components"]["schemas"] = filtered_schemas
+        
+    # Фільтруємо схеми авторизації: залишаємо тільки X-API-Key
+    if "components" in openapi_schema and "securitySchemes" in openapi_schema["components"]:
+        schemes = openapi_schema["components"]["securitySchemes"]
+        filtered_schemes = {
+            k: v for k, v in schemes.items() 
+            if v.get("in") == "header" and v.get("name") == "X-API-Key"
+        }
+        openapi_schema["components"]["securitySchemes"] = filtered_schemes
+        
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 @app.get("/")
 def read_root():

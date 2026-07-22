@@ -183,3 +183,14 @@ class UserSession(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id", ondelete="CASCADE")
     refresh_token: str = Field(index=True, unique=True)
     expires_at: datetime
+
+class ApiKey(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    key_prefix: str = Field(unique=True, index=True)
+    hashed_key: str
+    discount_percent: float = Field(default=0.0)
+    requests_this_month: int = Field(default=0)
+    last_reset_date: datetime = Field(default_factory=get_kyiv_time)
+    is_active: bool = Field(default=True)
+    created_at: datetime = Field(default_factory=get_kyiv_time)

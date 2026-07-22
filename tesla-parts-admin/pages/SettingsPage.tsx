@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ApiService } from "../services/api";
 import AdminSeoSettings from "../components/AdminSeoSettings";
+import { ApiKeysManager } from "../components/ApiKeysManager";
 
 export const SettingsPage: React.FC = () => {
   const [rate, setRate] = useState<string>("");
@@ -401,6 +402,8 @@ export const SettingsPage: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
         <AdminSeoSettings />
       </div>
+
+      <ApiKeysManager />
     </div>
   );
 };

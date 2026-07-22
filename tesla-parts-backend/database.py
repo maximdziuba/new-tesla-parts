@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-from models import Settings, User, Customer, Category, UserSession # Import Settings, User, Customer, Category and UserSession models
+from models import Settings, User, Customer, Category, UserSession, ApiKey # Import Settings, User, Customer, Category, UserSession and ApiKey models
 from auth import get_password_hash # Import password hashing utility
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -60,6 +60,7 @@ def create_db_and_tables():
     _ensure_customer_default_address_column()
     _ensure_order_comment_column()
     _migrate_existing_customers()
+    _ensure_apikey_table()
     
     with Session(engine) as session:
         # Check if admin user exists, if not, create it
@@ -299,3 +300,10 @@ def _ensure_customer_default_address_column():
         with engine.connect() as conn:
             conn.execute(text("ALTER TABLE customer ADD COLUMN default_address VARCHAR"))
             conn.commit()
+
+def _ensure_apikey_table():
+    inspector = inspect(engine)
+    tables = inspector.get_table_names()
+    if "apikey" not in tables:
+        print("Creating 'apikey' table...")
+        ApiKey.__table__.create(engine)

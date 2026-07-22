@@ -1034,4 +1034,43 @@ export const ApiService = {
     }
     return res.json();
   },
+
+  // API Keys
+  getApiKeys: async (): Promise<unknown[]> => {
+    const res = await _authenticatedFetch(`${API_URL}/apikeys/`, {
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error("Failed to fetch API keys");
+    return res.json();
+  },
+
+  createApiKey: async (data: {
+    name: string;
+    discount_percent: number;
+  }): Promise<unknown> => {
+    const res = await _authenticatedFetch(`${API_URL}/apikeys/`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Failed to create API key");
+    return res.json();
+  },
+
+  revokeApiKey: async (id: number): Promise<unknown> => {
+    const res = await _authenticatedFetch(`${API_URL}/apikeys/${id}/revoke`, {
+      method: "PUT",
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error("Failed to revoke API key");
+    return res.json();
+  },
+
+  deleteApiKey: async (id: number): Promise<boolean> => {
+    const res = await _authenticatedFetch(`${API_URL}/apikeys/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    });
+    return res.ok;
+  },
 };

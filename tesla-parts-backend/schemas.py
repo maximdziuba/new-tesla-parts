@@ -202,3 +202,33 @@ class CustomerRead(BaseModel):
 class CustomerUpdateDiscount(BaseModel):
     discount_type: str
     discount_value: float
+
+class ApiKeyCreate(BaseModel):
+    name: str
+    discount_percent: float = 0.0
+
+class ApiKeyRead(BaseModel):
+    id: int
+    name: str
+    key_prefix: str
+    discount_percent: float
+    requests_this_month: int
+    is_active: bool
+    created_at: datetime
+
+class ApiKeyCreateResponse(ApiKeyRead):
+    raw_key: str  # The full prefix.secret key, shown only once
+
+class PartnerProductRead(BaseModel):
+    id: str
+    name: str
+    priceUAH: float
+    discountedPriceUAH: float
+    inStock: bool
+    image: str
+
+class PaginatedPartnerResponse(BaseModel):
+    total: int
+    limit: int
+    offset: int
+    items: List[PartnerProductRead]
