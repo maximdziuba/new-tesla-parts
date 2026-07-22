@@ -1,10 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { ApiService } from '../services/api';
-import { Customer } from '../types';
-import { 
-  Mail, Users, Plus, Trash2, Send, Search, Check, X, 
-  Layers, ChevronRight, FileText, AlertCircle, Sparkles 
-} from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { ApiService } from "../services/api";
+import { Customer } from "../types";
+import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Mail,
+  Users,
+  Plus,
+  Trash2,
+  Send,
+  Search,
+  Check,
+  X,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Layers,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ChevronRight,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  FileText,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  AlertCircle,
+  Sparkles,
+} from "lucide-react";
 
 interface EmailListCustomer {
   id: number;
@@ -24,29 +40,31 @@ export const EmailCampaigns: React.FC = () => {
   const [emailLists, setEmailLists] = useState<EmailList[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'lists' | 'direct'>('lists');
-  
+  const [activeTab, setActiveTab] = useState<"lists" | "direct">("lists");
+
   // Create List Form State
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [listName, setListName] = useState('');
+  const [listName, setListName] = useState("");
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<number[]>([]);
-  const [searchCustomerQuery, setSearchCustomerQuery] = useState('');
+  const [searchCustomerQuery, setSearchCustomerQuery] = useState("");
 
   // Send Campaign Modal State
   const [isSendCampaignOpen, setIsSendCampaignOpen] = useState(false);
   const [targetList, setTargetList] = useState<EmailList | null>(null);
-  const [campaignSubject, setCampaignSubject] = useState('');
-  const [campaignBody, setCampaignBody] = useState('');
+  const [campaignSubject, setCampaignSubject] = useState("");
+  const [campaignBody, setCampaignBody] = useState("");
   const [sending, setSending] = useState(false);
 
   // Direct Mail Form State
-  const [directSubject, setDirectSubject] = useState('');
-  const [directBody, setDirectBody] = useState('');
-  const [directEmails, setDirectEmails] = useState('');
+  const [directSubject, setDirectSubject] = useState("");
+  const [directBody, setDirectBody] = useState("");
+  const [directEmails, setDirectEmails] = useState("");
   const [directCustomerIds, setDirectCustomerIds] = useState<number[]>([]);
-  const [searchDirectCustomerQuery, setSearchDirectCustomerQuery] = useState('');
+  const [searchDirectCustomerQuery, setSearchDirectCustomerQuery] =
+    useState("");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     fetchData();
   }, []);
 
@@ -55,7 +73,7 @@ export const EmailCampaigns: React.FC = () => {
       setLoading(true);
       const [listData, customerData] = await Promise.all([
         ApiService.getEmailLists(),
-        ApiService.getCustomers()
+        ApiService.getCustomers(),
       ]);
       setEmailLists(listData);
       setCustomers(customerData);
@@ -76,22 +94,24 @@ export const EmailCampaigns: React.FC = () => {
     try {
       const created = await ApiService.createEmailList({
         name: listName.trim(),
-        customer_ids: selectedCustomerIds
+        customer_ids: selectedCustomerIds,
       });
-      setEmailLists(prev => [...prev, created]);
+      setEmailLists((prev) => [...prev, created]);
       setIsCreateOpen(false);
-      setListName('');
+      setListName("");
       setSelectedCustomerIds([]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert(err.message || "Не вдалося створити список");
     }
   };
 
   const handleDeleteList = async (id: number) => {
-    if (!window.confirm("Ви впевнені, що хочете видалити цей список розсилки?")) return;
+    if (!window.confirm("Ви впевнені, що хочете видалити цей список розсилки?"))
+      return;
     try {
       await ApiService.deleteEmailList(id);
-      setEmailLists(prev => prev.filter(l => l.id !== id));
+      setEmailLists((prev) => prev.filter((l) => l.id !== id));
     } catch (e) {
       console.error("Failed to delete list", e);
       alert("Не вдалося видалити список розсилки");
@@ -100,8 +120,8 @@ export const EmailCampaigns: React.FC = () => {
 
   const handleOpenSendCampaign = (list: EmailList) => {
     setTargetList(list);
-    setCampaignSubject('');
-    setCampaignBody('');
+    setCampaignSubject("");
+    setCampaignBody("");
     setIsSendCampaignOpen(true);
   };
 
@@ -117,10 +137,11 @@ export const EmailCampaigns: React.FC = () => {
       setSending(true);
       const res = await ApiService.sendCampaignToList(targetList.id, {
         subject: campaignSubject.trim(),
-        body: campaignBody.trim()
+        body: campaignBody.trim(),
       });
       alert(res.message || "Розсилку успішно запущено!");
       setIsSendCampaignOpen(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert(err.message || "Не вдалося надіслати розсилку");
     } finally {
@@ -137,11 +158,13 @@ export const EmailCampaigns: React.FC = () => {
 
     const emailArr = directEmails
       .split(/[\n,;]+/)
-      .map(email => email.trim())
-      .filter(email => email.length > 0);
+      .map((email) => email.trim())
+      .filter((email) => email.length > 0);
 
     if (directCustomerIds.length === 0 && emailArr.length === 0) {
-      alert("Оберіть хоча б одного клієнта або введіть хоча б одну email адресу");
+      alert(
+        "Оберіть хоча б одного клієнта або введіть хоча б одну email адресу",
+      );
       return;
     }
 
@@ -151,13 +174,14 @@ export const EmailCampaigns: React.FC = () => {
         subject: directSubject.trim(),
         body: directBody.trim(),
         customer_ids: directCustomerIds,
-        emails: emailArr
+        emails: emailArr,
       });
       alert(res.message || "Повідомлення надіслано успішно!");
-      setDirectSubject('');
-      setDirectBody('');
-      setDirectEmails('');
+      setDirectSubject("");
+      setDirectBody("");
+      setDirectEmails("");
       setDirectCustomerIds([]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert(err.message || "Не вдалося відправити повідомлення");
     } finally {
@@ -166,35 +190,39 @@ export const EmailCampaigns: React.FC = () => {
   };
 
   const handleToggleCustomerForList = (id: number) => {
-    setSelectedCustomerIds(prev =>
-      prev.includes(id) ? prev.filter(cid => cid !== id) : [...prev, id]
+    setSelectedCustomerIds((prev) =>
+      prev.includes(id) ? prev.filter((cid) => cid !== id) : [...prev, id],
     );
   };
 
   const handleToggleCustomerForDirect = (id: number) => {
-    setDirectCustomerIds(prev =>
-      prev.includes(id) ? prev.filter(cid => cid !== id) : [...prev, id]
+    setDirectCustomerIds((prev) =>
+      prev.includes(id) ? prev.filter((cid) => cid !== id) : [...prev, id],
     );
   };
 
-  const filteredCustomersForList = customers.filter(c => {
+  const filteredCustomersForList = customers.filter((c) => {
     const q = searchCustomerQuery.toLowerCase();
     if (!q) return true;
-    const name = `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase();
-    const email = (c.email || '').toLowerCase();
+    const name = `${c.first_name || ""} ${c.last_name || ""}`.toLowerCase();
+    const email = (c.email || "").toLowerCase();
     return name.includes(q) || email.includes(q);
   });
 
-  const filteredCustomersForDirect = customers.filter(c => {
+  const filteredCustomersForDirect = customers.filter((c) => {
     const q = searchDirectCustomerQuery.toLowerCase();
     if (!q) return true;
-    const name = `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase();
-    const email = (c.email || '').toLowerCase();
+    const name = `${c.first_name || ""} ${c.last_name || ""}`.toLowerCase();
+    const email = (c.email || "").toLowerCase();
     return name.includes(q) || email.includes(q);
   });
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-500 font-medium">Завантаження даних розсилок...</div>;
+    return (
+      <div className="p-8 text-center text-gray-500 font-medium">
+        Завантаження даних розсилок...
+      </div>
+    );
   }
 
   return (
@@ -202,34 +230,34 @@ export const EmailCampaigns: React.FC = () => {
       {/* Navigation tabs */}
       <div className="flex border-b border-gray-200 bg-white px-6 pt-4 rounded-2xl shadow-sm border border-gray-100">
         <button
-          onClick={() => setActiveTab('lists')}
+          onClick={() => setActiveTab("lists")}
           className={`pb-4 px-4 font-bold text-sm transition-colors border-b-2 cursor-pointer ${
-            activeTab === 'lists' 
-              ? 'border-blue-600 text-blue-600' 
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+            activeTab === "lists"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-slate-500 hover:text-slate-800"
           }`}
         >
           Списки розсилки
         </button>
         <button
-          onClick={() => setActiveTab('direct')}
+          onClick={() => setActiveTab("direct")}
           className={`pb-4 px-4 font-bold text-sm transition-colors border-b-2 cursor-pointer ${
-            activeTab === 'direct' 
-              ? 'border-blue-600 text-blue-600' 
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+            activeTab === "direct"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-slate-500 hover:text-slate-800"
           }`}
         >
           Пряма розсилка
         </button>
       </div>
 
-      {activeTab === 'lists' ? (
+      {activeTab === "lists" ? (
         <div className="space-y-6 animate-in fade-in duration-200">
           {/* List Controls */}
           <div className="flex justify-end bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
             <button
               onClick={() => {
-                setListName('');
+                setListName("");
                 setSelectedCustomerIds([]);
                 setIsCreateOpen(true);
               }}
@@ -245,12 +273,19 @@ export const EmailCampaigns: React.FC = () => {
             {emailLists.length === 0 ? (
               <div className="col-span-full bg-white p-12 rounded-2xl border border-gray-100 text-center text-gray-400">
                 <Users className="mx-auto w-12 h-12 text-gray-300 mb-3" />
-                <p className="font-semibold text-slate-500">Списків розсилки не створено</p>
-                <p className="text-xs text-gray-400 mt-1">Згрупуйте клієнтів для зручної та швидкої розсилки</p>
+                <p className="font-semibold text-slate-500">
+                  Списків розсилки не створено
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Згрупуйте клієнтів для зручної та швидкої розсилки
+                </p>
               </div>
             ) : (
-              emailLists.map(list => (
-                <div key={list.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+              emailLists.map((list) => (
+                <div
+                  key={list.id}
+                  className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group"
+                >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-extrabold text-slate-800 line-clamp-1">
@@ -307,7 +342,9 @@ export const EmailCampaigns: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 max-w-4xl mx-auto animate-in fade-in duration-200">
           <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-100">
             <Sparkles className="text-blue-600 w-5 h-5" />
-            <h3 className="text-lg font-bold text-slate-800">Миттєве пряме розсилання</h3>
+            <h3 className="text-lg font-bold text-slate-800">
+              Миттєве пряме розсилання
+            </h3>
           </div>
 
           <form onSubmit={handleSendDirect} className="space-y-6">
@@ -315,7 +352,9 @@ export const EmailCampaigns: React.FC = () => {
               {/* Left Column: Form Details */}
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Тема листа</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Тема листа
+                  </label>
                   <input
                     type="text"
                     required
@@ -327,7 +366,9 @@ export const EmailCampaigns: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Текст повідомлення</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Текст повідомлення
+                  </label>
                   <textarea
                     required
                     rows={8}
@@ -342,7 +383,9 @@ export const EmailCampaigns: React.FC = () => {
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
                     Додаткові адреси отримувачів
                   </label>
-                  <p className="text-[10px] text-gray-400 font-medium mb-2">Введіть додаткові email-адреси через кому або з нового рядка</p>
+                  <p className="text-[10px] text-gray-400 font-medium mb-2">
+                    Введіть додаткові email-адреси через кому або з нового рядка
+                  </p>
                   <textarea
                     rows={3}
                     placeholder="customer1@example.com, test@example.com"
@@ -356,47 +399,62 @@ export const EmailCampaigns: React.FC = () => {
               {/* Right Column: Customer Selection */}
               <div className="space-y-4 flex flex-col h-full">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Оберіть клієнтів</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Оберіть клієнтів
+                  </label>
                   <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 font-bold border border-blue-100 rounded-lg text-[10px]">
                     Обрано: {directCustomerIds.length} осіб
                   </span>
                 </div>
 
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={16}
+                  />
                   <input
                     type="text"
                     placeholder="Пошук клієнта за іменем, email..."
                     className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 text-xs"
                     value={searchDirectCustomerQuery}
-                    onChange={(e) => setSearchDirectCustomerQuery(e.target.value)}
+                    onChange={(e) =>
+                      setSearchDirectCustomerQuery(e.target.value)
+                    }
                   />
                 </div>
 
                 {/* Customer list scrollable */}
                 <div className="border border-slate-100 rounded-xl flex-grow overflow-y-auto divide-y divide-gray-50 custom-scrollbar bg-slate-50/50 p-1.5 h-64 md:h-[350px]">
                   {filteredCustomersForDirect.length === 0 ? (
-                    <div className="py-12 text-center text-gray-400 text-xs">Клієнтів не знайдено</div>
+                    <div className="py-12 text-center text-gray-400 text-xs">
+                      Клієнтів не знайдено
+                    </div>
                   ) : (
-                    filteredCustomersForDirect.map(c => {
+                    filteredCustomersForDirect.map((c) => {
                       const isChecked = directCustomerIds.includes(c.id);
                       return (
-                        <div 
-                          key={c.id} 
+                        <div
+                          key={c.id}
                           onClick={() => handleToggleCustomerForDirect(c.id)}
                           className="flex items-center justify-between p-2.5 hover:bg-white hover:shadow-sm rounded-lg transition cursor-pointer"
                         >
                           <div>
                             <div className="text-xs font-bold text-slate-800">
-                              {c.first_name || c.last_name ? `${c.first_name || ''} ${c.last_name || ''}`.trim() : 'Клієнт без імені'}
+                              {c.first_name || c.last_name
+                                ? `${c.first_name || ""} ${c.last_name || ""}`.trim()
+                                : "Клієнт без імені"}
                             </div>
                             <div className="text-[10px] text-gray-400 font-medium">
                               {c.email}
                             </div>
                           </div>
-                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                            isChecked ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 bg-white'
-                          }`}>
+                          <div
+                            className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                              isChecked
+                                ? "bg-blue-600 border-blue-600 text-white"
+                                : "border-gray-300 bg-white"
+                            }`}
+                          >
                             {isChecked && <Check size={12} />}
                           </div>
                         </div>
@@ -414,7 +472,7 @@ export const EmailCampaigns: React.FC = () => {
                 className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-blue-100"
               >
                 <Send size={14} />
-                {sending ? 'Відправка...' : 'Запустити пряму розсилку'}
+                {sending ? "Відправка..." : "Запустити пряму розсилку"}
               </button>
             </div>
           </form>
@@ -427,17 +485,29 @@ export const EmailCampaigns: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-slate-50/50">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Створити список розсилки</h3>
-                <p className="text-xs text-gray-400 mt-1">Згрупуйте клієнтів за інтересами чи статусом</p>
+                <h3 className="text-lg font-bold text-slate-900">
+                  Створити список розсилки
+                </h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Згрупуйте клієнтів за інтересами чи статусом
+                </p>
               </div>
-              <button onClick={() => setIsCreateOpen(false)} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg transition">
+              <button
+                onClick={() => setIsCreateOpen(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg transition"
+              >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateList} className="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col custom-scrollbar">
+            <form
+              onSubmit={handleCreateList}
+              className="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col custom-scrollbar"
+            >
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Назва списку</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Назва списку
+                </label>
                 <input
                   type="text"
                   required
@@ -450,14 +520,19 @@ export const EmailCampaigns: React.FC = () => {
 
               <div className="space-y-3 flex-grow flex flex-col">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Оберіть клієнтів</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Оберіть клієнтів
+                  </label>
                   <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-lg text-[10px]">
                     Обрано: {selectedCustomerIds.length} осіб
                   </span>
                 </div>
 
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={16}
+                  />
                   <input
                     type="text"
                     placeholder="Шукати за іменем чи email..."
@@ -469,25 +544,35 @@ export const EmailCampaigns: React.FC = () => {
 
                 <div className="border border-slate-100 rounded-xl overflow-y-auto divide-y divide-gray-50 custom-scrollbar bg-slate-50/50 p-1.5 max-h-48">
                   {filteredCustomersForList.length === 0 ? (
-                    <div className="py-6 text-center text-gray-400 text-xs font-medium">Клієнтів не знайдено</div>
+                    <div className="py-6 text-center text-gray-400 text-xs font-medium">
+                      Клієнтів не знайдено
+                    </div>
                   ) : (
-                    filteredCustomersForList.map(c => {
+                    filteredCustomersForList.map((c) => {
                       const isChecked = selectedCustomerIds.includes(c.id);
                       return (
-                        <div 
-                          key={c.id} 
+                        <div
+                          key={c.id}
                           onClick={() => handleToggleCustomerForList(c.id)}
                           className="flex items-center justify-between p-2 hover:bg-white hover:shadow-sm rounded-lg transition cursor-pointer"
                         >
                           <div>
                             <div className="text-xs font-bold text-slate-800">
-                              {c.first_name || c.last_name ? `${c.first_name || ''} ${c.last_name || ''}`.trim() : 'Клієнт без імені'}
+                              {c.first_name || c.last_name
+                                ? `${c.first_name || ""} ${c.last_name || ""}`.trim()
+                                : "Клієнт без імені"}
                             </div>
-                            <div className="text-[10px] text-gray-400">{c.email}</div>
+                            <div className="text-[10px] text-gray-400">
+                              {c.email}
+                            </div>
                           </div>
-                          <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                            isChecked ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 bg-white'
-                          }`}>
+                          <div
+                            className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                              isChecked
+                                ? "bg-blue-600 border-blue-600 text-white"
+                                : "border-gray-300 bg-white"
+                            }`}
+                          >
                             {isChecked && <Check size={10} />}
                           </div>
                         </div>
@@ -523,17 +608,30 @@ export const EmailCampaigns: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-slate-50/50">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Запуск маркетингової розсилки</h3>
-                <p className="text-xs text-gray-400 mt-1">Список отримувачів: <span className="font-semibold text-blue-600">{targetList.name}</span> ({targetList.customers?.length || 0} осіб)</p>
+                <h3 className="text-lg font-bold text-slate-900">
+                  Запуск маркетингової розсилки
+                </h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Список отримувачів:{" "}
+                  <span className="font-semibold text-blue-600">
+                    {targetList.name}
+                  </span>{" "}
+                  ({targetList.customers?.length || 0} осіб)
+                </p>
               </div>
-              <button onClick={() => setIsSendCampaignOpen(false)} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg transition">
+              <button
+                onClick={() => setIsSendCampaignOpen(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg transition"
+              >
                 <X size={20} />
               </button>
             </div>
 
             <form onSubmit={handleSendCampaign} className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Тема листа</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Тема листа
+                </label>
                 <input
                   type="text"
                   required
@@ -545,7 +643,9 @@ export const EmailCampaigns: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Текст листа</label>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Текст листа
+                </label>
                 <textarea
                   required
                   rows={6}
@@ -570,7 +670,7 @@ export const EmailCampaigns: React.FC = () => {
                   className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold rounded-xl text-xs transition cursor-pointer active:scale-95 shadow-md shadow-blue-100 flex items-center justify-center gap-1.5"
                 >
                   <Send size={12} />
-                  {sending ? 'Надсилання...' : 'Запустити розсилку'}
+                  {sending ? "Надсилання..." : "Запустити розсилку"}
                 </button>
               </div>
             </form>

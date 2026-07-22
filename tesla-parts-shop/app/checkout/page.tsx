@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import Checkout from '../../components/Checkout';
-import { useApp } from '../../context/AppContext';
+import React from "react";
+import { useRouter } from "next/navigation";
+import Checkout from "../../components/Checkout";
+import { useApp } from "../../context/AppContext";
 
 export default function CheckoutPage() {
   const { cart, currency, uahPerUsd, cartTotalUSD, clearCart } = useApp();
@@ -11,7 +11,7 @@ export default function CheckoutPage() {
 
   const handleSuccess = () => {
     clearCart();
-    router.push('/success');
+    router.push("/success");
   };
 
   return (

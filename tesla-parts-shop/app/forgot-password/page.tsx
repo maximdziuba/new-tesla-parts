@@ -1,26 +1,34 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { api } from '@/services/api';
-import Link from 'next/link';
+import { useState } from "react";
+import { api } from "@/services/api";
+import Link from "next/link";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
-    setStatus('loading');
+    setStatus("loading");
     try {
       const res = await api.forgotPassword(email);
-      setStatus('success');
-      setMessage(res.message || 'Посилання для відновлення паролю надіслано на вашу пошту');
+      setStatus("success");
+      setMessage(
+        res.message ||
+          "Посилання для відновлення паролю надіслано на вашу пошту",
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setStatus('error');
-      setMessage(err.message || 'Помилка при відправленні запиту. Спробуйте ще раз.');
+      setStatus("error");
+      setMessage(
+        err.message || "Помилка при відправленні запиту. Спробуйте ще раз.",
+      );
     }
   };
 
@@ -36,13 +44,21 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
 
-        {status === 'success' ? (
+        {status === "success" ? (
           <div className="space-y-6">
             <div className="bg-green-50 dark:bg-green-950/30 border-l-4 border-green-400 dark:border-green-500 p-4 rounded-r-md transition-colors">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-green-400 dark:text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  <svg
+                    className="h-5 w-5 text-green-400 dark:text-green-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div className="ml-3">
@@ -53,7 +69,10 @@ export default function ForgotPasswordPage() {
               </div>
             </div>
             <div className="text-center">
-              <Link href="/login" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors">
+              <Link
+                href="/login"
+                className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+              >
                 Повернутися до входу
               </Link>
             </div>
@@ -62,7 +81,9 @@ export default function ForgotPasswordPage() {
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm">
               <div>
-                <label htmlFor="email" className="sr-only">Email</label>
+                <label htmlFor="email" className="sr-only">
+                  Email
+                </label>
                 <input
                   id="email"
                   name="email"
@@ -76,25 +97,30 @@ export default function ForgotPasswordPage() {
               </div>
             </div>
 
-            {status === 'error' && (
-              <p className="text-red-500 dark:text-red-400 text-sm text-center">{message}</p>
+            {status === "error" && (
+              <p className="text-red-500 dark:text-red-400 text-sm text-center">
+                {message}
+              </p>
             )}
 
             <div>
               <button
                 type="submit"
-                disabled={status === 'loading'}
+                disabled={status === "loading"}
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 cursor-pointer transition-colors"
               >
-                {status === 'loading' ? 'Надсилання...' : 'Надіслати посилання'}
+                {status === "loading" ? "Надсилання..." : "Надіслати посилання"}
               </button>
             </div>
           </form>
         )}
 
-        {status !== 'success' && (
+        {status !== "success" && (
           <div className="text-center">
-            <Link href="/login" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors">
+            <Link
+              href="/login"
+              className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+            >
               Повернутися до входу
             </Link>
           </div>

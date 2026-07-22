@@ -1,24 +1,27 @@
-'use client';
+"use client";
 
-import { useState, Suspense, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { api } from '@/services/api';
+import { useState, Suspense, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { api } from "@/services/api";
 
 function VerifyForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const token = searchParams.get('token');
+  const token = searchParams.get("token");
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('registerEmail');
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("registerEmail");
       if (stored) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setEmail(stored);
       }
     }
@@ -27,24 +30,25 @@ function VerifyForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setStatus('error');
-      setMessage('Паролі не співпадають');
+      setStatus("error");
+      setMessage("Паролі не співпадають");
       return;
     }
 
-    setStatus('loading');
+    setStatus("loading");
     try {
       await api.verifyCustomer({
         token,
         password,
-        confirm_password: confirmPassword
+        confirm_password: confirmPassword,
       });
-      setStatus('success');
+      setStatus("success");
       setTimeout(() => {
-        router.push('/login');
+        router.push("/login");
       }, 3000);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setStatus('error');
+      setStatus("error");
       setMessage(err.message);
     }
   };
@@ -52,8 +56,12 @@ function VerifyForm() {
   if (!token) {
     return (
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 p-10 rounded-xl shadow-lg dark:shadow-2xl/10 transition-colors duration-300 text-center">
-        <h2 className="text-2xl font-bold text-red-600 dark:text-red-400">Помилка</h2>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">Токен підтвердження відсутній.</p>
+        <h2 className="text-2xl font-bold text-red-600 dark:text-red-400">
+          Помилка
+        </h2>
+        <p className="mt-2 text-slate-600 dark:text-slate-400">
+          Токен підтвердження відсутній.
+        </p>
       </div>
     );
   }
@@ -69,12 +77,20 @@ function VerifyForm() {
         </p>
       </div>
 
-      {status === 'success' ? (
+      {status === "success" ? (
         <div className="bg-green-50 dark:bg-green-950/30 border-l-4 border-green-400 dark:border-green-500 p-4 rounded-r-md transition-colors">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-400 dark:text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <svg
+                className="h-5 w-5 text-green-400 dark:text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
             <div className="ml-3">
@@ -87,11 +103,21 @@ function VerifyForm() {
       ) : (
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {/* Hidden username field for browser password manager context */}
-          <input type="text" name="username" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} className="hidden" aria-hidden="true" />
-          
+          <input
+            type="text"
+            name="username"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="hidden"
+            aria-hidden="true"
+          />
+
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="password" className="sr-only">Новий пароль</label>
+              <label htmlFor="password" className="sr-only">
+                Новий пароль
+              </label>
               <input
                 id="password"
                 name="password"
@@ -105,7 +131,9 @@ function VerifyForm() {
               />
             </div>
             <div>
-              <label htmlFor="confirm-password" className="sr-only">Підтвердіть пароль</label>
+              <label htmlFor="confirm-password" className="sr-only">
+                Підтвердіть пароль
+              </label>
               <input
                 id="confirm-password"
                 name="confirm-password"
@@ -120,17 +148,19 @@ function VerifyForm() {
             </div>
           </div>
 
-          {status === 'error' && (
-            <p className="text-red-500 dark:text-red-400 text-sm text-center">{message}</p>
+          {status === "error" && (
+            <p className="text-red-500 dark:text-red-400 text-sm text-center">
+              {message}
+            </p>
           )}
 
           <div>
             <button
               type="submit"
-              disabled={status === 'loading'}
+              disabled={status === "loading"}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 cursor-pointer transition-colors"
             >
-              {status === 'loading' ? 'Обробка...' : 'Підтвердити'}
+              {status === "loading" ? "Обробка..." : "Підтвердити"}
             </button>
           </div>
         </form>
@@ -142,7 +172,13 @@ function VerifyForm() {
 export default function VerifyPage() {
   return (
     <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Suspense fallback={<div className="text-slate-600 dark:text-slate-400">Завантаження...</div>}>
+      <Suspense
+        fallback={
+          <div className="text-slate-600 dark:text-slate-400">
+            Завантаження...
+          </div>
+        }
+      >
         <VerifyForm />
       </Suspense>
     </div>

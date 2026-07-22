@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { ApiService } from '../services/api';
-import { DashboardStats, Order, Product } from '../types';
+import React, { useEffect, useState } from "react";
+import { ApiService } from "../services/api";
+import { DashboardStats, Order, Product } from "../types";
 import {
   BarChart,
   Bar,
@@ -11,15 +11,19 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
-import { DollarSign, ShoppingBag, Package, AlertTriangle } from 'lucide-react';
+  Cell,
+} from "recharts";
+import { DollarSign, ShoppingBag, Package, AlertTriangle } from "lucide-react";
 
 const getProductCategories = (value?: string) => {
   if (!value) return [];
-  return value.split(',').map(item => item.trim()).filter(Boolean);
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const StatCard = ({ title, value, icon: Icon, color, subtext }: any) => (
   <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
     <div className="flex items-center justify-between">
@@ -46,22 +50,32 @@ export const Dashboard: React.FC = () => {
       try {
         const [ordersData, productsData] = await Promise.all([
           ApiService.getOrders(),
-          ApiService.getProducts()
+          ApiService.getProducts(),
         ]);
 
-        const totalRevenue = ordersData.reduce((acc, order) => acc + (order.totalUAH ?? 0), 0);
-        const pending = ordersData.filter(o => o.status === 'new').length;
+        const totalRevenue = ordersData.reduce(
+          (acc, order) => acc + (order.totalUAH ?? 0),
+          0,
+        );
+        const pending = ordersData.filter((o) => o.status === "new").length;
         // Mock stock logic since backend doesn't track quantity yet, assume inStock=true is > 0
-        const lowStock = productsData.filter(p => !p.inStock).length;
+        const lowStock = productsData.filter((p) => !p.inStock).length;
 
         setStats({
           totalRevenue,
           totalOrders: ordersData.length,
           pendingOrders: pending,
-          lowStockItems: lowStock
+          lowStockItems: lowStock,
         });
-        setOrders(ordersData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+        setOrders(
+          ordersData.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          ),
+        );
         setProducts(productsData);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         console.error("Failed to load dashboard data");
       } finally {
@@ -80,12 +94,16 @@ export const Dashboard: React.FC = () => {
   }
 
   // Calculate Sales by Category
-  const salesByCategories = Array.from(new Set(products.flatMap(p => getProductCategories(p.category)))).map((categoryName: string) => {
+  const salesByCategories = Array.from(
+    new Set(products.flatMap((p) => getProductCategories(p.category))),
+  ).map((categoryName: string) => {
     const categoryProducts = products
-      .filter(p => getProductCategories(p.category).includes(categoryName))
-      .map(p => p.id);
+      .filter((p) => getProductCategories(p.category).includes(categoryName))
+      .map((p) => p.id);
     const count = orders.reduce((acc, order) => {
-      const categoryItems = order.items.filter(item => categoryProducts.includes(item.product_id));
+      const categoryItems = order.items.filter((item) =>
+        categoryProducts.includes(item.product_id),
+      );
       return acc + categoryItems.reduce((sum, item) => sum + item.quantity, 0);
     }, 0);
     return { name: categoryName, value: count };
@@ -128,19 +146,45 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Chart 1: Sales by Category */}
         <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">Продажі за категоріями (шт)</h3>
+          <h3 className="text-lg font-bold text-slate-900 mb-4">
+            Продажі за категоріями (шт)
+          </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salesByCategories}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                <Tooltip
-                  cursor={{fill: '#f8fafc'}}
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                  itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#f1f5f9"
                 />
-                <Bar dataKey="value" fill="#4169E1" radius={[6, 6, 0, 0]} barSize={40} />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                  dy={10}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                />
+                <Tooltip
+                  cursor={{ fill: "#f8fafc" }}
+                  contentStyle={{
+                    backgroundColor: "#fff",
+                    borderRadius: "12px",
+                    border: "none",
+                    boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                  }}
+                  itemStyle={{ color: "#1e293b", fontWeight: "bold" }}
+                />
+                <Bar
+                  dataKey="value"
+                  fill="#4169E1"
+                  radius={[6, 6, 0, 0]}
+                  barSize={40}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -148,14 +192,19 @@ export const Dashboard: React.FC = () => {
 
         {/* Chart 2: Order Status Distribution */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">Статус Замовлень</h3>
+          <h3 className="text-lg font-bold text-slate-900 mb-4">
+            Статус Замовлень
+          </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={[
-                    { name: 'Нові', value: stats.pendingOrders },
-                    { name: 'Завершені', value: stats.totalOrders - stats.pendingOrders },
+                    { name: "Нові", value: stats.pendingOrders },
+                    {
+                      name: "Завершені",
+                      value: stats.totalOrders - stats.pendingOrders,
+                    },
                   ]}
                   cx="50%"
                   cy="50%"
@@ -167,19 +216,27 @@ export const Dashboard: React.FC = () => {
                   <Cell fill="#f59e0b" stroke="none" />
                   <Cell fill="#10b981" stroke="none" />
                 </Pie>
-                <Tooltip 
-                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "12px",
+                    border: "none",
+                    boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                  }}
                 />
               </PieChart>
             </ResponsiveContainer>
             <div className="flex justify-center gap-6 mt-2">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-tight">Нові</span>
+                <span className="text-xs font-bold text-slate-600 uppercase tracking-tight">
+                  Нові
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-tight">Завершені</span>
+                <span className="text-xs font-bold text-slate-600 uppercase tracking-tight">
+                  Завершені
+                </span>
               </div>
             </div>
           </div>

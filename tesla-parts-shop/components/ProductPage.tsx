@@ -1,436 +1,506 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Product, Currency } from '../types';
-import { ShoppingCart, ArrowLeft, Check, ChevronLeft, ChevronRight, Truck, X, ZoomIn } from 'lucide-react';
-import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD } from '../constants';
-import SeoHead from './SeoHead';
-import { formatCurrency } from '../utils/currency';
-import { api } from '../services/api';
-import ProductList from './ProductList';
-import { useApp } from '../context/AppContext';
+import React, { useState, useMemo, useEffect } from "react";
+import { Product, Currency } from "../types";
+import {
+  ShoppingCart,
+  ArrowLeft,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Truck,
+  X,
+  ZoomIn,
+} from "lucide-react";
+import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD } from "../constants";
+import SeoHead from "./SeoHead";
+import { formatCurrency } from "../utils/currency";
+import { api } from "../services/api";
+import ProductList from "./ProductList";
+import { useApp } from "../context/AppContext";
 
 interface ProductPageProps {
-    product: Product;
-    currency: Currency;
-    uahPerUsd: number;
-    onAddToCart: (product: Product) => void;
-    onBack: () => void;
-    onProductClick: (product: Product) => void;
+  product: Product;
+  currency: Currency;
+  uahPerUsd: number;
+  onAddToCart: (product: Product) => void;
+  onBack: () => void;
+  onProductClick: (product: Product) => void;
 }
 
 const parseProductCategories = (value?: string | null) => {
-    if (!value) return [];
-    return value.split(',').map(item => item.trim()).filter(Boolean);
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 };
 
 const getProductSubcategoryIds = (product: Product): number[] => {
-    if (product.subcategory_ids && product.subcategory_ids.length > 0) {
-        return product.subcategory_ids;
-    }
-    return product.subcategory_id ? [product.subcategory_id] : [];
+  if (product.subcategory_ids && product.subcategory_ids.length > 0) {
+    return product.subcategory_ids;
+  }
+  return product.subcategory_id ? [product.subcategory_id] : [];
 };
 
-const ProductPage: React.FC<ProductPageProps> = ({ product, currency, uahPerUsd, onAddToCart, onBack, onProductClick }) => {
-    const { customer } = useApp();
-    const effectiveRate = uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
+const ProductPage: React.FC<ProductPageProps> = ({
+  product,
+  currency,
+  uahPerUsd,
+  onAddToCart,
+  onBack,
+  onProductClick,
+}) => {
+  const { customer } = useApp();
+  const effectiveRate =
+    uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
 
-    const priceUSD = useMemo(() => {
-        return product.priceUSD && product.priceUSD > 0
-            ? product.priceUSD
-            : (product.priceUAH && product.priceUAH > 0 && effectiveRate > 0
-                ? product.priceUAH / effectiveRate
-                : 0);
-    }, [product, effectiveRate]);
+  const priceUSD = useMemo(() => {
+    return product.priceUSD && product.priceUSD > 0
+      ? product.priceUSD
+      : product.priceUAH && product.priceUAH > 0 && effectiveRate > 0
+        ? product.priceUAH / effectiveRate
+        : 0;
+  }, [product, effectiveRate]);
 
-    const originalAmount = useMemo(() => {
-        return currency === Currency.USD ? priceUSD : priceUSD * effectiveRate;
-    }, [priceUSD, currency, effectiveRate]);
+  const originalAmount = useMemo(() => {
+    return currency === Currency.USD ? priceUSD : priceUSD * effectiveRate;
+  }, [priceUSD, currency, effectiveRate]);
 
-    const discountedAmount = useMemo(() => {
-        if (!customer || !customer.discount_value || customer.discount_value <= 0) {
-            return null;
-        }
-        if (customer.discount_type === 'percent') {
-            return originalAmount * (1 - customer.discount_value / 100);
-        }
-        if (customer.discount_type === 'usd') {
-            const discountInSelectedCurrency = currency === Currency.USD 
-                ? customer.discount_value 
-                : customer.discount_value * effectiveRate;
-            return Math.max(0, originalAmount - discountInSelectedCurrency);
-        }
-        if (customer.discount_type === 'uah') {
-            const discountInSelectedCurrency = currency === Currency.UAH 
-                ? customer.discount_value 
-                : customer.discount_value / effectiveRate;
-            return Math.max(0, originalAmount - discountInSelectedCurrency);
-        }
-        return null;
-    }, [customer, originalAmount, currency, effectiveRate]);
+  const discountedAmount = useMemo(() => {
+    if (!customer || !customer.discount_value || customer.discount_value <= 0) {
+      return null;
+    }
+    if (customer.discount_type === "percent") {
+      return originalAmount * (1 - customer.discount_value / 100);
+    }
+    if (customer.discount_type === "usd") {
+      const discountInSelectedCurrency =
+        currency === Currency.USD
+          ? customer.discount_value
+          : customer.discount_value * effectiveRate;
+      return Math.max(0, originalAmount - discountInSelectedCurrency);
+    }
+    if (customer.discount_type === "uah") {
+      const discountInSelectedCurrency =
+        currency === Currency.UAH
+          ? customer.discount_value
+          : customer.discount_value / effectiveRate;
+      return Math.max(0, originalAmount - discountInSelectedCurrency);
+    }
+    return null;
+  }, [customer, originalAmount, currency, effectiveRate]);
 
-    // Combine main image with additional images and remove duplicates
-    const allImages = useMemo(
-        () => Array.from(new Set([product.image, ...(product.images || [])].filter(Boolean))),
-        [product.image, product.images]
-    );
-    const [selectedImage, setSelectedImage] = useState(allImages[0]);
-    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-    const [added, setAdded] = useState(false);
-    const [deliveryInfo, setDeliveryInfo] = useState<string | null>(null);
-    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  // Combine main image with additional images and remove duplicates
+  const allImages = useMemo(
+    () =>
+      Array.from(
+        new Set([product.image, ...(product.images || [])].filter(Boolean)),
+      ),
+    [product.image, product.images],
+  );
+  const [selectedImage, setSelectedImage] = useState(allImages[0]);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [added, setAdded] = useState(false);
+  const [deliveryInfo, setDeliveryInfo] = useState<string | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
-    useEffect(() => {
-        setSelectedImage(allImages[0]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedImage(allImages[0]);
+    setIsLightboxOpen(false);
+  }, [allImages]);
+
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
         setIsLightboxOpen(false);
-    }, [allImages]);
+      } else if (event.key === "ArrowLeft") {
+        // eslint-disable-next-line react-hooks/immutability
+        handlePrevImage();
+      } else if (event.key === "ArrowRight") {
+        // eslint-disable-next-line react-hooks/immutability
+        handleNextImage();
+      }
+    };
 
-    useEffect(() => {
-        if (!isLightboxOpen) return;
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLightboxOpen, selectedImage, allImages]);
 
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                setIsLightboxOpen(false);
-            } else if (event.key === 'ArrowLeft') {
-                handlePrevImage();
-            } else if (event.key === 'ArrowRight') {
-                handleNextImage();
-            }
-        };
+  useEffect(() => {
+    const fetchDeliveryInfo = async () => {
+      const page = await api.getPage("delivery");
+      if (page && page.content) {
+        setDeliveryInfo(page.content);
+      }
+    };
+    fetchDeliveryInfo();
+  }, []);
 
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isLightboxOpen, selectedImage, allImages]);
+  useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      const targetSubcategoryId = getProductSubcategoryIds(product)[0];
+      const primaryCategorySlug = parseProductCategories(product.category)[0]
+        ?.toLowerCase()
+        .replace(/\s+/g, "-");
 
-    useEffect(() => {
-        const fetchDeliveryInfo = async () => {
-            const page = await api.getPage('delivery');
-            if (page && page.content) {
-                setDeliveryInfo(page.content);
-            }
-        };
-        fetchDeliveryInfo();
-    }, []);
+      try {
+        let nextProducts: Product[] = [];
 
-    useEffect(() => {
-        const fetchRelatedProducts = async () => {
-            const targetSubcategoryId = getProductSubcategoryIds(product)[0];
-            const primaryCategorySlug = parseProductCategories(product.category)[0]?.toLowerCase().replace(/\s+/g, '-');
-
-            try {
-                let nextProducts: Product[] = [];
-
-                if (targetSubcategoryId) {
-                    nextProducts = await api.getProducts({ subId: targetSubcategoryId, limit: 8 });
-                }
-
-                let filtered = nextProducts.filter(item => item.id !== product.id);
-
-                if (filtered.length < 4 && primaryCategorySlug) {
-                    const categoryProducts = await api.getProducts({ category: primaryCategorySlug, limit: 12 });
-                    const seenIds = new Set(filtered.map(item => item.id));
-                    for (const item of categoryProducts) {
-                        if (item.id === product.id || seenIds.has(item.id)) continue;
-                        filtered.push(item);
-                        seenIds.add(item.id);
-                        if (filtered.length >= 4) break;
-                    }
-                }
-
-                setRelatedProducts(filtered.slice(0, 4));
-            } catch (error) {
-                console.error('Failed to fetch related products', error);
-                setRelatedProducts([]);
-            }
-        };
-
-        fetchRelatedProducts();
-    }, [product]);
-
-    const fallbackTitle = `${product.name}`;
-    const fallbackDescription = useMemo(() => {
-        const trimmed = product.meta_description?.trim();
-        if (trimmed) return trimmed;
-        const desc = product.description?.trim();
-        if (desc) {
-            const shortened = desc.length > 160 ? `${desc.slice(0, 157).trimEnd()}...` : desc;
-            return shortened;
+        if (targetSubcategoryId) {
+          nextProducts = await api.getProducts({
+            subId: targetSubcategoryId,
+            limit: 8,
+          });
         }
-        return `Buy ${product.name} at Auto Parts Store`;
-    }, [product.meta_description, product.description, product.name]);
-    const seoImage = selectedImage || product.image;
 
-    const handleAddToCart = () => {
-        onAddToCart(product);
-        setAdded(true);
-        setTimeout(() => setAdded(false), 2000);
+        const filtered = nextProducts.filter((item) => item.id !== product.id);
+
+        if (filtered.length < 4 && primaryCategorySlug) {
+          const categoryProducts = await api.getProducts({
+            category: primaryCategorySlug,
+            limit: 12,
+          });
+          const seenIds = new Set(filtered.map((item) => item.id));
+          for (const item of categoryProducts) {
+            if (item.id === product.id || seenIds.has(item.id)) continue;
+            filtered.push(item);
+            seenIds.add(item.id);
+            if (filtered.length >= 4) break;
+          }
+        }
+
+        setRelatedProducts(filtered.slice(0, 4));
+      } catch (error) {
+        console.error("Failed to fetch related products", error);
+        setRelatedProducts([]);
+      }
     };
 
-    const handlePrevImage = () => {
-        const currentIndex = allImages.indexOf(selectedImage);
-        const prevIndex = (currentIndex - 1 + allImages.length) % allImages.length;
-        setSelectedImage(allImages[prevIndex]);
-    };
+    fetchRelatedProducts();
+  }, [product]);
 
-    const handleNextImage = () => {
-        const currentIndex = allImages.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1) % allImages.length;
-        setSelectedImage(allImages[nextIndex]);
-    };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const fallbackTitle = `${product.name}`;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const fallbackDescription = useMemo(() => {
+    const trimmed = product.meta_description?.trim();
+    if (trimmed) return trimmed;
+    const desc = product.description?.trim();
+    if (desc) {
+      const shortened =
+        desc.length > 160 ? `${desc.slice(0, 157).trimEnd()}...` : desc;
+      return shortened;
+    }
+    return `Buy ${product.name} at Auto Parts Store`;
+  }, [product.meta_description, product.description, product.name]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const seoImage = selectedImage || product.image;
 
-    const getDisplayPrice = () => {
-        const priceUSD = product.priceUSD && product.priceUSD > 0
-            ? product.priceUSD
-            : (product.priceUAH && product.priceUAH > 0 && effectiveRate > 0
-                ? product.priceUAH / effectiveRate
-                : 0);
-        const amount = currency === Currency.USD ? priceUSD : priceUSD * effectiveRate;
-        return formatCurrency(amount, currency);
-    };
+  const handleAddToCart = () => {
+    onAddToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
 
-    return (
-        <div className="max-w-6xl mx-auto animate-fade-in">
-            <SeoHead
-                title={product.meta_title || product.name}
-                description={product.meta_description}
-                fallbackTitle={product.name} // Якщо немає meta_title, візьме назву
-                fallbackDescription={`Купити ${product.name} за ціною ${product.priceUAH} грн`}
-                image={product.image}
+  const handlePrevImage = () => {
+    const currentIndex = allImages.indexOf(selectedImage);
+    const prevIndex = (currentIndex - 1 + allImages.length) % allImages.length;
+    setSelectedImage(allImages[prevIndex]);
+  };
 
-                // ВАЖЛИВО: Передаємо дані для Schema
-                type="product"
-                price={product.priceUAH}
-                currency="UAH"
-                availability={product.inStock}
-                deliveryInfo={deliveryInfo}
-            />
-            <button
-                onClick={onBack}
-                className="flex items-center text-gray-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 transition-colors group"
-            >
-                <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                Назад
-            </button>
+  const handleNextImage = () => {
+    const currentIndex = allImages.indexOf(selectedImage);
+    const nextIndex = (currentIndex + 1) % allImages.length;
+    setSelectedImage(allImages[nextIndex]);
+  };
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden transition-colors">
-                <div className="flex flex-col md:flex-row">
-                    {/* Image Gallery */}
-                    <div className="md:w-1/2 p-6 bg-gray-50 dark:bg-slate-900/50">
-                        <div className="relative">
-                            <button
-                                type="button"
-                                onClick={() => setIsLightboxOpen(true)}
-                                className="group relative mb-4 block aspect-square w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition dark:border-slate-700 dark:bg-slate-800"
-                            >
-                                <img
-                                    src={selectedImage}
-                                    alt={product.name}
-                                    className="w-full h-full object-contain"
-                                />
-                                <span className="pointer-events-none absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
-                                    <ZoomIn size={14} />
-                                    Відкрити
-                                </span>
-                            </button>
-                            {allImages.length > 1 && (
-                                <>
-                                    <button
-                                        onClick={handlePrevImage}
-                                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-full p-2 text-gray-700 dark:text-white hover:bg-white dark:hover:bg-slate-700 transition-all shadow-md"
-                                    >
-                                        <ChevronLeft size={24} />
-                                    </button>
-                                    <button
-                                        onClick={handleNextImage}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-full p-2 text-gray-700 dark:text-white hover:bg-white dark:hover:bg-slate-700 transition-all shadow-md"
-                                    >
-                                        <ChevronRight size={24} />
-                                    </button>
-                                </>
-                            )}
-                        </div>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getDisplayPrice = () => {
+    const priceUSD =
+      product.priceUSD && product.priceUSD > 0
+        ? product.priceUSD
+        : product.priceUAH && product.priceUAH > 0 && effectiveRate > 0
+          ? product.priceUAH / effectiveRate
+          : 0;
+    const amount =
+      currency === Currency.USD ? priceUSD : priceUSD * effectiveRate;
+    return formatCurrency(amount, currency);
+  };
 
-                        {allImages.length > 1 && (
-                            <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
-                                {allImages.map((img, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => {
-                                            setSelectedImage(img);
-                                            setIsLightboxOpen(true);
-                                        }}
-                                        className={`w-20 h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${selectedImage === img ? 'border-blue-600' : 'border-transparent hover:border-gray-300 dark:hover:border-slate-600'
-                                            }`}
-                                    >
-                                        <img src={img} alt="" className="w-full h-full object-cover" />
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+  return (
+    <div className="max-w-6xl mx-auto animate-fade-in">
+      <SeoHead
+        title={product.meta_title || product.name}
+        description={product.meta_description}
+        fallbackTitle={product.name} // Якщо немає meta_title, візьме назву
+        fallbackDescription={`Купити ${product.name} за ціною ${product.priceUAH} грн`}
+        image={product.image}
 
-                    {/* Product Details */}
-                    <div className="md:w-1/2 p-8 md:p-12 flex flex-col">
-                        <div className="mb-auto">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-sm font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
-                                        {product.category}
-                                    </span>
-                                    {product.detail_number && (
-                                        <span className="text-xs font-medium text-gray-400 dark:text-slate-500 uppercase tracking-wider">
-                                            Part #: {product.detail_number}
-                                        </span>
-                                    )}
-                                    {product.cross_number && (
-                                        <span className="text-xs font-medium text-gray-400 dark:text-slate-500 uppercase tracking-wider">
-                                            Cross #: {product.cross_number}
-                                        </span>
-                                    )}
-                                </div>
-                                {product.inStock ? (
-                                    <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                                        В наявності
-                                    </span>
-                                ) : (
-                                    <span className="bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                                        Немає в наявності
-                                    </span>
-                                )}
-                            </div>
+        // ВАЖЛИВО: Передаємо дані для Schema
+        type="product"
+        price={product.priceUAH}
+        currency="UAH"
+        availability={product.inStock}
+        deliveryInfo={deliveryInfo}
+      />
+      <button
+        onClick={onBack}
+        className="flex items-center text-gray-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 transition-colors group"
+      >
+        <ArrowLeft
+          size={20}
+          className="mr-2 group-hover:-translate-x-1 transition-transform"
+        />
+        Назад
+      </button>
 
-                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 transition-colors">{product.name}</h1>
-
-                            <div className="mb-8">
-                                {discountedAmount !== null ? (
-                                    <div className="flex items-baseline flex-wrap gap-2">
-                                        <span className="text-xl text-gray-400 dark:text-slate-500 line-through">
-                                            {formatCurrency(originalAmount, currency)}
-                                        </span>
-                                        <span className="text-3xl font-bold text-red-600 dark:text-red-500">
-                                            {formatCurrency(discountedAmount, currency)}
-                                        </span>
-                                        <span className="text-xs font-semibold uppercase tracking-wider px-2 py-1 bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400 rounded">
-                                            {customer?.discount_type === 'percent' 
-                                                ? `-${customer.discount_value}%` 
-                                                : `Знижка -${formatCurrency(currency === Currency.USD && customer?.discount_type === 'uah' ? customer.discount_value / effectiveRate : currency === Currency.UAH && customer?.discount_type === 'usd' ? customer.discount_value * effectiveRate : customer?.discount_value || 0, currency)}`}
-                                        </span>
-                                    </div>
-                                ) : (
-                                    <div className="text-3xl font-bold text-slate-900 dark:text-white">
-                                        {formatCurrency(originalAmount, currency)}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-slate-300 mb-8">
-                                <h3 className="text-gray-900 dark:text-white font-semibold mb-2">Опис</h3>
-                                <p className="whitespace-pre-line leading-relaxed">{product.description}</p>
-                            </div>
-                        </div>
-
-                        <div className="pt-8 border-t border-gray-100 dark:border-slate-700">
-                            <button
-                                onClick={handleAddToCart}
-                                disabled={!product.inStock}
-                                className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] ${added
-                                    ? 'bg-green-600 text-white'
-                                    : product.inStock
-                                        ? 'bg-blue-600 text-white hover:bg-blue-800 shadow-lg hover:shadow-xl'
-                                        : 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-slate-500 cursor-not-allowed'
-                                    }`}
-                            >
-                                {added ? (
-                                    <>
-                                        <Check size={24} />
-                                        Додано в кошик
-                                    </>
-                                ) : (
-                                    <>
-                                        <ShoppingCart size={24} />
-                                        {product.inStock ? 'Купити' : 'Немає в наявності'}
-                                    </>
-                                )}
-                            </button>
-                            
-                            {/* Delivery & Payment Info */}
-                            {deliveryInfo && (
-                                <div className="mt-8 bg-gray-50 dark:bg-slate-900/30 rounded-xl p-5 border border-gray-100 dark:border-slate-700 transition-colors">
-                                    <div className="flex items-center gap-2 mb-3 text-slate-900 dark:text-white font-bold">
-                                        <Truck size={20} className="text-blue-600 dark:text-blue-400" />
-                                        <h3>Доставка та оплата</h3>
-                                    </div>
-                                    <div className="text-gray-600 dark:text-slate-300 max-h-48 overflow-y-auto pr-2 custom-scrollbar text-sm leading-relaxed">
-                                        <p className="whitespace-pre-line">{deliveryInfo}</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden transition-colors">
+        <div className="flex flex-col md:flex-row">
+          {/* Image Gallery */}
+          <div className="md:w-1/2 p-6 bg-gray-50 dark:bg-slate-900/50">
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(true)}
+                className="group relative mb-4 block aspect-square w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition dark:border-slate-700 dark:bg-slate-800"
+              >
+                <img
+                  src={selectedImage}
+                  alt={product.name}
+                  className="w-full h-full object-contain"
+                />
+                <span className="pointer-events-none absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
+                  <ZoomIn size={14} />
+                  Відкрити
+                </span>
+              </button>
+              {allImages.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePrevImage}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-full p-2 text-gray-700 dark:text-white hover:bg-white dark:hover:bg-slate-700 transition-all shadow-md"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-full p-2 text-gray-700 dark:text-white hover:bg-white dark:hover:bg-slate-700 transition-all shadow-md"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </>
+              )}
             </div>
 
-            {relatedProducts.length > 0 && (
-                <div className="mt-10">
-                    <ProductList
-                        title="Схожі запчастини"
-                        products={relatedProducts}
-                        currency={currency}
-                        uahPerUsd={uahPerUsd}
-                        onAddToCart={onAddToCart}
-                        onProductClick={onProductClick}
+            {allImages.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                {allImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setSelectedImage(img);
+                      setIsLightboxOpen(true);
+                    }}
+                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${
+                      selectedImage === img
+                        ? "border-blue-600"
+                        : "border-transparent hover:border-gray-300 dark:hover:border-slate-600"
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt=""
+                      className="w-full h-full object-cover"
                     />
-                </div>
+                  </button>
+                ))}
+              </div>
             )}
+          </div>
 
-            {isLightboxOpen && (
-                <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm" onClick={() => setIsLightboxOpen(false)}>
-                    <button
-                        type="button"
-                        onClick={() => setIsLightboxOpen(false)}
-                        className="absolute right-4 top-4 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
-                        aria-label="Закрити"
-                    >
-                        <X size={24} />
-                    </button>
-
-                    {allImages.length > 1 && (
-                        <button
-                            type="button"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                handlePrevImage();
-                            }}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
-                            aria-label="Попереднє фото"
-                        >
-                            <ChevronLeft size={28} />
-                        </button>
-                    )}
-
-                    <div className="flex max-h-[92vh] max-w-[92vw] items-center justify-center" onClick={(event) => event.stopPropagation()}>
-                        <img
-                            src={selectedImage}
-                            alt={product.name}
-                            className="max-h-[92vh] max-w-[92vw] rounded-lg object-contain shadow-2xl"
-                        />
-                    </div>
-
-                    {allImages.length > 1 && (
-                        <button
-                            type="button"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                handleNextImage();
-                            }}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
-                            aria-label="Наступне фото"
-                        >
-                            <ChevronRight size={28} />
-                        </button>
-                    )}
+          {/* Product Details */}
+          <div className="md:w-1/2 p-8 md:p-12 flex flex-col">
+            <div className="mb-auto">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                    {product.category}
+                  </span>
+                  {product.detail_number && (
+                    <span className="text-xs font-medium text-gray-400 dark:text-slate-500 uppercase tracking-wider">
+                      Part #: {product.detail_number}
+                    </span>
+                  )}
+                  {product.cross_number && (
+                    <span className="text-xs font-medium text-gray-400 dark:text-slate-500 uppercase tracking-wider">
+                      Cross #: {product.cross_number}
+                    </span>
+                  )}
                 </div>
-            )}
+                {product.inStock ? (
+                  <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                    В наявності
+                  </span>
+                ) : (
+                  <span className="bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                    Немає в наявності
+                  </span>
+                )}
+              </div>
+
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 transition-colors">
+                {product.name}
+              </h1>
+
+              <div className="mb-8">
+                {discountedAmount !== null ? (
+                  <div className="flex items-baseline flex-wrap gap-2">
+                    <span className="text-xl text-gray-400 dark:text-slate-500 line-through">
+                      {formatCurrency(originalAmount, currency)}
+                    </span>
+                    <span className="text-3xl font-bold text-red-600 dark:text-red-500">
+                      {formatCurrency(discountedAmount, currency)}
+                    </span>
+                    <span className="text-xs font-semibold uppercase tracking-wider px-2 py-1 bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400 rounded">
+                      {customer?.discount_type === "percent"
+                        ? `-${customer.discount_value}%`
+                        : `Знижка -${formatCurrency(currency === Currency.USD && customer?.discount_type === "uah" ? customer.discount_value / effectiveRate : currency === Currency.UAH && customer?.discount_type === "usd" ? customer.discount_value * effectiveRate : customer?.discount_value || 0, currency)}`}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="text-3xl font-bold text-slate-900 dark:text-white">
+                    {formatCurrency(originalAmount, currency)}
+                  </div>
+                )}
+              </div>
+
+              <div className="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-slate-300 mb-8">
+                <h3 className="text-gray-900 dark:text-white font-semibold mb-2">
+                  Опис
+                </h3>
+                <p className="whitespace-pre-line leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-8 border-t border-gray-100 dark:border-slate-700">
+              <button
+                onClick={handleAddToCart}
+                disabled={!product.inStock}
+                className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] ${
+                  added
+                    ? "bg-green-600 text-white"
+                    : product.inStock
+                      ? "bg-blue-600 text-white hover:bg-blue-800 shadow-lg hover:shadow-xl"
+                      : "bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-slate-500 cursor-not-allowed"
+                }`}
+              >
+                {added ? (
+                  <>
+                    <Check size={24} />
+                    Додано в кошик
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart size={24} />
+                    {product.inStock ? "Купити" : "Немає в наявності"}
+                  </>
+                )}
+              </button>
+
+              {/* Delivery & Payment Info */}
+              {deliveryInfo && (
+                <div className="mt-8 bg-gray-50 dark:bg-slate-900/30 rounded-xl p-5 border border-gray-100 dark:border-slate-700 transition-colors">
+                  <div className="flex items-center gap-2 mb-3 text-slate-900 dark:text-white font-bold">
+                    <Truck
+                      size={20}
+                      className="text-blue-600 dark:text-blue-400"
+                    />
+                    <h3>Доставка та оплата</h3>
+                  </div>
+                  <div className="text-gray-600 dark:text-slate-300 max-h-48 overflow-y-auto pr-2 custom-scrollbar text-sm leading-relaxed">
+                    <p className="whitespace-pre-line">{deliveryInfo}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-    );
+      </div>
+
+      {relatedProducts.length > 0 && (
+        <div className="mt-10">
+          <ProductList
+            title="Схожі запчастини"
+            products={relatedProducts}
+            currency={currency}
+            uahPerUsd={uahPerUsd}
+            onAddToCart={onAddToCart}
+            onProductClick={onProductClick}
+          />
+        </div>
+      )}
+
+      {isLightboxOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute right-4 top-4 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
+            aria-label="Закрити"
+          >
+            <X size={24} />
+          </button>
+
+          {allImages.length > 1 && (
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                handlePrevImage();
+              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
+              aria-label="Попереднє фото"
+            >
+              <ChevronLeft size={28} />
+            </button>
+          )}
+
+          <div
+            className="flex max-h-[92vh] max-w-[92vw] items-center justify-center"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <img
+              src={selectedImage}
+              alt={product.name}
+              className="max-h-[92vh] max-w-[92vw] rounded-lg object-contain shadow-2xl"
+            />
+          </div>
+
+          {allImages.length > 1 && (
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                handleNextImage();
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
+              aria-label="Наступне фото"
+            >
+              <ChevronRight size={28} />
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ProductPage;

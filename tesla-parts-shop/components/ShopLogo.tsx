@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useApp } from '../context/AppContext';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useApp } from "../context/AppContext";
 
 interface ShopLogoProps {
   compact?: boolean;
@@ -11,6 +11,7 @@ const ShopLogo: React.FC<ShopLogoProps> = ({ compact = false }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 
@@ -18,13 +19,13 @@ const ShopLogo: React.FC<ShopLogoProps> = ({ compact = false }) => {
     <Link href="/" className="flex items-center group">
       <div
         className={`flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:scale-105 ${
-          compact ? 'h-14 md:h-16' : 'h-20 md:h-28'
+          compact ? "h-14 md:h-16" : "h-20 md:h-28"
         }`}
       >
         {isMounted && (
-          <img 
-            src={theme === 'dark' ? "/tesla-fix_dark.png" : "/tesla-fix.png"} 
-            alt="TeslaFix" 
+          <img
+            src={theme === "dark" ? "/tesla-fix_dark.png" : "/tesla-fix.png"}
+            alt="TeslaFix"
             className="h-full w-auto object-contain transform scale-125"
           />
         )}

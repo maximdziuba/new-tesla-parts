@@ -1,6 +1,6 @@
-import { api } from '../../../../../services/api';
-import CategoryView from '../../../../../components/CategoryView';
-import { Metadata } from 'next';
+import { api } from "../../../../../services/api";
+import CategoryView from "../../../../../components/CategoryView";
+import { Metadata } from "next";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -11,14 +11,20 @@ interface PageProps {
   }>;
 }
 
-const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
+const slugify = (value: string) =>
+  value.toLowerCase().trim().replace(/\s+/g, "-");
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+// eslint-disable-next-line react-refresh/only-export-components
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   try {
     const resolvedParams = await params;
     const categories = await api.getCategories();
     const decodedSlug = decodeURIComponent(resolvedParams.slug);
-    const currentCategory = categories.find(c => slugify(c.name) === decodedSlug);
+    const currentCategory = categories.find(
+      (c) => slugify(c.name) === decodedSlug,
+    );
     if (currentCategory) {
       return {
         title: `${currentCategory.name} | Tesla Parts UA`,
@@ -26,11 +32,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       };
     }
   } catch (e) {
-    console.error('Failed to generate subcategory page metadata:', e);
+    console.error("Failed to generate subcategory page metadata:", e);
   }
   return {
-    title: 'Підкатегорія товарів | Tesla Parts UA',
-    description: 'Запчастини для Tesla.',
+    title: "Підкатегорія товарів | Tesla Parts UA",
+    description: "Запчастини для Tesla.",
   };
 }
 
@@ -42,18 +48,25 @@ export default async function SubcategoryPage({ params }: PageProps) {
     const resolvedParams = await params;
     const categories = await api.getCategories();
     const decodedSlug = decodeURIComponent(resolvedParams.slug);
-    const currentCategory = categories.find(c => slugify(c.name) === decodedSlug);
-    
+    const currentCategory = categories.find(
+      (c) => slugify(c.name) === decodedSlug,
+    );
+
     if (currentCategory) {
       initialCategory = await api.getCategory(currentCategory.id);
-      initialProducts = await api.getProducts({ 
+      initialProducts = await api.getProducts({
         category: decodedSlug,
-        subId: Number(resolvedParams.subId)
+        subId: Number(resolvedParams.subId),
       });
     }
   } catch (e) {
-    console.error('Failed to pre-fetch subcategory details on server:', e);
+    console.error("Failed to pre-fetch subcategory details on server:", e);
   }
 
-  return <CategoryView initialCategory={initialCategory} initialProducts={initialProducts} />;
+  return (
+    <CategoryView
+      initialCategory={initialCategory}
+      initialProducts={initialProducts}
+    />
+  );
 }

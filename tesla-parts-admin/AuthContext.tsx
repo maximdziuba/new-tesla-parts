@@ -1,5 +1,11 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { ApiService, setUnauthorizedCallback } from './services/api'; // Import setUnauthorizedCallback
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
+import { ApiService, setUnauthorizedCallback } from "./services/api"; // Import setUnauthorizedCallback
 
 interface AuthContextType {
   accessToken: string | null;
@@ -16,29 +22,31 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [accessToken, setAccessToken] = useState<string | null>(
-    localStorage.getItem('accessToken')
+    localStorage.getItem("accessToken"),
   );
   const [refreshToken, setRefreshToken] = useState<string | null>(
-    localStorage.getItem('refreshToken')
+    localStorage.getItem("refreshToken"),
   );
   const [error, setError] = useState<string | null>(null);
   const [showSessionExpiredModal, setShowSessionExpiredModal] = useState(false); // New state
 
   useEffect(() => {
     if (accessToken) {
-      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem("accessToken", accessToken);
     } else {
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem("accessToken");
     }
   }, [accessToken]);
 
   useEffect(() => {
     if (refreshToken) {
-      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem("refreshToken", refreshToken);
     } else {
-      localStorage.removeItem('refreshToken');
+      localStorage.removeItem("refreshToken");
     }
   }, [refreshToken]);
 
@@ -46,6 +54,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     setUnauthorizedCallback(() => {
       // This function is called by ApiService on 401
+      // eslint-disable-next-line react-hooks/immutability
       handleLogoutError();
     });
   }, []); // Run once on mount
@@ -57,14 +66,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await ApiService.login(username, password);
       setAccessToken(response.access_token);
       setRefreshToken(response.refresh_token);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.message || 'Failed to login');
+      setError(err.message || "Failed to login");
       throw err;
     }
   };
 
   const logout = () => {
-    ApiService.logout().catch(err => console.error("Server logout failed:", err));
+    ApiService.logout().catch((err) =>
+      console.error("Server logout failed:", err),
+    );
     setAccessToken(null);
     setRefreshToken(null);
     setShowSessionExpiredModal(false); // Ensure modal is hidden on explicit logout
@@ -85,6 +97,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await ApiService.refreshToken(refreshToken);
       setAccessToken(response.access_token);
       setRefreshToken(response.refresh_token);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Failed to refresh token:", err);
       handleLogoutError(); // Refresh failed, trigger error logout
@@ -99,16 +112,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const isAuthenticated = !!accessToken;
 
   return (
-    <AuthContext.Provider value={{ accessToken, refreshToken, login, logout, isAuthenticated, error, resetError, refreshAccessToken, showSessionExpiredModal, setShowSessionExpiredModal }}>
+    <AuthContext.Provider
+      value={{
+        accessToken,
+        refreshToken,
+        login,
+        logout,
+        isAuthenticated,
+        error,
+        resetError,
+        refreshAccessToken,
+        showSessionExpiredModal,
+        setShowSessionExpiredModal,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

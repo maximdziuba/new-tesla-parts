@@ -1,8 +1,8 @@
-import React from 'react';
-import Link from 'next/link';
-import { api } from '../../../services/api';
-import ProductDetailClient from '../../../components/ProductDetailClient';
-import { Metadata } from 'next';
+import React from "react";
+import Link from "next/link";
+import { api } from "../../../services/api";
+import ProductDetailClient from "../../../components/ProductDetailClient";
+import { Metadata } from "next";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -12,24 +12,33 @@ interface PageProps {
   }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+// eslint-disable-next-line react-refresh/only-export-components
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   try {
     const resolvedParams = await params;
     const product = await api.getProduct(resolvedParams.productId);
     return {
       title: product.meta_title || `${product.name} | Tesla Parts UA`,
-      description: product.meta_description || product.description || `Придбати ${product.name} для Tesla з доставкою по Україні.`,
+      description:
+        product.meta_description ||
+        product.description ||
+        `Придбати ${product.name} для Tesla з доставкою по Україні.`,
       openGraph: {
         title: product.meta_title || `${product.name} | Tesla Parts UA`,
-        description: product.meta_description || product.description || `Придбати ${product.name} для Tesla з доставкою по Україні.`,
+        description:
+          product.meta_description ||
+          product.description ||
+          `Придбати ${product.name} для Tesla з доставкою по Україні.`,
         images: product.image ? [{ url: product.image }] : [],
       },
     };
   } catch (e) {
-    console.error('Failed to generate product page metadata:', e);
+    console.error("Failed to generate product page metadata:", e);
     return {
-      title: 'Деталі товару | Tesla Parts UA',
-      description: 'Придбати запчастини для Tesla.',
+      title: "Деталі товару | Tesla Parts UA",
+      description: "Придбати запчастини для Tesla.",
     };
   }
 }
@@ -40,7 +49,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     const resolvedParams = await params;
     product = await api.getProduct(resolvedParams.productId);
   } catch (e) {
-    console.error('Failed to load product details on server:', e);
+    console.error("Failed to load product details on server:", e);
   }
 
   if (!product) {

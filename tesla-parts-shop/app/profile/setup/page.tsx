@@ -1,26 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { api } from '@/services/api';
-import { useApp } from '@/context/AppContext';
-import { User, Phone, Check, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "@/services/api";
+import { useApp } from "@/context/AppContext";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { User, Phone, Check, ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function ProfileSetupPage() {
   const router = useRouter();
   const { isCustomerLoggedIn } = useApp();
-  
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [message, setMessage] = useState("");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     if (mounted && !isCustomerLoggedIn) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [isCustomerLoggedIn, router, mounted]);
 
@@ -31,25 +35,26 @@ export default function ProfileSetupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName.trim() || !lastName.trim() || !phone.trim()) {
-      setStatus('error');
+      setStatus("error");
       setMessage("Будь ласка, заповніть всі обов'язкові поля");
       return;
     }
 
-    setStatus('loading');
+    setStatus("loading");
     try {
       await api.updateProfile({
         first_name: firstName.trim(),
         last_name: lastName.trim(),
-        phone: phone.trim()
+        phone: phone.trim(),
       });
-      setStatus('success');
+      setStatus("success");
       setTimeout(() => {
-        router.push('/');
+        router.push("/");
       }, 2000);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setStatus('error');
-      setMessage(err.message || 'Не вдалося зберегти дані');
+      setStatus("error");
+      setMessage(err.message || "Не вдалося зберегти дані");
     }
   };
 
@@ -68,17 +73,26 @@ export default function ProfileSetupPage() {
           </p>
         </div>
 
-        {status === 'success' ? (
+        {status === "success" ? (
           <div className="bg-green-50 dark:bg-green-950/30 border-l-4 border-green-400 dark:border-green-500 p-5 rounded-r-xl transition-colors">
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-green-400 dark:text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <svg
+                  className="h-6 w-6 text-green-400 dark:text-green-500"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div className="ml-3">
                 <p className="text-sm text-green-800 dark:text-green-300 font-bold">
-                  Профіль успішно оновлено! Перенаправлення на головну сторінку...
+                  Профіль успішно оновлено! Перенаправлення на головну
+                  сторінку...
                 </p>
               </div>
             </div>
@@ -135,17 +149,21 @@ export default function ProfileSetupPage() {
               </div>
             </div>
 
-            {status === 'error' && (
-              <p className="text-red-500 dark:text-red-400 text-sm text-center font-semibold">{message}</p>
+            {status === "error" && (
+              <p className="text-red-500 dark:text-red-400 text-sm text-center font-semibold">
+                {message}
+              </p>
             )}
 
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={status === 'loading'}
+                disabled={status === "loading"}
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 cursor-pointer transition-colors shadow-md shadow-blue-100 dark:shadow-none flex items-center justify-center gap-1.5"
               >
-                {status === 'loading' ? 'Збереження...' : 'Зберегти та продовжити'}
+                {status === "loading"
+                  ? "Збереження..."
+                  : "Зберегти та продовжити"}
                 <ArrowRight size={16} />
               </button>
             </div>

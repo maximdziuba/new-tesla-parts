@@ -83,6 +83,6 @@ export interface Customer {
   is_verified: boolean;
   created_at: string;
   discount_percent: number;
-  discount_type: 'percent' | 'usd' | 'uah';
+  discount_type: "percent" | "usd" | "uah";
   discount_value: number;
 }

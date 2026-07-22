@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Hero from './Hero';
-import ProductList from './ProductList';
-import { Product } from '../types';
-import { useApp } from '../context/AppContext';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import Hero from "./Hero";
+import ProductList from "./ProductList";
+import { Product } from "../types";
+import { useApp } from "../context/AppContext";
+import { useRouter } from "next/navigation";
 
 interface HomeClientProps {
   initialProducts: Product[];
@@ -21,7 +21,8 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
   };
 
   const handleSelectCategory = (category: string) => {
-    const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
+    const slugify = (value: string) =>
+      value.toLowerCase().trim().replace(/\s+/g, "-");
     router.push(`/category/${slugify(category)}`);
   };
 
@@ -36,7 +37,7 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
   return (
     <>
       <div className="w-full min-h-[280px] md:min-h-[400px] lg:min-h-[500px]">
-         <Hero onSelectCategory={handleSelectCategory} />
+        <Hero onSelectCategory={handleSelectCategory} />
       </div>
       {products.length > 0 && (
         <div className="mt-8">

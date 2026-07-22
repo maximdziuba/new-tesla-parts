@@ -9,18 +9,18 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        tesla: ['Inter', 'sans-serif'],
+        sans: ["Inter", "sans-serif"],
+        tesla: ["Inter", "sans-serif"],
       },
       colors: {
         blue: {
-          600: '#4169E1', // Royal Blue
+          600: "#4169E1", // Royal Blue
         },
         slate: {
-          900: '#1a1a1a', // Dark for text
-        }
-      }
+          900: "#1a1a1a", // Dark for text
+        },
+      },
     },
   },
   plugins: [],
-}
+};

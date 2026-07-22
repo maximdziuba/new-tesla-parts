@@ -1,39 +1,45 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useApp } from '../context/AppContext';
-import { X, ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useApp } from "../context/AppContext";
+import { X, ChevronDown, ChevronRight } from "lucide-react";
 
-const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
+const slugify = (value: string) =>
+  value.toLowerCase().trim().replace(/\s+/g, "-");
 
 const Sidebar: React.FC = () => {
   const { categories, isSidebarOpen, setIsSidebarOpen } = useApp();
   const rawPathname = usePathname();
   const pathname = decodeURIComponent(rawPathname);
-  const [expandedCategories, setExpandedCategories] = useState<Record<number, boolean>>({});
+  const [expandedCategories, setExpandedCategories] = useState<
+    Record<number, boolean>
+  >({});
 
-  const sortedCategories = [...categories].sort((a, b) => (b.sort_order ?? 0) - (a.sort_order ?? 0));
+  const sortedCategories = [...categories].sort(
+    (a, b) => (b.sort_order ?? 0) - (a.sort_order ?? 0),
+  );
 
   const closeSidebar = () => setIsSidebarOpen(false);
 
   useEffect(() => {
     const newExpanded: Record<number, boolean> = {};
-    categories.forEach(cat => {
+    categories.forEach((cat) => {
       const categorySlug = slugify(cat.name);
       const categoryUrl = `/category/${categorySlug}`;
       if (pathname === categoryUrl || pathname.startsWith(`${categoryUrl}/`)) {
         newExpanded[cat.id] = true;
       }
     });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setExpandedCategories(newExpanded);
   }, [categories, pathname]);
 
   const toggleCategory = (e: React.MouseEvent, id: number) => {
     e.preventDefault();
     e.stopPropagation();
-    setExpandedCategories(prev => {
+    setExpandedCategories((prev) => {
       if (prev[id]) {
         return {};
       }
@@ -44,7 +50,10 @@ const Sidebar: React.FC = () => {
   const sidebarContent = (
     <>
       <div className="flex items-center justify-end border-b border-gray-100 p-4 dark:border-slate-700 lg:hidden">
-        <button onClick={closeSidebar} className="p-2 text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+        <button
+          onClick={closeSidebar}
+          className="p-2 text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+        >
           <X size={24} />
         </button>
       </div>
@@ -57,9 +66,12 @@ const Sidebar: React.FC = () => {
           {sortedCategories.map((category) => {
             const categorySlug = slugify(category.name);
             const categoryUrl = `/category/${categorySlug}`;
-            const isActive = pathname === categoryUrl || pathname.startsWith(`${categoryUrl}/`);
+            const isActive =
+              pathname === categoryUrl ||
+              pathname.startsWith(`${categoryUrl}/`);
             const isExpanded = !!expandedCategories[category.id];
-            const hasSubcategories = !!category.subcategories && category.subcategories.length > 0;
+            const hasSubcategories =
+              !!category.subcategories && category.subcategories.length > 0;
 
             return (
               <div key={category.id} className="mb-2">
@@ -68,7 +80,7 @@ const Sidebar: React.FC = () => {
                     href={`/category/${categorySlug}`}
                     onClick={() => {
                       if (hasSubcategories) {
-                        setExpandedCategories(prev => {
+                        setExpandedCategories((prev) => {
                           if (prev[category.id]) {
                             return {};
                           }
@@ -80,9 +92,11 @@ const Sidebar: React.FC = () => {
                     }}
                     className={`
                       flex flex-grow items-center rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-200
-                      ${isActive
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'text-slate-700 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-200 dark:hover:bg-slate-700/50 dark:hover:text-blue-400'}
+                      ${
+                        isActive
+                          ? "bg-blue-600 text-white shadow-md"
+                          : "text-slate-700 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-200 dark:hover:bg-slate-700/50 dark:hover:text-blue-400"
+                      }
                     `}
                   >
                     <span>{category.name}</span>
@@ -92,12 +106,18 @@ const Sidebar: React.FC = () => {
                       onClick={(e) => toggleCategory(e, category.id)}
                       className={`
                         ml-1 rounded-md p-2 transition-colors
-                        ${isActive
-                          ? 'text-white/80 hover:bg-white/10 hover:text-white'
-                          : 'text-gray-400 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-500 dark:hover:bg-slate-700/50 dark:hover:text-blue-400'}
+                        ${
+                          isActive
+                            ? "text-white/80 hover:bg-white/10 hover:text-white"
+                            : "text-gray-400 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-500 dark:hover:bg-slate-700/50 dark:hover:text-blue-400"
+                        }
                       `}
                     >
-                      {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                      {isExpanded ? (
+                        <ChevronDown size={18} />
+                      ) : (
+                        <ChevronRight size={18} />
+                      )}
                     </button>
                   )}
                 </div>
@@ -114,9 +134,11 @@ const Sidebar: React.FC = () => {
                           onClick={closeSidebar}
                           className={`
                             block rounded-md px-3 py-2 text-xs transition-colors
-                            ${isSubActive
-                              ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-900/20 dark:text-blue-400'
-                              : 'text-slate-500 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-blue-400'}
+                            ${
+                              isSubActive
+                                ? "bg-blue-50 font-bold text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+                                : "text-slate-500 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-blue-400"
+                            }
                           `}
                         >
                           {sub.name}
@@ -142,7 +164,7 @@ const Sidebar: React.FC = () => {
       <div
         className={`
           fixed inset-0 z-[66] transition-opacity duration-300 lg:hidden
-          ${isSidebarOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}
+          ${isSidebarOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}
         `}
       >
         <div
@@ -154,7 +176,7 @@ const Sidebar: React.FC = () => {
           className={`
             absolute inset-y-0 left-0 z-[67] flex h-[100dvh] min-h-[100dvh] max-h-[100dvh] w-72 max-w-[calc(100vw-3rem)]
             flex-col border-r border-gray-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:border-slate-700 dark:bg-slate-800
-            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
           `}
         >
           {sidebarContent}

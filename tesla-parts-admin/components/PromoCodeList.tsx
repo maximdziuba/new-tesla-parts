@@ -1,17 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { ApiService } from '../services/api';
-import { Customer } from '../types';
-import { 
-  Ticket, Plus, Trash2, Search, Users, Check, X, 
-  Percent, DollarSign, Award, AlertCircle 
-} from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { ApiService } from "../services/api";
+import { Customer } from "../types";
+import {
+  Ticket,
+  Plus,
+  Trash2,
+  Search,
+  Users,
+  Check,
+  X,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Percent,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  DollarSign,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Award,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  AlertCircle,
+} from "lucide-react";
 
 interface PromoCode {
   id: number;
   code: string;
-  discount_type: 'percent' | 'usd' | 'uah';
+  discount_type: "percent" | "usd" | "uah";
   discount_value: number;
-  scope: 'everyone' | 'selected';
+  scope: "everyone" | "selected";
   is_active: boolean;
   customer_ids: number[];
 }
@@ -20,21 +33,24 @@ export const PromoCodeList: React.FC = () => {
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [code, setCode] = useState('');
-  const [discountType, setDiscountType] = useState<'percent' | 'usd' | 'uah'>('percent');
-  const [discountValue, setDiscountValue] = useState('');
-  const [scope, setScope] = useState<'everyone' | 'selected'>('everyone');
+  const [code, setCode] = useState("");
+  const [discountType, setDiscountType] = useState<"percent" | "usd" | "uah">(
+    "percent",
+  );
+  const [discountValue, setDiscountValue] = useState("");
+  const [scope, setScope] = useState<"everyone" | "selected">("everyone");
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<number[]>([]);
-  
+
   // Filters and search inside form/table
-  const [searchCustomerQuery, setSearchCustomerQuery] = useState('');
-  const [searchPromoQuery, setSearchPromoQuery] = useState('');
+  const [searchCustomerQuery, setSearchCustomerQuery] = useState("");
+  const [searchPromoQuery, setSearchPromoQuery] = useState("");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     fetchData();
   }, []);
 
@@ -43,7 +59,7 @@ export const PromoCodeList: React.FC = () => {
       setLoading(true);
       const [promoData, customerData] = await Promise.all([
         ApiService.getPromoCodes(),
-        ApiService.getCustomers()
+        ApiService.getCustomers(),
       ]);
       setPromoCodes(promoData);
       setCustomers(customerData);
@@ -56,10 +72,10 @@ export const PromoCodeList: React.FC = () => {
 
   const handleOpenCreate = () => {
     setEditingId(null);
-    setCode('');
-    setDiscountType('percent');
-    setDiscountValue('');
-    setScope('everyone');
+    setCode("");
+    setDiscountType("percent");
+    setDiscountValue("");
+    setScope("everyone");
     setSelectedCustomerIds([]);
     setIsFormOpen(true);
   };
@@ -75,10 +91,11 @@ export const PromoCodeList: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Ви впевнені, що хочете видалити цей промокод?")) return;
+    if (!window.confirm("Ви впевнені, що хочете видалити цей промокод?"))
+      return;
     try {
       await ApiService.deletePromoCode(id);
-      setPromoCodes(prev => prev.filter(p => p.id !== id));
+      setPromoCodes((prev) => prev.filter((p) => p.id !== id));
     } catch (e) {
       console.error("Failed to delete promo code", e);
       alert("Не вдалося видалити промокод");
@@ -86,18 +103,18 @@ export const PromoCodeList: React.FC = () => {
   };
 
   const handleToggleCustomer = (customerId: number) => {
-    setSelectedCustomerIds(prev => 
-      prev.includes(customerId) 
-        ? prev.filter(id => id !== customerId)
-        : [...prev, customerId]
+    setSelectedCustomerIds((prev) =>
+      prev.includes(customerId)
+        ? prev.filter((id) => id !== customerId)
+        : [...prev, customerId],
     );
   };
 
   const handleSelectAllFiltered = (filteredIds: number[]) => {
-    setSelectedCustomerIds(prev => {
-      const otherSelected = prev.filter(id => !filteredIds.includes(id));
+    setSelectedCustomerIds((prev) => {
+      const otherSelected = prev.filter((id) => !filteredIds.includes(id));
       // if all filtered are already selected, unselect them
-      const allFilteredSelected = filteredIds.every(id => prev.includes(id));
+      const allFilteredSelected = filteredIds.every((id) => prev.includes(id));
       if (allFilteredSelected) {
         return otherSelected;
       } else {
@@ -117,11 +134,11 @@ export const PromoCodeList: React.FC = () => {
       alert("Введіть коректне значення знижки");
       return;
     }
-    if (discountType === 'percent' && val > 100) {
+    if (discountType === "percent" && val > 100) {
       alert("Відсоткова знижка не може бути більшою за 100%");
       return;
     }
-    if (scope === 'selected' && selectedCustomerIds.length === 0) {
+    if (scope === "selected" && selectedCustomerIds.length === 0) {
       alert("Оберіть хоча б одного клієнта для цього промокоду");
       return;
     }
@@ -131,41 +148,48 @@ export const PromoCodeList: React.FC = () => {
       discount_type: discountType,
       discount_value: val,
       scope,
-      customer_ids: scope === 'selected' ? selectedCustomerIds : []
+      customer_ids: scope === "selected" ? selectedCustomerIds : [],
     };
 
     try {
       if (editingId) {
         const updated = await ApiService.updatePromoCode(editingId, payload);
-        setPromoCodes(prev => prev.map(p => p.id === editingId ? updated : p));
+        setPromoCodes((prev) =>
+          prev.map((p) => (p.id === editingId ? updated : p)),
+        );
       } else {
         const created = await ApiService.createPromoCode(payload);
-        setPromoCodes(prev => [created, ...prev]);
+        setPromoCodes((prev) => [created, ...prev]);
       }
       setIsFormOpen(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert(err.message || "Не вдалося зберегти промокод");
     }
   };
 
   // Filter customers shown in selected users selector
-  const filteredCustomers = customers.filter(c => {
+  const filteredCustomers = customers.filter((c) => {
     const q = searchCustomerQuery.toLowerCase();
     if (!q) return true;
-    const name = `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase();
-    const email = (c.email || '').toLowerCase();
-    const phone = (c.phone || '').toLowerCase();
+    const name = `${c.first_name || ""} ${c.last_name || ""}`.toLowerCase();
+    const email = (c.email || "").toLowerCase();
+    const phone = (c.phone || "").toLowerCase();
     return name.includes(q) || email.includes(q) || phone.includes(q);
   });
 
-  const filteredPromoCodes = promoCodes.filter(p => {
+  const filteredPromoCodes = promoCodes.filter((p) => {
     const q = searchPromoQuery.toLowerCase();
     if (!q) return true;
     return p.code.toLowerCase().includes(q);
   });
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-500 font-medium">Завантаження промокодів...</div>;
+    return (
+      <div className="p-8 text-center text-gray-500 font-medium">
+        Завантаження промокодів...
+      </div>
+    );
   }
 
   return (
@@ -173,7 +197,10 @@ export const PromoCodeList: React.FC = () => {
       {/* Header controls */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
         <div className="relative max-w-xs w-full">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={18}
+          />
           <input
             type="text"
             placeholder="Шукати промокоди..."
@@ -196,43 +223,55 @@ export const PromoCodeList: React.FC = () => {
         {filteredPromoCodes.length === 0 ? (
           <div className="col-span-full bg-white p-12 rounded-2xl border border-gray-100 text-center text-gray-400">
             <Ticket className="mx-auto w-12 h-12 text-gray-300 mb-3" />
-            <p className="font-semibold text-slate-500">Промокодів не знайдено</p>
-            <p className="text-xs text-gray-400 mt-1">Створіть свій перший промокод для клієнтів</p>
+            <p className="font-semibold text-slate-500">
+              Промокодів не знайдено
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              Створіть свій перший промокод для клієнтів
+            </p>
           </div>
         ) : (
-          filteredPromoCodes.map(promo => (
-            <div key={promo.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+          filteredPromoCodes.map((promo) => (
+            <div
+              key={promo.id}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group"
+            >
               <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-300 flex items-center justify-end p-4">
                 <Ticket className="text-blue-100 w-10 h-10 transform translate-x-2 -translate-y-2 group-hover:rotate-12 transition-transform" />
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="px-3 py-1 bg-blue-50 text-blue-700 font-bold tracking-wider rounded-lg text-sm border border-blue-100">
                     {promo.code}
                   </span>
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                    promo.scope === 'everyone' 
-                      ? 'bg-green-50 text-green-700 border border-green-100' 
-                      : 'bg-amber-50 text-amber-700 border border-amber-100'
-                  }`}>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      promo.scope === "everyone"
+                        ? "bg-green-50 text-green-700 border border-green-100"
+                        : "bg-amber-50 text-amber-700 border border-amber-100"
+                    }`}
+                  >
                     <Users size={10} />
-                    {promo.scope === 'everyone' ? 'Для всіх' : 'Для обраних'}
+                    {promo.scope === "everyone" ? "Для всіх" : "Для обраних"}
                   </span>
                 </div>
 
                 <div>
                   <div className="text-3xl font-extrabold text-slate-800">
-                    {promo.discount_type === 'percent' && `${promo.discount_value}%`}
-                    {promo.discount_type === 'usd' && `$${promo.discount_value}`}
-                    {promo.discount_type === 'uah' && `${promo.discount_value} грн`}
+                    {promo.discount_type === "percent" &&
+                      `${promo.discount_value}%`}
+                    {promo.discount_type === "usd" &&
+                      `$${promo.discount_value}`}
+                    {promo.discount_type === "uah" &&
+                      `${promo.discount_value} грн`}
                   </div>
                   <div className="text-xs text-gray-400 font-medium mt-1">
                     Розмір знижки на замовлення
                   </div>
                 </div>
 
-                {promo.scope === 'selected' && (
+                {promo.scope === "selected" && (
                   <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex items-center justify-between text-xs text-slate-600 font-medium">
                     <span>Доступно для клієнтів:</span>
                     <span className="font-bold text-slate-800 px-2 py-0.5 bg-white rounded border border-slate-200">
@@ -270,9 +309,13 @@ export const PromoCodeList: React.FC = () => {
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-slate-50/50">
               <div>
                 <h3 className="text-lg font-bold text-slate-900">
-                  {editingId ? 'Редагування промокоду' : 'Створення нового промокоду'}
+                  {editingId
+                    ? "Редагування промокоду"
+                    : "Створення нового промокоду"}
                 </h3>
-                <p className="text-xs text-gray-400 mt-1">Вкажіть правила нарахування знижки та коло клієнтів</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Вкажіть правила нарахування знижки та коло клієнтів
+                </p>
               </div>
               <button
                 onClick={() => setIsFormOpen(false)}
@@ -283,11 +326,16 @@ export const PromoCodeList: React.FC = () => {
             </div>
 
             {/* Body */}
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+            <form
+              onSubmit={handleSubmit}
+              className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar"
+            >
               <div className="grid grid-cols-2 gap-4">
                 {/* Code field */}
                 <div className="col-span-2 sm:col-span-1 space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Код промокоду</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Код промокоду
+                  </label>
                   <input
                     type="text"
                     required
@@ -300,10 +348,13 @@ export const PromoCodeList: React.FC = () => {
 
                 {/* Scope */}
                 <div className="col-span-2 sm:col-span-1 space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Область дії</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Область дії
+                  </label>
                   <select
                     className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 text-sm font-semibold cursor-pointer"
                     value={scope}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onChange={(e) => setScope(e.target.value as any)}
                   >
                     <option value="everyone">Для всіх (глобально)</option>
@@ -313,10 +364,13 @@ export const PromoCodeList: React.FC = () => {
 
                 {/* Discount type */}
                 <div className="col-span-1 space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Тип знижки</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Тип знижки
+                  </label>
                   <select
                     className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 text-sm font-semibold cursor-pointer"
                     value={discountType}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onChange={(e) => setDiscountType(e.target.value as any)}
                   >
                     <option value="percent">Відсоток (%)</option>
@@ -327,13 +381,15 @@ export const PromoCodeList: React.FC = () => {
 
                 {/* Discount value */}
                 <div className="col-span-1 space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Значення знижки</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Значення знижки
+                  </label>
                   <input
                     type="number"
                     required
                     min={0.01}
                     step="any"
-                    placeholder={discountType === 'percent' ? '15' : '100'}
+                    placeholder={discountType === "percent" ? "15" : "100"}
                     className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 text-sm font-bold"
                     value={discountValue}
                     onChange={(e) => setDiscountValue(e.target.value)}
@@ -342,12 +398,16 @@ export const PromoCodeList: React.FC = () => {
               </div>
 
               {/* Customer selector (if scope is 'selected') */}
-              {scope === 'selected' && (
+              {scope === "selected" && (
                 <div className="space-y-3 pt-4 border-t border-gray-100">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <h4 className="text-sm font-bold text-slate-800">Оберіть клієнтів</h4>
-                      <p className="text-xs text-gray-400 font-medium">Оберіть користувачів, яким буде доступна знижка</p>
+                      <h4 className="text-sm font-bold text-slate-800">
+                        Оберіть клієнтів
+                      </h4>
+                      <p className="text-xs text-gray-400 font-medium">
+                        Оберіть користувачів, яким буде доступна знижка
+                      </p>
                     </div>
                     <span className="px-3 py-1 bg-blue-50 border border-blue-100 text-blue-700 font-bold rounded-lg text-xs">
                       Обрано: {selectedCustomerIds.length} осіб
@@ -357,7 +417,10 @@ export const PromoCodeList: React.FC = () => {
                   {/* Customer search & select all */}
                   <div className="flex gap-2">
                     <div className="relative flex-grow">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                      <Search
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                        size={16}
+                      />
                       <input
                         type="text"
                         placeholder="Шукати клієнта за іменем, email..."
@@ -368,37 +431,53 @@ export const PromoCodeList: React.FC = () => {
                     </div>
                     <button
                       type="button"
-                      onClick={() => handleSelectAllFiltered(filteredCustomers.map(c => c.id))}
+                      onClick={() =>
+                        handleSelectAllFiltered(
+                          filteredCustomers.map((c) => c.id),
+                        )
+                      }
                       className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition cursor-pointer"
                     >
-                      {filteredCustomers.every(c => selectedCustomerIds.includes(c.id)) ? 'Зняти виділення' : 'Виділити всі'}
+                      {filteredCustomers.every((c) =>
+                        selectedCustomerIds.includes(c.id),
+                      )
+                        ? "Зняти виділення"
+                        : "Виділити всі"}
                     </button>
                   </div>
 
                   {/* Scrollable list */}
                   <div className="border border-slate-100 rounded-xl max-h-48 overflow-y-auto divide-y divide-gray-50 custom-scrollbar bg-slate-50/50 p-1">
                     {filteredCustomers.length === 0 ? (
-                      <div className="py-6 text-center text-gray-400 text-xs">Клієнтів не знайдено</div>
+                      <div className="py-6 text-center text-gray-400 text-xs">
+                        Клієнтів не знайдено
+                      </div>
                     ) : (
-                      filteredCustomers.map(c => {
+                      filteredCustomers.map((c) => {
                         const isChecked = selectedCustomerIds.includes(c.id);
                         return (
-                          <div 
-                            key={c.id} 
+                          <div
+                            key={c.id}
                             onClick={() => handleToggleCustomer(c.id)}
                             className="flex items-center justify-between p-2.5 hover:bg-white hover:shadow-sm rounded-lg transition cursor-pointer"
                           >
                             <div>
                               <div className="text-xs font-bold text-slate-800">
-                                {c.first_name || c.last_name ? `${c.first_name || ''} ${c.last_name || ''}`.trim() : 'Клієнт без імені'}
+                                {c.first_name || c.last_name
+                                  ? `${c.first_name || ""} ${c.last_name || ""}`.trim()
+                                  : "Клієнт без імені"}
                               </div>
                               <div className="text-[10px] text-gray-400 font-medium">
                                 {c.email} {c.phone && `• ${c.phone}`}
                               </div>
                             </div>
-                            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                              isChecked ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 bg-white'
-                            }`}>
+                            <div
+                              className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                                isChecked
+                                  ? "bg-blue-600 border-blue-600 text-white"
+                                  : "border-gray-300 bg-white"
+                              }`}
+                            >
                               {isChecked && <Check size={12} />}
                             </div>
                           </div>
@@ -408,7 +487,7 @@ export const PromoCodeList: React.FC = () => {
                   </div>
                 </div>
               )}
-              
+
               {/* Actions */}
               <div className="flex gap-3 pt-6 border-t border-gray-100 bg-white sticky bottom-0">
                 <button
@@ -422,7 +501,7 @@ export const PromoCodeList: React.FC = () => {
                   type="submit"
                   className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition cursor-pointer active:scale-95 shadow-md shadow-blue-100"
                 >
-                  {editingId ? 'Зберегти зміни' : 'Створити промокод'}
+                  {editingId ? "Зберегти зміни" : "Створити промокод"}
                 </button>
               </div>
             </form>

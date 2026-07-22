@@ -1,25 +1,27 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { AppProvider } from '../context/AppContext';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import CartDrawer from '../components/CartDrawer';
-import Sidebar from '../components/Sidebar';
-import ScrollToTop from '../components/ScrollToTop';
-import { Suspense } from 'react';
-import { config } from '@fortawesome/fontawesome-svg-core';
-import '@fortawesome/fontawesome-svg-core/styles.css';
-import Script from 'next/script';
+import type { Metadata } from "next";
+import "./globals.css";
+import { AppProvider } from "../context/AppContext";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import CartDrawer from "../components/CartDrawer";
+import Sidebar from "../components/Sidebar";
+import ScrollToTop from "../components/ScrollToTop";
+import { Suspense } from "react";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import Script from "next/script";
 config.autoAddCss = false;
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata: Metadata = {
-  title: 'Магазин запчастин',
-  description: 'Купуйте оригінальні та перевірені запчастини для Tesla з доставкою по Україні.',
+  title: "Магазин запчастин",
+  description:
+    "Купуйте оригінальні та перевірені запчастини для Tesla з доставкою по Україні.",
   icons: {
     icon: [
       {
-        url: 'https://www.teslafix.com.ua/tesla-fix.png',
-        type: 'image/png',
+        url: "https://www.teslafix.com.ua/tesla-fix.png",
+        type: "image/png",
       },
     ],
   },
@@ -39,7 +41,7 @@ export default function RootLayout({
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-NJ3WGQLB');`
+})(window,document,'script','dataLayer','GTM-NJ3WGQLB');`,
           }}
         />
         <script
@@ -48,9 +50,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "Tesla Fix",
-              "url": "https://teslafix.com.ua"
-            })
+              name: "Tesla Fix",
+              url: "https://teslafix.com.ua",
+            }),
           }}
         />
       </head>
@@ -60,7 +62,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             src="https://www.googletagmanager.com/ns.html?id=GTM-NJ3WGQLB"
             height="0"
             width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
+            style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
         <Script
@@ -83,12 +85,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div className="flex flex-grow w-full relative">
             <Sidebar />
             <div className="flex-grow flex flex-col min-w-0">
-                <main className="flex-grow px-4 py-8 md:px-8">
-                    <div className="container mx-auto">
-                        {children}
-                    </div>
-                </main>
-                <Footer />
+              <main className="flex-grow px-4 py-8 md:px-8">
+                <div className="container mx-auto">{children}</div>
+              </main>
+              <Footer />
             </div>
           </div>
           <CartDrawer />

@@ -1,36 +1,39 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { api } from '@/services/api';
-import Link from 'next/link';
-import { useApp } from '@/context/AppContext';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "@/services/api";
+import Link from "next/link";
+import { useApp } from "@/context/AppContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const { loginCustomer } = useApp();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('loading');
+    setStatus("loading");
     try {
       const res = await api.loginCustomer({ email, password });
       await loginCustomer(res.access_token);
-      
+
       // Fetch user profile info to check completeness
       const me = await api.getMe();
-      setStatus('success');
+      setStatus("success");
       if (!me.first_name || !me.phone) {
-        router.push('/profile/setup');
+        router.push("/profile/setup");
       } else {
-        router.push('/');
+        router.push("/");
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setStatus('error');
+      setStatus("error");
       setMessage(err.message);
     }
   };
@@ -47,7 +50,9 @@ export default function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">Email</label>
+              <label htmlFor="email" className="sr-only">
+                Email
+              </label>
               <input
                 id="email"
                 name="email"
@@ -61,7 +66,9 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">Пароль</label>
+              <label htmlFor="password" className="sr-only">
+                Пароль
+              </label>
               <input
                 id="password"
                 name="password"
@@ -77,28 +84,36 @@ export default function LoginPage() {
           </div>
 
           <div className="flex justify-end text-sm">
-            <Link href="/forgot-password" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors">
+            <Link
+              href="/forgot-password"
+              className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+            >
               Забули пароль?
             </Link>
           </div>
 
-          {status === 'error' && (
-            <p className="text-red-500 dark:text-red-400 text-sm text-center">{message}</p>
+          {status === "error" && (
+            <p className="text-red-500 dark:text-red-400 text-sm text-center">
+              {message}
+            </p>
           )}
 
           <div>
             <button
               type="submit"
-              disabled={status === 'loading'}
+              disabled={status === "loading"}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 cursor-pointer transition-colors"
             >
-              {status === 'loading' ? 'Вхід...' : 'Увійти'}
+              {status === "loading" ? "Вхід..." : "Увійти"}
             </button>
           </div>
         </form>
 
         <div className="text-center">
-          <Link href="/register" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors">
+          <Link
+            href="/register"
+            className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+          >
             Ще немає акаунта? Зареєструватися
           </Link>
         </div>

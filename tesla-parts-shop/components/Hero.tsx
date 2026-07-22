@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowRight } from 'lucide-react';
-import { api } from '../services/api';
-import { Category } from '../types';
+import React, { useEffect, useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { api } from "../services/api";
+import { Category } from "../types";
 
 interface HeroProps {
   onSelectCategory: (category: string) => void;
@@ -24,7 +24,9 @@ const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
 
   return (
     <div className="mb-12">
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-slate-900 dark:text-white transition-colors">Оберіть модель вашого електромобіля</h1>
+      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-slate-900 dark:text-white transition-colors">
+        Оберіть модель вашого електромобіля
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {categories.map((category) => (
           <div
@@ -34,7 +36,10 @@ const Hero: React.FC<HeroProps> = ({ onSelectCategory }) => {
           >
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-all z-10" />
             <img
-              src={category.image || 'https://imgd.aeplcdn.com/1920x1080/n/cw/ec/201411/model-y-exterior-right-front-three-quarter.jpeg?isig=0&q=80&q=80'}
+              src={
+                category.image ||
+                "https://imgd.aeplcdn.com/1920x1080/n/cw/ec/201411/model-y-exterior-right-front-three-quarter.jpeg?isig=0&q=80&q=80"
+              }
               alt={category.name}
               className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-102 transition-transform duration-700"
             />

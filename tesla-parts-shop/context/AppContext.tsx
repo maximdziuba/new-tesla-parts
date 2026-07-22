@@ -1,10 +1,29 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
-import { Product, Currency, CartItem, Category, StaticSeoRecord, Page, Customer } from '../types';
-import { api } from '../services/api';
-import { DEFAULT_EXCHANGE_RATE_UAH_PER_USD, DEFAULT_SETTINGS } from '../constants';
-import { usePathname } from 'next/navigation';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  useRef,
+} from "react";
+import {
+  Product,
+  Currency,
+  CartItem,
+  Category,
+  StaticSeoRecord,
+  Page,
+  Customer,
+} from "../types";
+import { api } from "../services/api";
+import {
+  DEFAULT_EXCHANGE_RATE_UAH_PER_USD,
+  DEFAULT_SETTINGS,
+} from "../constants";
+import { usePathname } from "next/navigation";
 
 interface AppContextType {
   cart: CartItem[];
@@ -18,12 +37,17 @@ interface AppContextType {
   setIsSidebarOpen: (open: boolean) => void;
   currency: Currency;
   setCurrency: (currency: Currency) => void;
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   toggleTheme: () => void;
   uahPerUsd: number;
   categories: Category[];
   headerPages: Page[];
-  socialLinks: { instagram?: string; telegram?: string; whatsapp?: string; viber?: string };
+  socialLinks: {
+    instagram?: string;
+    telegram?: string;
+    whatsapp?: string;
+    viber?: string;
+  };
   contactInfo: {
     email: string;
     phone: string;
@@ -43,11 +67,11 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const CART_STORAGE_KEY = 'tesla-parts-cart';
-const THEME_STORAGE_KEY = 'tesla-parts-theme';
+const CART_STORAGE_KEY = "tesla-parts-cart";
+const THEME_STORAGE_KEY = "tesla-parts-theme";
 
 const getInitialCart = (): CartItem[] => {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === "undefined") return [];
   try {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
     if (stored) {
@@ -57,16 +81,18 @@ const getInitialCart = (): CartItem[] => {
       }
     }
   } catch (err) {
-    console.warn('Failed to load cart from storage', err);
+    console.warn("Failed to load cart from storage", err);
   }
   return [];
 };
 
-const getInitialTheme = (): 'light' | 'dark' => {
-  if (typeof window === 'undefined') return 'light';
+const getInitialTheme = (): "light" | "dark" => {
+  if (typeof window === "undefined") return "light";
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored === 'light' || stored === 'dark') return stored;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  if (stored === "light" || stored === "dark") return stored;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 };
 
 const getProductUsdPrice = (product: Product, rate: number): number => {
@@ -79,7 +105,12 @@ const getProductUsdPrice = (product: Product, rate: number): number => {
   return 0;
 };
 
-const compareBySortOrder = <T extends { sort_order?: number | null; id?: number }>(a: T, b: T) => {
+const compareBySortOrder = <
+  T extends { sort_order?: number | null; id?: number },
+>(
+  a: T,
+  b: T,
+) => {
   const orderDiff = (b.sort_order ?? 0) - (a.sort_order ?? 0);
   if (orderDiff !== 0) return orderDiff;
   if (a.id !== undefined && b.id !== undefined) {
@@ -88,45 +119,45 @@ const compareBySortOrder = <T extends { sort_order?: number | null; id?: number 
   return 0;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sortSubcategoryTreeData = (subs?: any[]): any[] => {
   if (!subs) return [];
-  return [...subs]
-    .sort(compareBySortOrder)
-    .map(sub => ({
-      ...sub,
-      subcategories: sortSubcategoryTreeData(sub.subcategories),
-    }));
+  return [...subs].sort(compareBySortOrder).map((sub) => ({
+    ...sub,
+    subcategories: sortSubcategoryTreeData(sub.subcategories),
+  }));
 };
 
 const sortCategoryTreeData = (cats: Category[]): Category[] => {
-  return [...cats]
-    .sort(compareBySortOrder)
-    .map(cat => ({
-      ...cat,
-      subcategories: sortSubcategoryTreeData(cat.subcategories),
-    }));
+  return [...cats].sort(compareBySortOrder).map((cat) => ({
+    ...cat,
+    subcategories: sortSubcategoryTreeData(cat.subcategories),
+  }));
 };
 
 // --- Image Preloader ---
 const preloadImages = async (imageUrls: (string | undefined)[]) => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   const promises = imageUrls.filter(Boolean).map((src) => {
     return new Promise((resolve) => {
       const img = new Image();
       img.src = src!;
       img.onload = resolve;
-      img.onerror = resolve; 
+      img.onerror = resolve;
     });
   });
   await Promise.all(promises);
 };
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const pathname = usePathname();
   const [historyCount, setHistoryCount] = useState(0);
 
   useEffect(() => {
-    setHistoryCount(prev => prev + 1);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setHistoryCount((prev) => prev + 1);
   }, [pathname]);
 
   const hasInternalHistory = historyCount > 1;
@@ -135,23 +166,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currency, setCurrency] = useState<Currency>(Currency.UAH);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [uahPerUsd, setUahPerUsd] = useState(DEFAULT_EXCHANGE_RATE_UAH_PER_USD);
   const [categories, setCategories] = useState<Category[]>([]);
   const [headerPages, setHeaderPages] = useState<Page[]>([]);
-  const [socialLinks, setSocialLinks] = useState<{ instagram?: string; telegram?: string; whatsapp?: string; viber?: string }>({ 
-    instagram: '', 
-    telegram: '', 
-    whatsapp: '', 
-    viber: '' 
+  const [socialLinks, setSocialLinks] = useState<{
+    instagram?: string;
+    telegram?: string;
+    whatsapp?: string;
+    viber?: string;
+  }>({
+    instagram: "",
+    telegram: "",
+    whatsapp: "",
+    viber: "",
   });
   const [contactInfo, setContactInfo] = useState({
-    email: '',
-    phone: '',
-    footerDescription: '',
-    footerText: '',
+    email: "",
+    phone: "",
+    footerDescription: "",
+    footerText: "",
   });
-  const [staticSeo, setStaticSeo] = useState<Record<string, StaticSeoRecord>>({});
+  const [staticSeo, setStaticSeo] = useState<Record<string, StaticSeoRecord>>(
+    {},
+  );
   const [loading, setLoading] = useState(true);
   const [isCustomerLoggedIn, setIsCustomerLoggedIn] = useState(false);
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -161,24 +199,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const initApp = async () => {
       setCart(getInitialCart());
       setTheme(getInitialTheme());
-      
-      const token = localStorage.getItem('customerToken');
+
+      const token = localStorage.getItem("customerToken");
       if (token) {
         setIsCustomerLoggedIn(true);
         try {
           const [serverCart, customerData] = await Promise.all([
             api.getCart(),
-            api.getMe()
+            api.getMe(),
           ]);
           setCart(serverCart);
           setCustomer(customerData);
         } catch (err) {
-          console.error("Failed to fetch initial customer or cart from server", err);
+          console.error(
+            "Failed to fetch initial customer or cart from server",
+            err,
+          );
         }
       }
 
       // Close sidebar on mobile initially
-      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      if (typeof window !== "undefined" && window.innerWidth < 1024) {
         setIsSidebarOpen(false);
       }
     };
@@ -190,40 +231,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsCustomerLoggedIn(false);
       setCustomer(null);
       setCart([]);
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         localStorage.removeItem(CART_STORAGE_KEY);
       }
     };
-    window.addEventListener('customer-logged-out', handleLogoutEvent);
+    window.addEventListener("customer-logged-out", handleLogoutEvent);
     return () => {
-      window.removeEventListener('customer-logged-out', handleLogoutEvent);
+      window.removeEventListener("customer-logged-out", handleLogoutEvent);
     };
   }, []);
 
   const loginCustomer = async (token: string) => {
-    localStorage.setItem('customerToken', token);
+    localStorage.setItem("customerToken", token);
     setIsCustomerLoggedIn(true);
-    
+
     try {
       const [serverCart, customerData] = await Promise.all([
         api.getCart(),
-        api.getMe()
+        api.getMe(),
       ]);
       setCustomer(customerData);
       const guestCart = cart;
-      
+
       if (guestCart.length > 0) {
         // Merge guest cart with server cart
         const merged = [...serverCart];
         guestCart.forEach((guestItem) => {
           const existingIdx = merged.findIndex((i) => i.id === guestItem.id);
           if (existingIdx > -1) {
-            merged[existingIdx].quantity = merged[existingIdx].quantity + guestItem.quantity;
+            merged[existingIdx].quantity =
+              merged[existingIdx].quantity + guestItem.quantity;
           } else {
             merged.push(guestItem);
           }
         });
-        
+
         setCart(merged);
         await api.saveCart(merged);
       } else {
@@ -235,7 +277,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const logoutCustomer = () => {
-    localStorage.removeItem('customerToken');
+    localStorage.removeItem("customerToken");
     setIsCustomerLoggedIn(false);
     setCustomer(null);
     setCart([]);
@@ -245,28 +287,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Theme application and system listener
   useEffect(() => {
     // Apply theme class to document
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
 
     // Listen for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e: MediaQueryListEvent) => {
       // ONLY auto-adjust if there is no manual preference in localStorage
       const manualPreference = localStorage.getItem(THEME_STORAGE_KEY);
       if (!manualPreference) {
-        setTheme(e.matches ? 'dark' : 'light');
+        setTheme(e.matches ? "dark" : "light");
       }
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
+    const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     // Explicitly save manual preference
     localStorage.setItem(THEME_STORAGE_KEY, newTheme);
@@ -274,7 +316,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Save cart to local storage on changes
   useEffect(() => {
-    if (cart.length > 0 || (typeof window !== 'undefined' && localStorage.getItem(CART_STORAGE_KEY))) {
+    if (
+      cart.length > 0 ||
+      (typeof window !== "undefined" && localStorage.getItem(CART_STORAGE_KEY))
+    ) {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     }
   }, [cart]);
@@ -297,13 +342,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const headerPageSlugs = ['about', 'delivery', 'returns', 'contacts', 'faq', 'terms-of-service', 'privacy-policy'];
-        const [categoriesData, socialLinksData, pagesData, staticSeoData] = await Promise.all([
-          api.getCategories(),
-          api.getSocialLinks(),
-          api.getPagesBySlugs(headerPageSlugs),
-          api.getStaticSeo(),
-        ]);
+        const headerPageSlugs = [
+          "about",
+          "delivery",
+          "returns",
+          "contacts",
+          "faq",
+          "terms-of-service",
+          "privacy-policy",
+        ];
+        const [categoriesData, socialLinksData, pagesData, staticSeoData] =
+          await Promise.all([
+            api.getCategories(),
+            api.getSocialLinks(),
+            api.getPagesBySlugs(headerPageSlugs),
+            api.getStaticSeo(),
+          ]);
 
         const sortedCats = sortCategoryTreeData(categoriesData);
         setCategories(sortedCats);
@@ -311,15 +365,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setHeaderPages(pagesData);
 
         const seoMap: Record<string, StaticSeoRecord> = {};
-        staticSeoData.forEach(record => {
+        staticSeoData.forEach((record) => {
           seoMap[record.slug] = record;
         });
         setStaticSeo(seoMap);
 
         // Preload critical images
-        const heroImages = sortedCats.slice(0, 4).map(c => c.image);
+        const heroImages = sortedCats.slice(0, 4).map((c) => c.image);
         await preloadImages(heroImages);
-
       } catch (e) {
         console.error("Failed to load initial data", e);
       } finally {
@@ -332,7 +385,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const fetchRate = async () => {
       try {
-        const value = await api.getSetting('exchange_rate');
+        const value = await api.getSetting("exchange_rate");
         const parsed = value ? parseFloat(value) : NaN;
         if (!Number.isNaN(parsed) && parsed > 0) {
           setUahPerUsd(parsed);
@@ -355,10 +408,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       };
       const [email, phone, footerDescription, footerText] = await Promise.all([
-        fetchSetting('contact_email', DEFAULT_SETTINGS.contact_email),
-        fetchSetting('contact_phone', DEFAULT_SETTINGS.contact_phone),
-        fetchSetting('footer_description', DEFAULT_SETTINGS.footer_description),
-        fetchSetting('footer_text', DEFAULT_SETTINGS.footer_text),
+        fetchSetting("contact_email", DEFAULT_SETTINGS.contact_email),
+        fetchSetting("contact_phone", DEFAULT_SETTINGS.contact_phone),
+        fetchSetting("footer_description", DEFAULT_SETTINGS.footer_description),
+        fetchSetting("footer_text", DEFAULT_SETTINGS.footer_text),
       ]);
       setContactInfo({
         email,
@@ -371,10 +424,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const addToCart = (product: Product) => {
-    setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
       if (existing) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+        return prev.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
       }
       return [...prev, { ...product, quantity: 1 }];
     });
@@ -382,29 +439,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateQuantity = (id: string, delta: number) => {
-    setCart(prev => prev.map(item => {
-      if (item.id === id) {
-        return { ...item, quantity: Math.max(1, item.quantity + delta) };
-      }
-      return item;
-    }));
+    setCart((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          return { ...item, quantity: Math.max(1, item.quantity + delta) };
+        }
+        return item;
+      }),
+    );
   };
 
   const removeItem = (id: string) => {
-    setCart(prev => prev.filter(item => item.id !== id));
+    setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
   const clearCart = () => setCart([]);
 
   const cartTotalUSD = useMemo(() => {
-    const effectiveRate = uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
+    const effectiveRate =
+      uahPerUsd > 0 ? uahPerUsd : DEFAULT_EXCHANGE_RATE_UAH_PER_USD;
     return cart.reduce((sum, item) => {
       const priceUSD = getProductUsdPrice(item, effectiveRate);
       return sum + priceUSD * item.quantity;
     }, 0);
   }, [cart, uahPerUsd]);
 
-  const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
+  const cartCount = useMemo(
+    () => cart.reduce((sum, item) => sum + item.quantity, 0),
+    [cart],
+  );
 
   return (
     <AppContext.Provider
@@ -443,10 +506,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useApp = () => {
   const context = useContext(AppContext);
   if (context === undefined) {
-    throw new Error('useApp must be used within an AppProvider');
+    throw new Error("useApp must be used within an AppProvider");
   }
   return context;
 };

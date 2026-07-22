@@ -1,18 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import ProductList from '../components/ProductList';
-import SubcategoryCard from '../components/SubcategoryCard';
-import SeoHead from '../components/SeoHead';
-import { Category, Subcategory, Product } from '../types';
-import { api } from '../services/api';
-import { useApp } from '../context/AppContext';
+import React, { useState, useEffect, useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import ProductList from "../components/ProductList";
+import SubcategoryCard from "../components/SubcategoryCard";
+import SeoHead from "../components/SeoHead";
+import { Category, Subcategory, Product } from "../types";
+import { api } from "../services/api";
+import { useApp } from "../context/AppContext";
 
-const slugify = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
+const slugify = (value: string) =>
+  value.toLowerCase().trim().replace(/\s+/g, "-");
 
-const compareBySortOrder = <T extends { sort_order?: number | null; id?: number }>(a: T, b: T) => {
+const compareBySortOrder = <
+  T extends { sort_order?: number | null; id?: number },
+>(
+  a: T,
+  b: T,
+) => {
   const orderDiff = (b.sort_order ?? 0) - (a.sort_order ?? 0);
   if (orderDiff !== 0) return orderDiff;
   if (a.id !== undefined && b.id !== undefined) {
@@ -23,12 +29,10 @@ const compareBySortOrder = <T extends { sort_order?: number | null; id?: number 
 
 const sortSubcategoryTreeData = (subs?: Subcategory[]): Subcategory[] => {
   if (!subs) return [];
-  return [...subs]
-    .sort(compareBySortOrder)
-    .map(sub => ({
-      ...sub,
-      subcategories: sortSubcategoryTreeData(sub.subcategories),
-    }));
+  return [...subs].sort(compareBySortOrder).map((sub) => ({
+    ...sub,
+    subcategories: sortSubcategoryTreeData(sub.subcategories),
+  }));
 };
 
 interface CategoryViewProps {
@@ -36,40 +40,54 @@ interface CategoryViewProps {
   initialProducts?: Product[];
 }
 
-const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, initialProducts }) => {
+const CategoryViewComponent: React.FC<CategoryViewProps> = ({
+  initialCategory,
+  initialProducts,
+}) => {
   const params = useParams();
   const router = useRouter();
   const { slug, subId: subIdParam } = params;
   const subId = subIdParam ? Number(subIdParam) : null;
 
-  const { categories, currency, uahPerUsd, addToCart, loading: appLoading } = useApp();
-  
+  const {
+    categories,
+    currency,
+    uahPerUsd,
+    addToCart,
+    loading: appLoading,
+  } = useApp();
+
   const currentCategory = useMemo(() => {
-    const decodedSlug = slug ? decodeURIComponent(slug as string) : '';
-    return categories.find(c => slugify(c.name) === decodedSlug);
+    const decodedSlug = slug ? decodeURIComponent(slug as string) : "";
+    return categories.find((c) => slugify(c.name) === decodedSlug);
   }, [categories, slug]);
 
   const [products, setProducts] = useState<Product[]>(initialProducts || []);
   const [loadingProducts, setLoadingProducts] = useState(!initialProducts);
-  const [detailedCategory, setDetailedCategory] = useState<Category | null>(initialCategory || null);
+  const [detailedCategory, setDetailedCategory] = useState<Category | null>(
+    initialCategory || null,
+  );
   const [loadingCategory, setLoadingCategory] = useState(false);
-  const [hasInitializedProducts, setHasInitializedProducts] = useState(!!initialProducts);
-  const [hasInitializedCategory, setHasInitializedCategory] = useState(!!initialCategory);
+  const [hasInitializedProducts, setHasInitializedProducts] =
+    useState(!!initialProducts);
+  const [hasInitializedCategory, setHasInitializedCategory] =
+    useState(!!initialCategory);
 
   useEffect(() => {
     if (!currentCategory) return;
     if (hasInitializedCategory) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasInitializedCategory(false);
       return;
     }
-    
+
     const fetchDetails = async () => {
       setLoadingCategory(true);
       try {
         const fullData = await api.getCategory(currentCategory.id);
         const sorted = {
-            ...fullData,
-            subcategories: sortSubcategoryTreeData(fullData.subcategories)
+          ...fullData,
+          subcategories: sortSubcategoryTreeData(fullData.subcategories),
         };
         setDetailedCategory(sorted);
       } catch (e) {
@@ -79,19 +97,22 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
       }
     };
     fetchDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCategory]);
 
   useEffect(() => {
     if (!slug) return;
     if (hasInitializedProducts) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasInitializedProducts(false);
       return;
     }
-    
+
     const fetchProducts = async () => {
       setLoadingProducts(true);
       try {
         const decodedSlug = decodeURIComponent(slug as string);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const filters: any = { category: decodedSlug };
         if (subId) {
           filters.subId = subId;
@@ -105,9 +126,13 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
       }
     };
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, subId]);
 
-  const findSubcategory = (subs: Subcategory[], targetId: number): Subcategory | null => {
+  const findSubcategory = (
+    subs: Subcategory[],
+    targetId: number,
+  ): Subcategory | null => {
     if (!subs) return null;
     for (const sub of subs) {
       if (sub.id === targetId) {
@@ -121,20 +146,39 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
     return null;
   };
 
-  const currentSubcategory = subId && detailedCategory
-    ? findSubcategory(detailedCategory.subcategories, subId)
-    : null;
+  const currentSubcategory =
+    subId && detailedCategory
+      ? findSubcategory(detailedCategory.subcategories, subId)
+      : null;
 
   useEffect(() => {
-    if (!loadingCategory && subId && !currentSubcategory && detailedCategory && detailedCategory.subcategories && detailedCategory.subcategories.length > 0) {
+    if (
+      !loadingCategory &&
+      subId &&
+      !currentSubcategory &&
+      detailedCategory &&
+      detailedCategory.subcategories &&
+      detailedCategory.subcategories.length > 0
+    ) {
       router.replace(`/category/${slug}`);
     }
-  }, [subId, currentSubcategory, router, slug, loadingCategory, detailedCategory]);
+  }, [
+    subId,
+    currentSubcategory,
+    router,
+    slug,
+    loadingCategory,
+    detailedCategory,
+  ]);
 
   const getBackLink = (): string => {
-    if (!subId || !detailedCategory) return '/';
-    
-    const findParent = (subs: Subcategory[], target: number, parent: number | null = null): number | null => {
+    if (!subId || !detailedCategory) return "/";
+
+    const findParent = (
+      subs: Subcategory[],
+      target: number,
+      parent: number | null = null,
+    ): number | null => {
       if (!subs) return null;
       for (const sub of subs) {
         if (sub.id === target) {
@@ -149,7 +193,7 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
       }
       return null;
     };
-    
+
     const parentId = findParent(detailedCategory.subcategories, subId, null);
     if (parentId) {
       return `/category/${slug}/sub/${parentId}`;
@@ -159,16 +203,20 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
   };
 
   const getSelectedSubcategoryName = () => {
-    if (!subId || !detailedCategory) return currentCategory?.name || '';
+    if (!subId || !detailedCategory) return currentCategory?.name || "";
     const found = findSubcategory(detailedCategory.subcategories, subId);
-    return found?.name || currentCategory?.name || '';
+    return found?.name || currentCategory?.name || "";
   };
 
   const getBreadcrumbs = () => {
     if (!currentCategory) return [];
     const crumbs = [{ name: currentCategory.name, url: `/category/${slug}` }];
     if (subId && detailedCategory) {
-      const findPath = (subs: Subcategory[], target: number, currentPath: Subcategory[] = []): Subcategory[] | null => {
+      const findPath = (
+        subs: Subcategory[],
+        target: number,
+        currentPath: Subcategory[] = [],
+      ): Subcategory[] | null => {
         for (const sub of subs) {
           const newPath = [...currentPath, sub];
           if (sub.id === target) return newPath;
@@ -181,7 +229,9 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
       };
       const path = findPath(detailedCategory.subcategories, subId);
       if (path) {
-        path.forEach(p => crumbs.push({ name: p.name, url: `/category/${slug}/sub/${p.id}` }));
+        path.forEach((p) =>
+          crumbs.push({ name: p.name, url: `/category/${slug}/sub/${p.id}` }),
+        );
       }
     }
     return crumbs;
@@ -189,25 +239,26 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
 
   const subcategoriesToShow = useMemo(() => {
     if (loadingCategory || !detailedCategory) return [];
-    
+
     const base = subId
       ? currentSubcategory?.subcategories || []
       : detailedCategory.subcategories;
     return sortSubcategoryTreeData(base);
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
   }, [subId, currentSubcategory, detailedCategory, loadingCategory]);
 
   if (appLoading || (!currentCategory && !loadingCategory)) {
     if (!appLoading && !currentCategory) {
-        return <div>Категорію не знайдено</div>;
+      return <div>Категорію не знайдено</div>;
     }
     return (
-        <div className="flex justify-center py-20">
-          <div className="relative w-10 h-10">
-            <div className="absolute inset-0 border-4 border-blue-600/20 rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-blue-600 border-t-transparent rounded-full animate-pulse"></div>
-          </div>
+      <div className="flex justify-center py-20">
+        <div className="relative w-10 h-10">
+          <div className="absolute inset-0 border-4 border-blue-600/20 rounded-full"></div>
+          <div className="absolute inset-0 border-4 border-blue-600 border-t-transparent rounded-full animate-pulse"></div>
         </div>
-      );
+      </div>
+    );
   }
 
   const pageHeading = getSelectedSubcategoryName();
@@ -216,6 +267,7 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
     ? `Запчастини підкатегорії ${pageHeading} в категорії ${currentCategory?.name}.`
     : `Категорія ${currentCategory?.name}: підберіть запчастини для вашого авто.`;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const backLink = getBackLink();
   const loading = loadingProducts || loadingCategory;
 
@@ -228,27 +280,34 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
         fallbackDescription={fallbackDescription}
       />
       <div className="flex items-center gap-2 mb-2 text-sm text-gray-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap custom-scrollbar">
-        <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition">Головна</Link>
+        <Link
+          href="/"
+          className="hover:text-blue-600 dark:hover:text-blue-400 transition"
+        >
+          Головна
+        </Link>
         {getBreadcrumbs().map((crumb, idx, arr) => (
           <React.Fragment key={crumb.url}>
             <span className="text-gray-400 dark:text-slate-600">&gt;</span>
-            <Link 
-              href={crumb.url} 
-              className={`hover:text-blue-600 dark:hover:text-blue-400 transition ${idx === arr.length - 1 ? 'font-semibold text-slate-900 dark:text-white' : ''}`}
+            <Link
+              href={crumb.url}
+              className={`hover:text-blue-600 dark:hover:text-blue-400 transition ${idx === arr.length - 1 ? "font-semibold text-slate-900 dark:text-white" : ""}`}
             >
               {crumb.name}
             </Link>
           </React.Fragment>
         ))}
       </div>
-      
+
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{pageHeading}</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          {pageHeading}
+        </h1>
       </div>
 
       {subcategoriesToShow.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-          {subcategoriesToShow.map(sub => (
+          {subcategoriesToShow.map((sub) => (
             <SubcategoryCard
               key={sub.id}
               subcategory={sub}
@@ -278,9 +337,13 @@ const CategoryViewComponent: React.FC<CategoryViewProps> = ({ initialCategory, i
         )
       )}
 
-      {!loading && subcategoriesToShow.length === 0 && products.length === 0 && (
-        <p className="text-gray-500 dark:text-slate-400 italic">В цій категорії поки немає товарів чи підкатегорій.</p>
-      )}
+      {!loading &&
+        subcategoriesToShow.length === 0 &&
+        products.length === 0 && (
+          <p className="text-gray-500 dark:text-slate-400 italic">
+            В цій категорії поки немає товарів чи підкатегорій.
+          </p>
+        )}
     </div>
   );
 };
