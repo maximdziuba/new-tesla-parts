@@ -7,7 +7,7 @@ import collections
 
 from database import engine
 from models import Product, ApiKey
-from schemas import PaginatedPartnerResponse, PartnerProductRead
+from schemas import PartnerProductRead
 from auth import verify_password
 from zoneinfo import ZoneInfo
 
@@ -41,7 +41,7 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False, description="�
 
 @router.get(
     "/products", 
-    response_model=PaginatedPartnerResponse,
+    response_model=List[PartnerProductRead],
     summary="Отримати каталог товарів (Partner API)",
     description="""
 Отримує повний список товарів із вказанням актуальної наявності та цін з урахуванням персональної знижки СТО.
@@ -50,19 +50,17 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False, description="�
 Авторизуватись в Swagger UI можна, натиснувши кнопку **Authorize** (або замок) та ввівши ключ.
 
 **Обмеження (Rate Limit):**
-Максимум 100 запитів на годину для одного ключа.
+Максимум 3 запити на 10 хвилин для одного ключа.
     """,
     responses={
         200: {"description": "Успішна відповідь зі списком товарів"},
         401: {"description": "Відсутній або невірний API ключ"},
-        429: {"description": "Перевищено ліміт запитів (100 на годину)"}
+        429: {"description": "Перевищено ліміт запитів (3 на 10 хвилин)"}
     }
 )
 async def get_partner_products(
     background_tasks: BackgroundTasks,
     x_api_key: str = Security(api_key_header),
-    limit: int = Query(100, ge=20, le=200, description="Кількість товарів на сторінку (від 20 до 200)"),
-    offset: int = Query(0, ge=0, description="Зміщення для пагінації (пропущені елементи)"),
     session: Session = Depends(get_session)
 ):
     if not x_api_key or "." not in x_api_key:
@@ -80,17 +78,17 @@ async def get_partner_products(
     if not verify_password(secret, api_key.hashed_key):
         raise HTTPException(status_code=401, detail="Invalid API Key")
         
-    # Rate Limiting check (100 per hour)
+    # Rate Limiting check (3 per 10 minutes)
     now = get_kyiv_time()
-    one_hour_ago = now - timedelta(hours=1)
+    ten_minutes_ago = now - timedelta(minutes=10)
     
     # Clean up old timestamps for this key
     timestamps = rate_limits[api_key.id]
-    while timestamps and timestamps[0] < one_hour_ago:
+    while timestamps and timestamps[0] < ten_minutes_ago:
         timestamps.popleft()
         
-    if len(timestamps) >= 100:
-        raise HTTPException(status_code=429, detail="Rate limit exceeded. Maximum 100 requests per hour.")
+    if len(timestamps) >= 3:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded. Maximum 3 requests per 10 minutes.")
         
     timestamps.append(now)
     
@@ -98,12 +96,9 @@ async def get_partner_products(
     background_tasks.add_task(increment_api_key_usage, api_key.id)
     
     # Fetch products
-    total = session.exec(select(func.count(Product.id))).one()
     products = session.exec(
         select(Product)
         .order_by(Product.sort_order.desc(), Product.created_at.desc())
-        .offset(offset)
-        .limit(limit)
     ).all()
     
     items = []
@@ -119,9 +114,4 @@ async def get_partner_products(
             image=p.image
         ))
         
-    return PaginatedPartnerResponse(
-        total=total,
-        limit=limit,
-        offset=offset,
-        items=items
-    )
+    return items

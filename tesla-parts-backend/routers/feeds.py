@@ -12,7 +12,7 @@ import os
 # Configure logging
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/feed", tags=["feeds"])
+router = APIRouter(prefix="/feed", tags=["feeds"], include_in_schema=False)
 
 # Base URL for the shop
 SHOP_BASE_URL = os.getenv("FRONTEND_URL", "https://teslafix.com.ua")
