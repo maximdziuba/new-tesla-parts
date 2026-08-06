@@ -216,6 +216,12 @@ def get_sitemap():
 
     return Response(content="".join(xml_parts), media_type="application/xml")
 
+@app.get("/prom-ua.xml", response_class=Response, include_in_schema=False)
+async def get_prom_ua_feed_root(session: Session = Depends(get_session)):
+    from routers.feeds import get_prom_ua_feed
+    return await get_prom_ua_feed(session)
+
+
 @app.get("/seo/static", response_model=List[StaticPageSEORead])
 def get_static_seo_records(session: Session = Depends(get_session)):
     return session.exec(select(StaticPageSEO)).all()

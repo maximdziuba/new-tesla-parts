@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from main import app
-from models import Product, Order, OrderItem, Settings, User
+from models import Product, Order, OrderItem, Settings, User, Category, Subcategory
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 from database import get_session
@@ -149,3 +149,46 @@ def test_update_social_links(session: Session, admin_headers):
     data = response.json()
     assert data["instagram"] == "new_insta"
     assert data["telegram"] == "new_tele"
+
+
+def test_prom_ua_feed(session: Session):
+    cat = Category(id=1, name="Brakes", slug="brakes")
+    session.add(cat)
+    session.commit()
+    
+    sub = Subcategory(id=10, name="Front Brakes", category_id=1)
+    session.add(sub)
+    session.commit()
+
+    prod = Product(
+        id="prom-prod-1",
+        name="Tesla Model 3 Brake Pad",
+        category="Brakes",
+        subcategory_id=10,
+        priceUAH=1500.0,
+        priceUSD=40.0,
+        image="http://example.com/pad.jpg",
+        description="High quality brake pad",
+        inStock=True,
+        detail_number="TP-12345"
+    )
+    session.add(prod)
+    session.commit()
+
+    # Test feed router endpoint /feed/prom-ua.xml
+    response = client.get("/feed/prom-ua.xml")
+    assert response.status_code == 200
+    assert "application/xml" in response.headers["content-type"]
+    xml_content = response.text
+    assert "<yml_catalog" in xml_content
+    assert "<shop>" in xml_content
+    assert "<name>Tesla Model 3 Brake Pad</name>" in xml_content
+    assert "<price>" in xml_content
+    assert "<vendorCode>TP-12345</vendorCode>" in xml_content
+
+    # Test root alias /prom-ua.xml
+    response_root = client.get("/prom-ua.xml")
+    assert response_root.status_code == 200
+    assert "<yml_catalog" in response_root.text
+
+
